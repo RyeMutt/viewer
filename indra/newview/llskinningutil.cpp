@@ -357,15 +357,8 @@ void LLSkinningUtil::updateRiggingInfo(const LLMeshSkinInfo* skin, LLVOAvatar *a
                             {
                                 rig_info_tab[joint_num].setIsRiggedTo(true);
 
-                                // FIXME could precompute these matMuls.
-                                const LLMatrix4a& bind_shape = skin->mBindShapeMatrix;
-                                const LLMatrix4a& inv_bind = skin->mInvBindMatrix[joint_index];
-                                LLMatrix4a mat;
                                 LLVector4a pos_joint_space;
-
-                                matMul(bind_shape, inv_bind, mat);
-
-                                mat.affineTransform(pos, pos_joint_space);
+                                skin->mInvBindShapeMatrix[joint_index].affineTransform(pos, pos_joint_space);
                                 pos_joint_space.mul(wght[k]);
 
                                 LLVector4a *extents = rig_info_tab[joint_num].getRiggedExtents();
