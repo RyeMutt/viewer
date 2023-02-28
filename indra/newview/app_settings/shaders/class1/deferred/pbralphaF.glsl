@@ -1,9 +1,9 @@
 /** 
- * @file class1\deferred\moonV.glsl
+ * @file pbralphaF.glsl
  *
-  * $LicenseInfo:firstyear=2007&license=viewerlgpl$
+ * $LicenseInfo:firstyear=2023&license=viewerlgpl$
  * Second Life Viewer Source Code
- * Copyright (C) 2007, 2020 Linden Research, Inc.
+ * Copyright (C) 2023, Linden Research, Inc.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,11 @@
  * $/LicenseInfo$
  */
 
-uniform mat4 texture_matrix0;
-uniform mat4 modelview_matrix;
-uniform mat4 modelview_projection_matrix;
+ // debug stub
 
-in vec3 position;
-in vec2 texcoord0;
-
-out vec2 vary_texcoord0;
+out vec4 frag_color;
 
 void main()
 {
-    //transform vertex
-    vec4 vert = vec4(position.xyz, 1.0);
-    vec4 pos = (modelview_projection_matrix * vert);
-
-    // smash to *almost* far clip plane -- stars are still behind
-    pos.z = pos.w*0.999999;
-    gl_Position = pos;
-
-    vary_texcoord0 = (texture_matrix0 * vec4(texcoord0,0,1)).xy;
+    frag_color = vec4(1.0, 0, 0.5, 0.5);
 }

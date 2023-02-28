@@ -1,9 +1,9 @@
 /** 
- * @file class1\deferred\moonV.glsl
+ * @file gaussianF.glsl
  *
-  * $LicenseInfo:firstyear=2007&license=viewerlgpl$
+ * $LicenseInfo:firstyear=2023&license=viewerlgpl$
  * Second Life Viewer Source Code
- * Copyright (C) 2007, 2020 Linden Research, Inc.
+ * Copyright (C) 2023, Linden Research, Inc.
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,31 @@
  * $/LicenseInfo$
  */
 
-uniform mat4 texture_matrix0;
-uniform mat4 modelview_matrix;
-uniform mat4 modelview_projection_matrix;
+out vec4 frag_color;
 
-in vec3 position;
-in vec2 texcoord0;
+uniform sampler2D diffuseRect;
 
-out vec2 vary_texcoord0;
+uniform float resScale;
 
-void main()
+// texture direction, will be <1, 0> or <0, 1>
+uniform vec2 direction;
+
+in vec2 vary_texcoord0;
+
+// get linear depth value given a depth buffer sample d and znear and zfar values
+float linearDepth(float d, float znear, float zfar);
+
+void main() 
 {
-    //transform vertex
-    vec4 vert = vec4(position.xyz, 1.0);
-    vec4 pos = (modelview_projection_matrix * vert);
+    vec3 col = vec3(0,0,0);
 
-    // smash to *almost* far clip plane -- stars are still behind
-    pos.z = pos.w*0.999999;
-    gl_Position = pos;
+    float w[] = { 0.0002, 0.0060, 0.0606, 0.2417, 0.3829, 0.2417, 0.0606, 0.0060, 0.0002 };
+    
+    for (int i = 0; i < 9; ++i)
+    {
+        vec2 tc = vary_texcoord0 + (i-4)*direction*resScale;
+        col += texture(diffuseRect, tc).rgb * w[i];
+    }
 
-    vary_texcoord0 = (texture_matrix0 * vec4(texcoord0,0,1)).xy;
+    frag_color = vec4(col, 0.0);
 }

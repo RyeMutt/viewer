@@ -44,15 +44,22 @@ uniform mat4 modelview_matrix;
 
 out vec3 vary_position;
 
-uniform mat3 texture_basecolor_matrix;
-uniform mat3 texture_normal_matrix;
-uniform mat3 texture_metallic_roughness_matrix;
-uniform mat3 texture_emissive_matrix;
+uniform vec2 texture_base_color_scale;
+uniform float texture_base_color_rotation;
+uniform vec2 texture_base_color_offset;
+uniform vec2 texture_normal_scale;
+uniform float texture_normal_rotation;
+uniform vec2 texture_normal_offset;
+uniform vec2 texture_metallic_roughness_scale;
+uniform float texture_metallic_roughness_rotation;
+uniform vec2 texture_metallic_roughness_offset;
+uniform vec2 texture_emissive_scale;
+uniform float texture_emissive_rotation;
+uniform vec2 texture_emissive_offset;
 
-#ifdef HAS_SUN_SHADOW
 out vec3 vary_fragcoord;
+
 uniform float near_clip;
-#endif
 
 in vec3 position;
 in vec4 diffuse_color;
@@ -60,7 +67,7 @@ in vec3 normal;
 in vec4 tangent;
 in vec2 texcoord0;
 
-out vec2 basecolor_texcoord;
+out vec2 base_color_texcoord;
 out vec2 normal_texcoord;
 out vec2 metallic_roughness_texcoord;
 out vec2 emissive_texcoord;
@@ -70,6 +77,8 @@ out vec4 vertex_color;
 out vec3 vary_tangent;
 flat out float vary_sign;
 out vec3 vary_normal;
+
+vec2 texture_transform(vec2 vertex_texcoord, vec2 khr_gltf_scale, float khr_gltf_rotation, vec2 khr_gltf_offset, mat4 sl_animation_transform);
 
 
 void main()
@@ -86,14 +95,12 @@ void main()
 #endif
     gl_Position = vert;
 
-#ifdef HAS_SUN_SHADOW
     vary_fragcoord.xyz = vert.xyz + vec3(0,0,near_clip);
-#endif
 
-	basecolor_texcoord = (texture_matrix0 * vec4(texture_basecolor_matrix * vec3(texcoord0,1), 1)).xy;
-	normal_texcoord = (texture_matrix0 * vec4(texture_normal_matrix * vec3(texcoord0,1), 1)).xy;
-	metallic_roughness_texcoord = (texture_matrix0 * vec4(texture_metallic_roughness_matrix * vec3(texcoord0,1), 1)).xy;
-	emissive_texcoord = (texture_matrix0 * vec4(texture_emissive_matrix * vec3(texcoord0,1), 1)).xy;
+	base_color_texcoord = texture_transform(texcoord0, texture_base_color_scale, texture_base_color_rotation, texture_base_color_offset, texture_matrix0);
+	normal_texcoord = texture_transform(texcoord0, texture_normal_scale, texture_normal_rotation, texture_normal_offset, texture_matrix0);
+	metallic_roughness_texcoord = texture_transform(texcoord0, texture_metallic_roughness_scale, texture_metallic_roughness_rotation, texture_metallic_roughness_offset, texture_matrix0);
+	emissive_texcoord = texture_transform(texcoord0, texture_emissive_scale, texture_emissive_rotation, texture_emissive_offset, texture_matrix0);
 
 #ifdef HAS_SKIN
 	vec3 n = (mat*vec4(normal.xyz+position.xyz,1.0)).xyz-pos.xyz;
@@ -126,17 +133,24 @@ uniform mat4 modelview_matrix;
 
 out vec3 vary_position;
 
-uniform mat3 texture_basecolor_matrix;
-uniform mat3 texture_emissive_matrix;
+uniform vec2 texture_base_color_scale;
+uniform float texture_base_color_rotation;
+uniform vec2 texture_base_color_offset;
+uniform vec2 texture_emissive_scale;
+uniform float texture_emissive_rotation;
+uniform vec2 texture_emissive_offset;
 
 in vec3 position;
 in vec4 diffuse_color;
 in vec2 texcoord0;
 
-out vec2 basecolor_texcoord;
+out vec2 base_color_texcoord;
 out vec2 emissive_texcoord;
 
 out vec4 vertex_color;
+
+vec2 texture_transform(vec2 vertex_texcoord, vec2 khr_gltf_scale, float khr_gltf_rotation, vec2 khr_gltf_offset, mat4 sl_animation_transform);
+
 
 void main()
 {
@@ -145,8 +159,8 @@ void main()
     gl_Position = vert;
     vary_position = vert.xyz;
 
-	basecolor_texcoord = (texture_matrix0 * vec4(texture_basecolor_matrix * vec3(texcoord0,1), 1)).xy;
-	emissive_texcoord = (texture_matrix0 * vec4(texture_emissive_matrix * vec3(texcoord0,1), 1)).xy;
+	base_color_texcoord = texture_transform(texcoord0, texture_base_color_scale, texture_base_color_rotation, texture_base_color_offset, texture_matrix0);
+	emissive_texcoord = texture_transform(texcoord0, texture_emissive_scale, texture_emissive_rotation, texture_emissive_offset, texture_matrix0);
 
 	vertex_color = diffuse_color;
 }
