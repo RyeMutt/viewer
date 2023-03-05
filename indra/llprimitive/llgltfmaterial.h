@@ -28,7 +28,6 @@
 
 #include "llrefcount.h"
 #include "llmemory.h"
-#include "m3math.h"
 #include "v4color.h"
 #include "v3color.h"
 #include "v2math.h"
@@ -60,7 +59,7 @@ public:
         LLVector2 mScale = { 1.f, 1.f };
         F32 mRotation = 0.f;
 
-        LLMatrix3 asMatrix();
+        void getPacked(F32 (&packed)[8]);
 
         bool operator==(const TextureTransform& other) const;
     };
@@ -99,7 +98,8 @@ public:
 
     std::array<TextureTransform, GLTF_TEXTURE_INFO_COUNT> mTextureTransform;
 
-    // NOTE : initialize values to defaults according to the GLTF spec
+    // NOTE: initialize values to defaults according to the GLTF spec
+    // NOTE: these values should be in linear color space
     LLColor4 mBaseColor = LLColor4(1, 1, 1, 1);
     LLColor3 mEmissiveColor = LLColor3(0, 0, 0);
 
