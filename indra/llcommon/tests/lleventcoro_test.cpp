@@ -111,7 +111,7 @@ namespace tut
 
     void test_data::explicit_wait(std::shared_ptr<LLCoros::Promise<std::string>>& cbp)
     {
-        BEGIN
+        DEBUGIN
         {
             mSync.bump();
             // The point of this test is to verify / illustrate suspending a
@@ -134,7 +134,7 @@ namespace tut
             mSync.bump();
             ensure_equals("Got it", stringdata, "received");
         }
-        END
+        DEBUGEND
     }
 
     template<> template<>
@@ -161,13 +161,13 @@ namespace tut
 
     void test_data::waitForEventOn1()
     {
-        BEGIN
+        DEBUGIN
         {
             mSync.bump();
             result = suspendUntilEventOn("source");
             mSync.bump();
         }
-        END
+        DEBUGEND
     }
 
     template<> template<>
@@ -187,7 +187,7 @@ namespace tut
 
     void test_data::coroPump()
     {
-        BEGIN
+        DEBUGIN
         {
             mSync.bump();
             LLCoroEventPump waiter;
@@ -195,7 +195,7 @@ namespace tut
             result = waiter.suspend();
             mSync.bump();
         }
-        END
+        DEBUGEND
     }
 
     template<> template<>
@@ -215,7 +215,7 @@ namespace tut
 
     void test_data::postAndWait1()
     {
-        BEGIN
+        DEBUGIN
         {
             mSync.bump();
             result = postAndSuspend(LLSDMap("value", 17),       // request event
@@ -224,7 +224,7 @@ namespace tut
                                  "reply");                   // request["reply"] = name
             mSync.bump();
         }
-        END
+        DEBUGEND
     }
 
     template<> template<>
@@ -238,7 +238,7 @@ namespace tut
 
     void test_data::coroPumpPost()
     {
-        BEGIN
+        DEBUGIN
         {
             mSync.bump();
             LLCoroEventPump waiter;
@@ -246,7 +246,7 @@ namespace tut
                                         immediateAPI.getPump(), "reply");
             mSync.bump();
         }
-        END
+        DEBUGEND
     }
 
     template<> template<>
