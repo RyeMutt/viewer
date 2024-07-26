@@ -371,7 +371,7 @@ void LLNetMap::draw()
         S32 local_mouse_x;
         S32 local_mouse_y;
         //localMouse(&local_mouse_x, &local_mouse_y);
-        LLUI::getInstance()->getMousePositionLocal(this, &local_mouse_x, &local_mouse_y);
+        LLUI::getMousePositionLocal(this, &local_mouse_x, &local_mouse_y);
         mClosestAgentToCursor.setNull();
         F32 closest_dist_squared = F32_MAX; // value will be overridden in the loop
         F32 min_pick_dist_squared = (mDotRadius * MIN_PICK_SCALE) * (mDotRadius * MIN_PICK_SCALE);
@@ -592,7 +592,7 @@ bool LLNetMap::isMouseOnPopupMenu()
 
     S32 popup_x;
     S32 popup_y;
-    LLUI::getInstance()->getMousePositionLocal(menu, &popup_x, &popup_y);
+    LLUI::getMousePositionLocal(menu, &popup_x, &popup_y);
     // *NOTE: Tolerance is larger than it needs to be because the context menu is offset from the mouse when the menu is opened from certain
     // directions. This may be a quirk of LLMenuGL::showPopup. -Cosmic,2022-03-22
     constexpr S32 tolerance = 10;
@@ -1018,7 +1018,7 @@ bool LLNetMap::handleMouseUp(S32 x, S32 y, MASK mask)
             LLRect clip_rect = getRect();
             clip_rect.stretch(-8);
             clip_rect.clipPointToRect(mMouseDown.mX, mMouseDown.mY, local_x, local_y);
-            LLUI::getInstance()->setMousePositionLocal(this, local_x, local_y);
+            LLUI::setMousePositionLocal(this, local_x, local_y);
 
             // finish the pan
             mPanning = false;

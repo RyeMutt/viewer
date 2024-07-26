@@ -2345,6 +2345,7 @@ void LLViewerWindow::shutdownViews()
     mPopupView = NULL;
 
     // Delete all child views.
+    LLUI::setRootView(nullptr);
     delete mRootView;
     mRootView = NULL;
     LL_INFOS() << "RootView deleted." << LL_ENDL ;
@@ -2573,7 +2574,7 @@ void LLViewerWindow::setNormalControlsVisible( bool visible )
         gStatusBar->setEnabled( visible );
     }
 
-    LLNavigationBar* navbarp = LLUI::getInstance()->getRootView()->findChild<LLNavigationBar>("navigation_bar");
+    LLNavigationBar* navbarp = LLUI::getRootView()->findChild<LLNavigationBar>("navigation_bar");
     if (navbarp)
     {
         // when it's time to show navigation bar we need to ensure that the user wants to see it
@@ -3281,7 +3282,7 @@ void LLViewerWindow::moveCursorToCenter()
         S32 x = getWorldViewWidthScaled() / 2;
         S32 y = getWorldViewHeightScaled() / 2;
 
-        LLUI::getInstance()->setMousePositionScreen(x, y);
+        LLUI::setMousePositionScreen(x, y);
 
         //on a forced move, all deltas get zeroed out to prevent jumping
         mCurrentMousePoint.set(x,y);

@@ -437,7 +437,7 @@ void LLToast::setVisible(bool show)
 void LLToast::updateHoveredState()
 {
     S32 x, y;
-    LLUI::getInstance()->getMousePositionScreen(&x, &y);
+    LLUI::getMousePositionScreen(&x, &y);
 
     LLRect panel_rc = mWrapperPanel->calcScreenRect();
     LLRect button_rc;

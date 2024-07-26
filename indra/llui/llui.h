@@ -122,10 +122,10 @@ private:
                            LLImageProviderInterface* image_provider,
                            LLUIAudioCallback audio_callback,
                            LLUIAudioCallback deferred_audio_callback);
-    LOG_CLASS(LLUI);
-public:
     ~LLUI();
 
+    LOG_CLASS(LLUI);
+public:
     //
     // Classes
     //
@@ -284,35 +284,35 @@ public:
      *      tree, the first "bar" anywhere under it, and "baz"
      *      as a direct child of that
      */
-    const LLView* resolvePath(const LLView* context, const std::string& path);
-    LLView* resolvePath(LLView* context, const std::string& path);
+    static const LLView* resolvePath(const LLView* context, const std::string& path);
+    static LLView* resolvePath(LLView* context, const std::string& path);
     static std::string locateSkin(const std::string& filename);
-    void setMousePositionScreen(S32 x, S32 y);
-    void getMousePositionScreen(S32 *x, S32 *y);
-    void setMousePositionLocal(const LLView* viewp, S32 x, S32 y);
-    void getMousePositionLocal(const LLView* viewp, S32 *x, S32 *y);
-    LLVector2 getWindowSize();
-    void screenPointToGL(S32 screen_x, S32 screen_y, S32 *gl_x, S32 *gl_y);
-    void glPointToScreen(S32 gl_x, S32 gl_y, S32 *screen_x, S32 *screen_y);
-    void screenRectToGL(const LLRect& screen, LLRect *gl);
-    void glRectToScreen(const LLRect& gl, LLRect *screen);
+    static void setMousePositionScreen(S32 x, S32 y);
+    static void getMousePositionScreen(S32 *x, S32 *y);
+    static void setMousePositionLocal(const LLView* viewp, S32 x, S32 y);
+    static void getMousePositionLocal(const LLView* viewp, S32 *x, S32 *y);
+    static LLVector2 getWindowSize();
+    static void screenPointToGL(S32 screen_x, S32 screen_y, S32 *gl_x, S32 *gl_y);
+    static void glPointToScreen(S32 gl_x, S32 gl_y, S32 *screen_x, S32 *screen_y);
+    static void screenRectToGL(const LLRect& screen, LLRect *gl);
+    static void glRectToScreen(const LLRect& gl, LLRect *screen);
     // Returns the control group containing the control name, or the default group
     LLControlGroup& getControlControlGroup (std::string_view controlname);
     F32 getMouseIdleTime() { return mMouseIdleTimer.getElapsedTimeF32(); }
     void resetMouseIdleTimer() { mMouseIdleTimer.reset(); }
-    LLWindow* getWindow() { return mWindow; }
+    static LLWindow* getWindow() { return sWindow; }
 
     void addPopup(LLView*);
     void removePopup(LLView*);
     void clearPopups();
 
-    void reportBadKeystroke();
+    static void reportBadKeystroke();
 
     // Ensures view does not overlap mouse cursor, but is inside
     // the view's parent rectangle.  Used for tooltips, inspectors.
     // Optionally override the view's default X/Y, which are relative to the
     // view's parent.
-    void positionViewNearMouse(LLView* view,    S32 spawn_x = S32_MAX, S32 spawn_y = S32_MAX);
+    static void positionViewNearMouse(LLView* view, S32 spawn_x = S32_MAX, S32 spawn_y = S32_MAX);
 
     // LLRender2D wrappers
     static void pushMatrix() { LLRender2D::pushMatrix(); }
@@ -334,11 +334,12 @@ public:
     settings_map_t mSettingGroups;
     LLUIAudioCallback mAudioCallback;
     LLUIAudioCallback mDeferredAudioCallback;
-    LLWindow*       mWindow;
     LLHelp*         mHelpImpl;
 
     // Statics
     static LLView* sRootView;
+    static LLWindow* sWindow;
+
 private:
     std::vector<std::string> mXUIPaths;
     LLFrameTimer        mMouseIdleTimer;

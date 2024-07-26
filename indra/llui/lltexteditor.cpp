@@ -325,7 +325,7 @@ void LLTextEditor::setText(const LLStringExplicit &utf8str, const LLStyle::Param
     {
         if (!mPrevalidator.validate(utf8str))
         {
-            LLUI::getInstance()->reportBadKeystroke();
+            LLUI::reportBadKeystroke();
             mPrevalidator.showLastErrorUsingTimeout();
 
             // not valid text, nothing to do
@@ -993,7 +993,7 @@ S32 LLTextEditor::execute( TextCmd* cmd )
         bool need_to_rollback = mPrevalidator && !mPrevalidator.validate(getViewModel()->getDisplay());
         if (need_to_rollback)
         {
-            LLUI::getInstance()->reportBadKeystroke();
+            LLUI::reportBadKeystroke();
             mPrevalidator.showLastErrorUsingTimeout();
 
             // get rid of this last command and clean up undo stack
@@ -1099,7 +1099,7 @@ void LLTextEditor::removeCharOrTab()
     }
     else
     {
-        LLUI::getInstance()->reportBadKeystroke();
+        LLUI::reportBadKeystroke();
     }
 }
 
@@ -1124,7 +1124,7 @@ void LLTextEditor::removeChar()
     }
     else
     {
-        LLUI::getInstance()->reportBadKeystroke();
+        LLUI::reportBadKeystroke();
     }
 }
 
@@ -1133,7 +1133,7 @@ S32 LLTextEditor::addChar(S32 pos, llwchar wc)
 {
     if ((wstring_utf8_length(getWText()) + wchar_utf8_length(wc)) > mMaxTextByteLength)
     {
-        LLUI::getInstance()->reportBadKeystroke();
+        LLUI::reportBadKeystroke();
         return 0;
     }
 
@@ -1149,7 +1149,7 @@ S32 LLTextEditor::addChar(S32 pos, llwchar wc)
             test_string.insert(pos, 1, wc);
             if (!mPrevalidator.validate(test_string))
             {
-                LLUI::getInstance()->reportBadKeystroke();
+                LLUI::reportBadKeystroke();
                 mPrevalidator.showLastErrorUsingTimeout();
                 return 0;
             }
@@ -1405,7 +1405,7 @@ bool LLTextEditor::handleNavigationKey(const KEY key, const MASK mask)
                 }
                 else
                 {
-                    LLUI::getInstance()->reportBadKeystroke();
+                    LLUI::reportBadKeystroke();
                 }
             }
             break;
@@ -1423,7 +1423,7 @@ bool LLTextEditor::handleNavigationKey(const KEY key, const MASK mask)
                 }
                 else
                 {
-                    LLUI::getInstance()->reportBadKeystroke();
+                    LLUI::reportBadKeystroke();
                 }
             }
             break;
@@ -1760,7 +1760,7 @@ bool LLTextEditor::handleSpecialKey(const KEY key, const MASK mask)
         }
         else
         {
-            LLUI::getInstance()->reportBadKeystroke();
+            LLUI::reportBadKeystroke();
         }
         break;
 
@@ -2870,7 +2870,7 @@ bool LLTextEditor::getPreeditLocation(S32 query_offset, LLCoordGL *coord, LLRect
     {
         LLRect control_rect_screen;
         localRectToScreen(mVisibleTextRect, &control_rect_screen);
-        LLUI::getInstance()->screenRectToGL(control_rect_screen, control);
+        LLUI::screenRectToGL(control_rect_screen, control);
     }
 
     S32 preedit_left_position, preedit_right_position;
@@ -2924,7 +2924,7 @@ bool LLTextEditor::getPreeditLocation(S32 query_offset, LLCoordGL *coord, LLRect
         const S32 query_y = mVisibleTextRect.mTop - (current_line - first_visible_line) * line_height - line_height / 2;
         S32 query_screen_x, query_screen_y;
         localPointToScreen(query_x, query_y, &query_screen_x, &query_screen_y);
-        LLUI::getInstance()->screenPointToGL(query_screen_x, query_screen_y, &coord->mX, &coord->mY);
+        LLUI::screenPointToGL(query_screen_x, query_screen_y, &coord->mX, &coord->mY);
     }
 
     if (bounds)
@@ -2951,7 +2951,7 @@ bool LLTextEditor::getPreeditLocation(S32 query_offset, LLCoordGL *coord, LLRect
         const LLRect preedit_rect_local(preedit_left, preedit_top, preedit_right, preedit_bottom);
         LLRect preedit_rect_screen;
         localRectToScreen(preedit_rect_local, &preedit_rect_screen);
-        LLUI::getInstance()->screenRectToGL(preedit_rect_screen, bounds);
+        LLUI::screenRectToGL(preedit_rect_screen, bounds);
     }
 
     return true;

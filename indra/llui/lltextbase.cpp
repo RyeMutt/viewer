@@ -3401,7 +3401,7 @@ bool LLNormalTextSegment::handleHover(S32 x, S32 y, MASK mask)
         // Only process the click if it's actually in this segment, not to the right of the end-of-line.
         if(mEditor.getSegmentAtLocalPos(x, y, false) == this)
         {
-            LLUI::getInstance()->getWindow()->setCursor(UI_CURSOR_HAND);
+            LLUI::getWindow()->setCursor(UI_CURSOR_HAND);
             return true;
         }
     }

@@ -630,7 +630,7 @@ void LLButton::getOverlayImageSize(S32& overlay_width, S32& overlay_height)
 // virtual
 void LLButton::draw()
 {
-    static LLCachedControl<bool> sEnableButtonFlashing(*LLUI::getInstance()->mSettingGroups["config"], "EnableButtonFlashing", true);
+    static LLUICachedControl<bool> sEnableButtonFlashing("EnableButtonFlashing", true);
     F32 alpha = mUseDrawContextAlpha ? getDrawContext().mAlpha : getCurrentTransparency();
 
     bool pressed_by_keyboard = false;
@@ -644,7 +644,7 @@ void LLButton::draw()
     {
         S32 local_mouse_x ;
         S32 local_mouse_y;
-        LLUI::getInstance()->getMousePositionLocal(this, &local_mouse_x, &local_mouse_y);
+        LLUI::getMousePositionLocal(this, &local_mouse_x, &local_mouse_y);
         mouse_pressed_and_over = pointInView(local_mouse_x, local_mouse_y);
     }
 

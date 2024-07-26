@@ -201,7 +201,7 @@ bool LLChatEntry::handleSpecialKey(const KEY key, const MASK mask)
             }
             else
             {
-                LLUI::getInstance()->reportBadKeystroke();
+                LLUI::reportBadKeystroke();
             }
             handled = true;
         }
@@ -225,7 +225,7 @@ bool LLChatEntry::handleSpecialKey(const KEY key, const MASK mask)
             }
             else
             {
-                LLUI::getInstance()->reportBadKeystroke();
+                LLUI::reportBadKeystroke();
             }
             handled = true;
         }

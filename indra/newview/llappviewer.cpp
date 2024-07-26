@@ -1872,6 +1872,8 @@ bool LLAppViewer::cleanup()
 
     LL_INFOS() << "Shutting down OpenGL" << LL_ENDL;
 
+    LLUI::sWindow = nullptr;
+
     // Shut down OpenGL
     if( gViewerWindow)
     {
@@ -3188,7 +3190,7 @@ bool LLAppViewer::initWindow()
         gViewerWindow->getWindow()->maximize();
     }
 
-    LLUI::getInstance()->mWindow = gViewerWindow->getWindow();
+    LLUI::sWindow = gViewerWindow->getWindow();
 
     // Show watch cursor
     gViewerWindow->setCursor(UI_CURSOR_WAIT);

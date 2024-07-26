@@ -527,7 +527,7 @@ bool LLFloaterImagePreview::handleHover(S32 x, S32 y, MASK mask)
             mSculptedPreview->refresh();
         }
 
-        LLUI::getInstance()->setMousePositionLocal(this, mLastMouseX, mLastMouseY);
+        LLUI::setMousePositionLocal(this, mLastMouseX, mLastMouseY);
     }
 
     if (!mPreviewRect.pointInRect(x, y) || !mAvatarPreview || !mSculptedPreview)

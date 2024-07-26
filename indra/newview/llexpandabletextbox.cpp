@@ -97,7 +97,7 @@ public:
     /*virtual*/ bool    handleMouseUp(S32 x, S32 y, MASK mask) { mEditor.onCommit(); return true; }
     /*virtual*/ bool    handleHover(S32 x, S32 y, MASK mask)
     {
-        LLUI::getInstance()->getWindow()->setCursor(UI_CURSOR_HAND);
+        gViewerWindow->setCursor(UI_CURSOR_HAND);
         return true;
     }
 private:

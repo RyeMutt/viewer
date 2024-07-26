@@ -1161,7 +1161,7 @@ bool LLFavoritesBarCtrl::collectFavoriteItems(LLInventoryModel::item_array_t &it
 
 void LLFavoritesBarCtrl::onMoreTextBoxClicked()
 {
-    LLUI::getInstance()->getMousePositionScreen(&mMouseX, &mMouseY);
+    LLUI::getMousePositionScreen(&mMouseX, &mMouseY);
     showDropDownMenu();
 }
 
