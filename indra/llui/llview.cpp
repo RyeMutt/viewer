@@ -1226,7 +1226,7 @@ void LLView::drawChildren()
 {
     if (!mChildList.empty())
     {
-        LLView* rootp = LLUI::getInstance()->getRootView();
+        LLView* rootp = LLUI::getRootView();
         ++sDepth;
 
         for (child_list_reverse_iter_t child_iter = mChildList.rbegin(); child_iter != mChildList.rend();)  // ++child_iter)
@@ -1752,12 +1752,7 @@ void LLView::localRectToScreen(const LLRect& local, LLRect* screen) const
 
 LLView* LLView::getRootView()
 {
-    LLView* view = this;
-    while( view->mParentView )
-    {
-        view = view->mParentView;
-    }
-    return view;
+    return LLUI::getRootView();
 }
 
 LLView* LLView::findPrevSibling(LLView* child)

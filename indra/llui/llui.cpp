@@ -85,6 +85,12 @@ static LLDefaultChildRegistry::Register<LLSearchEditor> register_search_editor("
 static LLDefaultChildRegistry::Register<LLLoadingIndicator> register_loading_indicator("loading_indicator");
 static LLDefaultChildRegistry::Register<LLToolBar> register_toolbar("toolbar");
 
+
+//
+// Statics
+//
+LLView* LLUI::sRootView = nullptr;
+
 //
 // Functions
 //
@@ -153,7 +159,6 @@ LLUI::LLUI(const settings_map_t& settings,
 mAudioCallback(audio_callback),
 mDeferredAudioCallback(deferred_audio_callback),
 mWindow(NULL), // set later in startup
-mRootView(NULL),
 mHelpImpl(NULL)
 {
     LLRender2D::initParamSingleton(image_provider);
@@ -194,6 +199,11 @@ mHelpImpl(NULL)
 
     // Parse the master list of commands
     LLCommandManager::load();
+}
+
+LLUI::~LLUI()
+{
+    sRootView = nullptr;
 }
 
 void LLUI::setPopupFuncs(const add_popup_t& add_popup, const remove_popup_t& remove_popup,  const clear_popups_t& clear_popups)

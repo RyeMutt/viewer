@@ -124,6 +124,8 @@ private:
                            LLUIAudioCallback deferred_audio_callback);
     LOG_CLASS(LLUI);
 public:
+    ~LLUI();
+
     //
     // Classes
     //
@@ -255,8 +257,8 @@ public:
     static std::string getLanguage(); // static for lldateutil_test compatibility
 
     //helper functions (should probably move free standing rendering helper functions here)
-    LLView* getRootView() { return mRootView; }
-    void setRootView(LLView* view) { mRootView = view; }
+    static LLView* getRootView() { return sRootView; }
+    static void setRootView(LLView* view) { sRootView = view; }
     /**
      * Walk the LLView tree to resolve a path
      * Paths can be discovered using Develop > XUI > Show XUI Paths
@@ -333,8 +335,10 @@ public:
     LLUIAudioCallback mAudioCallback;
     LLUIAudioCallback mDeferredAudioCallback;
     LLWindow*       mWindow;
-    LLView*         mRootView;
     LLHelp*         mHelpImpl;
+
+    // Statics
+    static LLView* sRootView;
 private:
     std::vector<std::string> mXUIPaths;
     LLFrameTimer        mMouseIdleTimer;
