@@ -542,7 +542,9 @@ void LLAvatarAppearance::computeBodySize()
     {
         mBodySize = new_body_size;
 
+#ifndef LL_RELEASE_FOR_DOWNLOAD
         compareJointStateMaps(mLastBodySizeState, mCurrBodySizeState);
+#endif
     }
 }
 

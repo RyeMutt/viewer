@@ -209,7 +209,6 @@ boost::signals2::connection LLMaterialMgr::get(const LLUUID& region_id, const LL
     material_map_t::const_iterator itMaterial = mMaterials.find(material_id);
     if (itMaterial != mMaterials.end())
     {
-        LL_DEBUGS("Materials") << "region " << region_id << " found materialid " << material_id << LL_ENDL;
         get_callback_t signal;
         signal.connect(cb);
         signal(material_id, itMaterial->second);
@@ -222,11 +221,9 @@ boost::signals2::connection LLMaterialMgr::get(const LLUUID& region_id, const LL
             get_queue_t::iterator itQueue = mGetQueue.find(region_id);
             if (mGetQueue.end() == itQueue)
             {
-                LL_DEBUGS("Materials") << "mGetQueue inserting region "<<region_id << LL_ENDL;
                 std::pair<get_queue_t::iterator, bool> ret = mGetQueue.insert(std::pair<LLUUID, material_queue_t>(region_id, material_queue_t()));
                 itQueue = ret.first;
             }
-            LL_DEBUGS("Materials") << "adding material id " << material_id << LL_ENDL;
             itQueue->second.insert(material_id);
             markGetPending(region_id, material_id);
         }
@@ -250,7 +247,6 @@ boost::signals2::connection LLMaterialMgr::getTE(const LLUUID& region_id, const 
     material_map_t::const_iterator itMaterial = mMaterials.find(material_id);
     if (itMaterial != mMaterials.end())
     {
-        LL_DEBUGS("Materials") << "region " << region_id << " found materialid " << material_id << LL_ENDL;
         get_callback_te_t signal;
         signal.connect(cb);
         signal(material_id, itMaterial->second, te);
@@ -263,11 +259,9 @@ boost::signals2::connection LLMaterialMgr::getTE(const LLUUID& region_id, const 
             get_queue_t::iterator itQueue = mGetQueue.find(region_id);
             if (mGetQueue.end() == itQueue)
             {
-                LL_DEBUGS("Materials") << "mGetQueue inserting region "<<region_id << LL_ENDL;
                 std::pair<get_queue_t::iterator, bool> ret = mGetQueue.insert(std::pair<LLUUID, material_queue_t>(region_id, material_queue_t()));
                 itQueue = ret.first;
             }
-            LL_DEBUGS("Materials") << "adding material id " << material_id << LL_ENDL;
             itQueue->second.insert(material_id);
             markGetPending(region_id, material_id);
         }
@@ -360,7 +354,6 @@ void LLMaterialMgr::setLocalMaterial(const LLUUID& region_id, LLMaterialPtr mate
         material_id.set(uuid.mData);
     }
 
-    LL_DEBUGS("Materials") << "region " << region_id << "new local material id " << material_id << LL_ENDL;
     mMaterials.insert(std::pair<LLMaterialID, LLMaterialPtr>(material_id, material_ptr));
 
     setMaterialCallbacks(material_id, material_ptr);
@@ -370,11 +363,9 @@ void LLMaterialMgr::setLocalMaterial(const LLUUID& region_id, LLMaterialPtr mate
 
 const LLMaterialPtr LLMaterialMgr::setMaterial(const LLUUID& region_id, const LLMaterialID& material_id, const LLSD& material_data)
 {
-    LL_DEBUGS("Materials") << "region " << region_id << " material id " << material_id << LL_ENDL;
     material_map_t::const_iterator itMaterial = mMaterials.find(material_id);
     if (mMaterials.end() == itMaterial)
     {
-        LL_DEBUGS("Materials") << "new material" << LL_ENDL;
         LLMaterialPtr newMaterial(new LLMaterial(material_data));
         std::pair<material_map_t::const_iterator, bool> ret = mMaterials.insert(std::pair<LLMaterialID, LLMaterialPtr>(material_id, newMaterial));
         itMaterial = ret.first;

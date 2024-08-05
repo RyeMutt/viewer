@@ -340,23 +340,9 @@ void LLJoint::setPosition( const LLVector3& requested_pos, bool apply_attachment
     LLUUID mesh_id;
     if (apply_attachment_overrides && m_attachmentPosOverrides.findActiveOverride(mesh_id,active_override))
     {
-        if (pos != active_override && do_debug_joint(getName()))
-        {
-            LLScopedContextString str("setPosition");
-            LL_DEBUGS("Avatar") << " joint " << getName() << " requested_pos " << requested_pos
-                                << " overriden by attachment " << active_override << LL_ENDL;
-        }
         pos = active_override;
     }
-    if ((pos != getPosition()) && do_debug_joint(getName()))
-    {
-        LLScopedContextString str("setPosition");
-        LLCallStack cs;
-        LLContextStatus con_status;
-        LL_DEBUGS("Avatar") << " joint " << getName() << " set pos " << pos << LL_ENDL;
-        LL_DEBUGS("Avatar") << "CONTEXT:\n" << "====================\n" << con_status << "====================" << LL_ENDL;
-        LL_DEBUGS("Avatar") << "STACK:\n" << "====================\n" << cs << "====================" << LL_ENDL;
-    }
+
     if (pos != getPosition())
     {
         mXform.setPosition(pos);
@@ -877,29 +863,12 @@ void LLJoint::setScale( const LLVector3& requested_scale, bool apply_attachment_
     LLVector3 active_override;
     if (apply_attachment_overrides && m_attachmentScaleOverrides.findActiveOverride(mesh_id,active_override))
     {
-        if (scale != active_override && do_debug_joint(getName()))
-        {
-            LLScopedContextString str("setScale");
-            LL_DEBUGS("Avatar") << " joint " << getName() << " requested_scale " << requested_scale
-                                << " overriden by attachment " << active_override << LL_ENDL;
-        }
         scale = active_override;
     }
-    if ((mXform.getScale() != scale) && do_debug_joint(getName()))
-    {
-        LLScopedContextString str("setScale");
-        LLCallStack cs;
-        LLContextStatus con_status;
-        LL_DEBUGS("Avatar") << " joint " << getName() << " set scale " << scale << LL_ENDL;
-        LL_DEBUGS("Avatar") << "CONTEXT:\n" << "====================\n" << con_status << LL_ENDL;
-        LL_DEBUGS("Avatar") << "STACK:\n" << "====================\n" << cs << "====================" << LL_ENDL;
-    }
+
     mXform.setScale(scale);
     touch();
-
 }
-
-
 
 //--------------------------------------------------------------------
 // getWorldMatrix()

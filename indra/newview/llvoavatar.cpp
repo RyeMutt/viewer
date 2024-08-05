@@ -2642,8 +2642,6 @@ void LLVOAvatar::idleUpdate(LLAgent &agent, const F64 &time)
         mNeedsExtentUpdate = ((LLDrawable::getCurrentFrame()+mID.mData[0])%upd_freq==0);
     }
 
-    LLScopedContextString str("avatar_idle_update " + getFullname());
-
     checkTextureLoading() ;
 
     // force immediate pixel area update on avatars using last frames data (before drawable or camera updates)
@@ -4671,18 +4669,6 @@ bool LLVOAvatar::updateCharacter(LLAgent &agent)
     }
 
     bool visible = isVisible();
-    bool is_control_avatar = isControlAvatar(); // capture state to simplify tracing
-    bool is_attachment = false;
-
-    if (is_control_avatar)
-    {
-        LLControlAvatar *cav = dynamic_cast<LLControlAvatar*>(this);
-        is_attachment = cav && cav->mRootVolp && cav->mRootVolp->isAttachment(); // For attached animated objects
-    }
-
-    LLScopedContextString str("updateCharacter " + getFullname() + " is_control_avatar "
-                              + boost::lexical_cast<std::string>(is_control_avatar)
-                              + " is_attachment " + boost::lexical_cast<std::string>(is_attachment));
 
     // For fading out the names above heads, only let the timer
     // run if we're visible.
@@ -6349,8 +6335,6 @@ bool LLVOAvatar::jointIsRiggedTo(const LLJoint *joint) const
 
 void LLVOAvatar::clearAttachmentOverrides()
 {
-    LLScopedContextString str("clearAttachmentOverrides " + getFullname());
-
     for (S32 i=0; i<LL_CHARACTER_MAX_ANIMATED_JOINTS; i++)
     {
         LLJoint *pJoint = getJoint(i);
@@ -6381,11 +6365,6 @@ void LLVOAvatar::clearAttachmentOverrides()
 //-----------------------------------------------------------------------------
 void LLVOAvatar::rebuildAttachmentOverrides()
 {
-    LLScopedContextString str("rebuildAttachmentOverrides " + getFullname());
-
-    LL_DEBUGS("AnimatedObjects") << "rebuilding" << LL_ENDL;
-    dumpStack("AnimatedObjectsStack");
-
     clearAttachmentOverrides();
 
     // Handle the case that we're resetting the skeleton of an animated object.
@@ -6432,11 +6411,6 @@ void LLVOAvatar::rebuildAttachmentOverrides()
 // -----------------------------------------------------------------------------
 void LLVOAvatar::updateAttachmentOverrides()
 {
-    LLScopedContextString str("updateAttachmentOverrides " + getFullname());
-
-    LL_DEBUGS("AnimatedObjects") << "updating" << LL_ENDL;
-    dumpStack("AnimatedObjectsStack");
-
     std::set<LLUUID> meshes_seen;
 
     // Handle the case that we're updating the skeleton of an animated object.
@@ -6564,15 +6538,10 @@ void LLVOAvatar::addAttachmentOverridesForObject(LLViewerObject *vo, std::set<LL
         return;
     }
 
-    LLScopedContextString str("addAttachmentOverridesForObject " + getFullname());
-
     if (getOverallAppearance() != AOA_NORMAL)
     {
         return;
     }
-
-    LL_DEBUGS("AnimatedObjects") << "adding" << LL_ENDL;
-    dumpStack("AnimatedObjectsStack");
 
     // Process all children
     if (recursive)
@@ -6594,12 +6563,9 @@ void LLVOAvatar::addAttachmentOverridesForObject(LLViewerObject *vo, std::set<LL
         return;
     }
 
-    LLViewerObject *root_object = (LLViewerObject*)vobj->getRoot();
-    LL_DEBUGS("AnimatedObjects") << "trying to add attachment overrides for root object " << root_object->getID() << " prim is " << vobj << LL_ENDL;
     if (vobj->isMesh() &&
         ((vobj->getVolume() && !vobj->getVolume()->isMeshAssetLoaded()) || !gMeshRepo.meshRezEnabled()))
     {
-        LL_DEBUGS("AnimatedObjects") << "failed to add attachment overrides for root object " << root_object->getID() << " mesh asset not loaded" << LL_ENDL;
         return;
     }
     const LLMeshSkinInfo*  pSkinData = vobj->getSkinInfo();
@@ -6622,18 +6588,6 @@ void LLVOAvatar::addAttachmentOverridesForObject(LLViewerObject *vo, std::set<LL
                 meshes_seen->insert(mesh_id);
             }
             bool mesh_overrides_loaded = (mActiveOverrideMeshes.find(mesh_id) != mActiveOverrideMeshes.end());
-            if (mesh_overrides_loaded)
-            {
-                LL_DEBUGS("AnimatedObjects") << "skipping add attachment overrides for " << mesh_id
-                                             << " to root object " << root_object->getID()
-                                             << ", already loaded"
-                                             << LL_ENDL;
-            }
-            else
-            {
-                LL_DEBUGS("AnimatedObjects") << "adding attachment overrides for " << mesh_id
-                                             << " to root object " << root_object->getID() << LL_ENDL;
-            }
             bool fullRig = jointCnt >= JOINT_COUNT_REQUIRED_FOR_FULLRIG;
             if ( fullRig && !mesh_overrides_loaded )
             {
@@ -6687,7 +6641,7 @@ void LLVOAvatar::addAttachmentOverridesForObject(LLViewerObject *vo, std::set<LL
     }
     else
     {
-        LL_DEBUGS("AnimatedObjects") << "failed to add attachment overrides for root object " << root_object->getID() << " not mesh or no pSkinData" << LL_ENDL;
+        LL_DEBUGS("AnimatedObjects") << "failed to add attachment overrides for root object " << static_cast<LLViewerObject*>(vobj->getRoot())->getID() << " not mesh or no pSkinData" << LL_ENDL;
     }
 
     //Rebuild body data if we altered joints/pelvis
@@ -10687,8 +10641,6 @@ void LLVOAvatar::updateRiggingInfo()
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_AVATAR;
 
-    LL_DEBUGS("RigSpammish") << getFullname() << " updating rig tab" << LL_ENDL;
-
     std::vector<LLVOVolume*> volumes;
 
     getAssociatedVolumes(volumes);
@@ -10723,12 +10675,6 @@ void LLVOAvatar::updateRiggingInfo()
         vol->updateRiggingInfo();
         mJointRiggingInfoTab.merge(vol->mJointRiggingInfoTab);
     }
-
-    //LL_INFOS() << "done update rig count is " << countRigInfoTab(mJointRiggingInfoTab) << LL_ENDL;
-    LL_DEBUGS("RigSpammish") << getFullname() << " after update rig tab:" << LL_ENDL;
-    S32 joint_count, box_count;
-    showRigInfoTabExtents(this, mJointRiggingInfoTab, joint_count, box_count);
-    LL_DEBUGS("RigSpammish") << "uses " << joint_count << " joints " << " nonzero boxes: " << box_count << LL_ENDL;
 }
 
 // virtual
@@ -11007,7 +10953,6 @@ void LLVOAvatar::idleUpdateDebugInfo()
 
 void LLVOAvatar::updateVisualComplexity()
 {
-    LL_DEBUGS("AvatarRender") << "avatar " << getID() << " appearance changed" << LL_ENDL;
     // Set the cache time to in the past so it's updated ASAP
     mVisualComplexityStale = true;
 }

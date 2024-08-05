@@ -225,16 +225,14 @@ void LLControlAvatar::matchVolumeTransform()
             LLMatrix3 bind_mat;
 
             LLQuaternion bind_rot;
-#define MATCH_BIND_SHAPE
-#ifdef MATCH_BIND_SHAPE
+
             // MAINT-8671 - based on a patch from Beq Janus
             const LLMeshSkinInfo* skin_info = mRootVolp->getSkinInfo();
             if (skin_info)
             {
-                LL_DEBUGS("BindShape") << getFullname() << " bind shape " << skin_info->mBindShapeMatrix << LL_ENDL;
                 bind_rot = LLSkinningUtil::getUnscaledQuaternion(LLMatrix4(skin_info->mBindShapeMatrix));
             }
-#endif
+
             setRotation(bind_rot*obj_rot);
             mRoot->setWorldRotation(bind_rot*obj_rot);
             if (getRegion() && !isDead())
@@ -589,7 +587,6 @@ void LLControlAvatar::updateAnimations()
                 // Animation not already present, use this sequence id.
                 anims[anim_it->first] = anim_it->second;
             }
-            LL_DEBUGS("AnimatedObjectsNotify") << "found anim for vol " << volp->getID() << " anim " << anim_it->first << " root " << mRootVolp->getID() << LL_ENDL;
         }
     }
     if (!mPlaying)

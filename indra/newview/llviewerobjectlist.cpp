@@ -243,10 +243,6 @@ void LLViewerObjectList::processUpdateCore(LLViewerObject* objectp,
     }
 
     // ignore returned flags
-    LL_DEBUGS("ObjectUpdate") << "uuid " << objectp->mID << " calling processUpdateMessage "
-                              << objectp << " just_created " << just_created << " from_cache " << from_cache << " msg " << msg << LL_ENDL;
-    dumpStack("ObjectUpdateStack");
-
     objectp->processUpdateMessage(msg, user_data, i, update_type, dpp);
 
     if (objectp->isDead())
@@ -361,8 +357,10 @@ LLViewerObject* LLViewerObjectList::processObjectUpdateFromCache(LLVOCacheEntry*
     {
         objectp = createObjectFromCache(pcode, regionp, fullid, entry->getLocalID());
 
+#ifndef LL_RELEASE_FOR_DOWNLOAD
         LL_DEBUGS("ObjectUpdate") << "uuid " << fullid << " created objectp " << objectp << LL_ENDL;
         dumpStack("ObjectUpdateStack");
+#endif
 
         if (!objectp)
         {
@@ -477,7 +475,9 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
             compressed_dp.reset();
 
             S32 uncompressed_length = mesgsys->getSizeFast(_PREHASH_ObjectData, i, _PREHASH_Data);
+#ifndef LL_RELEASE_FOR_DOWNLOAD
             LL_DEBUGS("ObjectUpdate") << "got binary data from message to compressed_dpbuffer" << LL_ENDL;
+#endif
             mesgsys->getBinaryDataFast(_PREHASH_ObjectData, _PREHASH_Data, compressed_dpbuffer, 0, i, 2048);
             compressed_dp.assignBuffer(compressed_dpbuffer, uncompressed_length);
 
@@ -518,7 +518,9 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
                                  gMessageSystem->getSenderPort());
                 if (fullid.isNull())
                 {
+#ifndef LL_RELEASE_FOR_DOWNLOAD
                     LL_DEBUGS() << "update for unknown localid " << local_id << " host " << gMessageSystem->getSender() << ":" << gMessageSystem->getSenderPort() << LL_ENDL;
+#endif
                     mNumUnknownUpdates++;
                 }
             }
@@ -536,20 +538,24 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
                 // LL_WARNS() << "update for unknown localid " << local_id << " host " << gMessageSystem->getSender() << LL_ENDL;
                 mNumUnknownUpdates++;
             }
+#ifndef LL_RELEASE_FOR_DOWNLOAD
             else
             {
                 LL_DEBUGS("ObjectUpdate") << "Non-full, non-compressed update, obj " << local_id << ", global ID " << fullid << " from " << mesgsys->getSender() << LL_ENDL;
             }
+#endif
         }
         else // OUT_FULL only?
         {
             update_cache = true;
             mesgsys->getUUIDFast(_PREHASH_ObjectData, _PREHASH_FullID, fullid, i);
             mesgsys->getU32Fast(_PREHASH_ObjectData, _PREHASH_ID, local_id, i);
+#ifndef LL_RELEASE_FOR_DOWNLOAD
             LL_DEBUGS("ObjectUpdate") << "Full Update, obj " << local_id << ", global ID " << fullid << " from " << mesgsys->getSender() << LL_ENDL;
+#endif
         }
         objectp = findObject(fullid);
-
+#ifndef LL_RELEASE_FOR_DOWNLOAD
         if (compressed)
         {
             LL_DEBUGS("ObjectUpdate") << "uuid " << fullid << " received compressed data from message (earlier in function)" << LL_ENDL;
@@ -558,6 +564,7 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
                                      << " update_cache " << (S32) update_cache << " compressed " << compressed
                                      << " update_type "  << update_type << LL_ENDL;
         dumpStack("ObjectUpdateStack");
+#endif
 
         if(update_cache)
         {
@@ -634,8 +641,10 @@ void LLViewerObjectList::processObjectUpdate(LLMessageSystem *mesgsys,
 
             objectp = createObject(pcode, regionp, fullid, local_id, gMessageSystem->getSender());
 
+#ifndef LL_RELEASE_FOR_DOWNLOAD
             LL_DEBUGS("ObjectUpdate") << "creating object " << fullid << " result " << objectp << LL_ENDL;
             dumpStack("ObjectUpdateStack");
+#endif
 
             if (!objectp)
             {
@@ -728,8 +737,10 @@ void LLViewerObjectList::processCachedObjectUpdate(LLMessageSystem *mesgsys,
         mesgsys->getU32Fast(_PREHASH_ObjectData, _PREHASH_CRC, crc, i);
         mesgsys->getU32Fast(_PREHASH_ObjectData, _PREHASH_UpdateFlags, flags, i);
 
+#ifndef LL_RELEASE_FOR_DOWNLOAD
         LL_DEBUGS("ObjectUpdate") << "got probe for id " << id << " crc " << crc << LL_ENDL;
         dumpStack("ObjectUpdateStack");
+#endif
 
         // Lookup data packer and add this id to cache miss lists if necessary.
         U8 cache_miss_type = LLViewerRegion::CACHE_MISS_TYPE_NONE;
@@ -739,7 +750,9 @@ void LLViewerObjectList::processCachedObjectUpdate(LLMessageSystem *mesgsys,
         }
         else
         {   // Cache Miss
+#ifndef LL_RELEASE_FOR_DOWNLOAD
             LL_DEBUGS("ObjectUpdate") << "cache miss for id " << id << " crc " << crc << " miss type " << (S32) cache_miss_type << LL_ENDL;
+#endif
             recorder.cacheMissEvent(cache_miss_type);
         }
     }
