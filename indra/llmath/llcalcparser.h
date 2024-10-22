@@ -27,6 +27,11 @@
 #ifndef LL_CALCPARSER_H
 #define LL_CALCPARSER_H
 
+#if LL_GNUC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-pointer"
+#endif
+
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_error_handling.hpp>
@@ -34,6 +39,10 @@
 #include <boost/spirit/include/phoenix1_binders.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
 using namespace boost::spirit::classic;
+
+#if LL_GNUC
+#pragma GCC diagnostic pop
+#endif
 
 #include "llcalc.h"
 #include "llmath.h"

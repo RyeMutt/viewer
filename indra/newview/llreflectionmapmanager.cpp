@@ -104,6 +104,11 @@ void load_exr(const std::string& filename)
     }
 }
 
+#ifdef LL_GNUC // GCC 13 false positive over use of lambda
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 void hdri_preview()
 {
     LLFilePickerReplyThread::startPicker(
@@ -121,6 +126,10 @@ void hdri_preview()
         LLFilePicker::FFLOAD_HDRI,
         true);
 }
+
+#ifdef LL_GNUC
+#pragma GCC diagnostic pop
+#endif
 
 extern bool gCubeSnapshot;
 extern bool gTeleportDisplay;

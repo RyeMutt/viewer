@@ -1357,6 +1357,7 @@ finally:
 // virtual
 void LLWindowSDL::processMiscNativeEvents()
 {
+#ifdef LL_GLIB
     // Pump until we've nothing left to do or passed 1/15th of a
     // second pumping for this frame.
     static LLTimer pump_timer;
@@ -1366,6 +1367,7 @@ void LLWindowSDL::processMiscNativeEvents()
     {
         g_main_context_iteration(g_main_context_default(), false);
     } while( g_main_context_pending(g_main_context_default()) && !pump_timer.hasExpired());
+#endif
 
     // hack - doesn't belong here - but this is just for debugging
     if (getenv("LL_DEBUG_BLOAT"))

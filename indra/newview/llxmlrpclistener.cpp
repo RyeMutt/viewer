@@ -349,6 +349,11 @@ private:
     LLXMLRPCTransaction::EStatus mPreviousStatus; // To detect state changes.
 };
 
+#ifdef LL_GNUC // GCC 13 false positive over use of lambda
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#endif
+
 LLXMLRPCListener::LLXMLRPCListener(const std::string& pumpname)
 : mBoundListener(LLEventPumps::instance().obtain(pumpname).listen
 (
@@ -364,3 +369,7 @@ LLXMLRPCListener::LLXMLRPCListener(const std::string& pumpname)
 ))
 {
 }
+
+#ifdef LL_GNUC
+#pragma GCC diagnostic pop
+#endif

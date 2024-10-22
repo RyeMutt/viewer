@@ -1966,6 +1966,11 @@ bool LLPanelRegionTerrainInfo::sendUpdate()
     return true;
 }
 
+#ifdef LL_GNUC // GCC 13 false positive over use of lambda
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 void LLPanelRegionTerrainInfo::initMaterialCtrl(LLTextureCtrl*& ctrl, const std::string& name, S32 index)
 {
     ctrl = findChild<LLTextureCtrl>(name, true);
@@ -1990,6 +1995,10 @@ void LLPanelRegionTerrainInfo::initMaterialCtrl(LLTextureCtrl*& ctrl, const std:
         onChangeAnything();
     });
 }
+
+#ifdef LL_GNUC
+#pragma GCC diagnostic pop
+#endif
 
 bool LLPanelRegionTerrainInfo::callbackTextureHeights(const LLSD& notification, const LLSD& response)
 {

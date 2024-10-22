@@ -341,8 +341,12 @@ bool LLTextureCacheRemoteWorker::doRead()
         {
             mDataSize = local_size;
         }
-        // Allocate read buffer
-        mReadData = (U8*)ll_aligned_malloc_16(mDataSize);
+
+        if(mDataSize > 0)
+        {
+            // Allocate read buffer
+            mReadData = (U8*)ll_aligned_malloc_16(mDataSize);
+        }
 
         if (mReadData)
         {
