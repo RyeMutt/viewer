@@ -31,6 +31,10 @@ target_link_libraries(llconvexdecomposition
         llmath
         ll::vhacd)
 
+if (USE_PRECOMPILED_HEADERS)
+  target_precompile_headers(llconvexdecomposition REUSE_FROM llprecompiled)
+endif ()
+
 if(WINDOWS)
   target_compile_options(llconvexdecomposition PRIVATE /bigobj)
 endif()
