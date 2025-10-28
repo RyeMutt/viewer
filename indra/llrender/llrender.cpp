@@ -1923,6 +1923,17 @@ void LLRender::diffuseColor4ub(U8 r, U8 g, U8 b, U8 a)
     }
 }
 
+void LLRender::setLineWidth(F32 width)
+{
+    gGL.flush();
+
+    width = llclamp(width, gGLManager.mMinSmoothLineWidth, gGLManager.mMaxSmoothLineWidth);
+    if(mLineWidth != width)
+    {
+        mLineWidth = width;
+        glLineWidth(width);
+    }
+}
 
 void LLRender::debugTexUnits(void)
 {
