@@ -6518,7 +6518,7 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
         return;
     }
 
-    gGL.getTexUnit(0)->bind(mSilhouetteImagep);
+    LLRender::instance().getTexUnit(0)->bind(mSilhouetteImagep);
     LLGLSPipelineSelection gls_select;
     LLGLEnable blend(GL_BLEND);
     LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
@@ -6530,20 +6530,20 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
         F32 cur_zoom = gAgentCamera.mHUDCurZoom;
 
         // set up transform to encompass bounding box of HUD
-        gGL.matrixMode(LLRender::MM_PROJECTION);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
         F32 depth = llmax(1.f, hud_bbox.getExtentLocal().mV[VX] * 1.1f);
-        gGL.ortho(-0.5f * LLViewerCamera::getInstance()->getAspect(), 0.5f * LLViewerCamera::getInstance()->getAspect(), -0.5f, 0.5f, 0.f, depth);
+        LLRender::instance().ortho(-0.5f * LLViewerCamera::getInstance()->getAspect(), 0.5f * LLViewerCamera::getInstance()->getAspect(), -0.5f, 0.5f, 0.f, depth);
 
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.pushMatrix();
-        gGL.pushUIMatrix();
-        gGL.loadUIIdentity();
-        gGL.loadIdentity();
-        gGL.loadMatrix(OGL_TO_CFR_ROTATION);        // Load Cory's favorite reference frame
-        gGL.translatef(-hud_bbox.getCenterLocal().mV[VX] + (depth *0.5f), 0.f, 0.f);
-        gGL.scalef(cur_zoom, cur_zoom, cur_zoom);
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().pushUIMatrix();
+        LLRender::instance().loadUIIdentity();
+        LLRender::instance().loadIdentity();
+        LLRender::instance().loadMatrix(OGL_TO_CFR_ROTATION);        // Load Cory's favorite reference frame
+        LLRender::instance().translatef(-hud_bbox.getCenterLocal().mV[VX] + (depth *0.5f), 0.f, 0.f);
+        LLRender::instance().scalef(cur_zoom, cur_zoom, cur_zoom);
     }
 
     bool wireframe_selection = (gFloaterTools && gFloaterTools->getVisible()) || LLSelectMgr::sRenderHiddenSelections;
@@ -6563,25 +6563,25 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
             gDebugProgram.bind();
         }
 
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.pushMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
 
         bool is_hud_object = objectp->isHUDAttachment();
 
         if (!is_hud_object)
         {
-            gGL.loadIdentity();
-            gGL.multMatrix(gGLModelView);
+            LLRender::instance().loadIdentity();
+            LLRender::instance().multMatrix(gGLModelView);
         }
 
         if (objectp->mDrawable->isActive())
         {
-            gGL.multMatrix((F32*)objectp->getRenderMatrix().mMatrix);
+            LLRender::instance().multMatrix((F32*)objectp->getRenderMatrix().mMatrix);
         }
         else if (!is_hud_object)
         {
             LLVector3 trans = objectp->getRegion()->getOriginAgent();
-            gGL.translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
+            LLRender::instance().translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
         }
 
         bool bRenderHidenSelection = node->isTransient() ? false : LLSelectMgr::sRenderHiddenSelections;
@@ -6591,8 +6591,8 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
         if (vobj)
         {
             LLVertexBuffer::unbind();
-            gGL.pushMatrix();
-            gGL.multMatrix((F32*)vobj->getRelativeXform().mMatrix);
+            LLRender::instance().pushMatrix();
+            LLRender::instance().multMatrix((F32*)vobj->getRelativeXform().mMatrix);
 
             if (objectp->mDrawable->isState(LLDrawable::RIGGED))
             {
@@ -6611,10 +6611,10 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
             }
         }
 
-        gGL.popMatrix();
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
+        LLRender::instance().popMatrix();
 
-        gGL.setLineWidth(1.f);
+        LLRender::instance().setLineWidth(1.f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         if (shader)
@@ -6743,16 +6743,16 @@ void LLSelectMgr::renderSilhouettes(bool for_hud)
 
     if (isAgentAvatarValid() && for_hud)
     {
-        gGL.matrixMode(LLRender::MM_PROJECTION);
-        gGL.popMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+        LLRender::instance().popMatrix();
 
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.popMatrix();
-        gGL.popUIMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().popMatrix();
+        LLRender::instance().popUIMatrix();
         stop_glerror();
     }
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 }
 
 void LLSelectMgr::generateSilhouette(LLSelectNode* nodep, const LLVector3& view_point)
@@ -7233,21 +7233,21 @@ void LLSelectNode::renderOneSilhouette(const LLColor4 &color)
         gUIProgram.bind();
     }
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
-    gGL.pushUIMatrix();
-    gGL.loadUIIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().pushUIMatrix();
+    LLRender::instance().loadUIIdentity();
 
     if (!is_hud_object)
     {
-        gGL.loadIdentity();
-        gGL.multMatrix(gGLModelView);
+        LLRender::instance().loadIdentity();
+        LLRender::instance().multMatrix(gGLModelView);
     }
 
 
     if (drawable->isActive())
     {
-        gGL.multMatrix((F32*) objectp->getRenderMatrix().mMatrix);
+        LLRender::instance().multMatrix((F32*) objectp->getRenderMatrix().mMatrix);
     }
 
     LLVolume *volume = objectp->getVolume();
@@ -7271,32 +7271,32 @@ void LLSelectNode::renderOneSilhouette(const LLColor4 &color)
 
         if (LLSelectMgr::sRenderHiddenSelections) // && gFloaterTools && gFloaterTools->getVisible())
         {
-            gGL.flush();
-            gGL.blendFunc(LLRender::BF_SOURCE_COLOR, LLRender::BF_ONE);
+            LLRender::instance().flush();
+            LLRender::instance().blendFunc(LLRender::BF_SOURCE_COLOR, LLRender::BF_ONE);
 
             LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE, GL_GEQUAL);
-            gGL.flush();
-            gGL.begin(LLRender::LINES);
+            LLRender::instance().flush();
+            LLRender::instance().begin(LLRender::LINES);
             {
-                gGL.color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.4f);
+                LLRender::instance().color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.4f);
 
                 for(S32 i = 0; i < mSilhouetteVertices.size(); i += 2)
                 {
                     u_coord += u_divisor * LLSelectMgr::sHighlightUScale;
-                    gGL.texCoord2f( u_coord, v_coord );
-                    gGL.vertex3fv( mSilhouetteVertices[i].mV);
+                    LLRender::instance().texCoord2f( u_coord, v_coord );
+                    LLRender::instance().vertex3fv( mSilhouetteVertices[i].mV);
                     u_coord += u_divisor * LLSelectMgr::sHighlightUScale;
-                    gGL.texCoord2f( u_coord, v_coord );
-                    gGL.vertex3fv(mSilhouetteVertices[i+1].mV);
+                    LLRender::instance().texCoord2f( u_coord, v_coord );
+                    LLRender::instance().vertex3fv(mSilhouetteVertices[i+1].mV);
                 }
             }
-            gGL.end();
+            LLRender::instance().end();
             u_coord = fmod(animationTime * LLSelectMgr::sHighlightUAnim, 1.f);
         }
 
-        gGL.flush();
-        gGL.setSceneBlendType(LLRender::BT_ALPHA);
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().flush();
+        LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
+        LLRender::instance().begin(LLRender::TRIANGLES);
         {
             for(S32 i = 0; i < mSilhouetteVertices.size(); i+=2)
             {
@@ -7322,33 +7322,33 @@ void LLSelectNode::renderOneSilhouette(const LLColor4 &color)
                 v[3] = mSilhouetteVertices[i+1];
                 tc[3].set(u_coord,v_coord);
 
-                gGL.color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.0f); //LLSelectMgr::sHighlightAlpha);
-                gGL.texCoord2fv(tc[0].mV);
-                gGL.vertex3fv( v[0].mV );
+                LLRender::instance().color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.0f); //LLSelectMgr::sHighlightAlpha);
+                LLRender::instance().texCoord2fv(tc[0].mV);
+                LLRender::instance().vertex3fv( v[0].mV );
 
-                gGL.color4f(color.mV[VRED]*2, color.mV[VGREEN]*2, color.mV[VBLUE]*2, LLSelectMgr::sHighlightAlpha);
-                gGL.texCoord2fv( tc[1].mV );
-                gGL.vertex3fv( v[1].mV );
+                LLRender::instance().color4f(color.mV[VRED]*2, color.mV[VGREEN]*2, color.mV[VBLUE]*2, LLSelectMgr::sHighlightAlpha);
+                LLRender::instance().texCoord2fv( tc[1].mV );
+                LLRender::instance().vertex3fv( v[1].mV );
 
-                gGL.color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.0f); //LLSelectMgr::sHighlightAlpha);
-                gGL.texCoord2fv( tc[2].mV );
-                gGL.vertex3fv( v[2].mV );
+                LLRender::instance().color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], 0.0f); //LLSelectMgr::sHighlightAlpha);
+                LLRender::instance().texCoord2fv( tc[2].mV );
+                LLRender::instance().vertex3fv( v[2].mV );
 
-                gGL.vertex3fv( v[2].mV );
+                LLRender::instance().vertex3fv( v[2].mV );
 
-                gGL.color4f(color.mV[VRED]*2, color.mV[VGREEN]*2, color.mV[VBLUE]*2, LLSelectMgr::sHighlightAlpha);
-                gGL.texCoord2fv( tc[1].mV );
-                gGL.vertex3fv( v[1].mV );
+                LLRender::instance().color4f(color.mV[VRED]*2, color.mV[VGREEN]*2, color.mV[VBLUE]*2, LLSelectMgr::sHighlightAlpha);
+                LLRender::instance().texCoord2fv( tc[1].mV );
+                LLRender::instance().vertex3fv( v[1].mV );
 
-                gGL.texCoord2fv( tc[3].mV );
-                gGL.vertex3fv( v[3].mV );
+                LLRender::instance().texCoord2fv( tc[3].mV );
+                LLRender::instance().vertex3fv( v[3].mV );
             }
         }
-        gGL.end();
-        gGL.flush();
+        LLRender::instance().end();
+        LLRender::instance().flush();
     }
-    gGL.popMatrix();
-    gGL.popUIMatrix();
+    LLRender::instance().popMatrix();
+    LLRender::instance().popUIMatrix();
 
     if (shader)
     {

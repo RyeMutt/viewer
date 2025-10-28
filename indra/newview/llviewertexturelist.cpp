@@ -1132,7 +1132,7 @@ F32 LLViewerTextureList::updateImagesCreateTextures(F32 max_time)
     if (!mDownScaleQueue.empty() && gPipeline.mDownResMap.isComplete())
     {
         LLGLDisable blend(GL_BLEND);
-        gGL.setColorMask(true, true);
+        LLRender::instance().setColorMask(true, true);
 
         // just in case we downres textures, bind downresmap and copy program
         gPipeline.mDownResMap.bindTarget();

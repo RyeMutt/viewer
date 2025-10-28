@@ -199,12 +199,12 @@ void LLCubeMapArray::allocate(U32 resolution, U32 components, U32 count, bool us
 void LLCubeMapArray::bind(S32 stage)
 {
     mTextureStage = stage;
-    gGL.getTexUnit(stage)->bindManual(LLTexUnit::TT_CUBE_MAP_ARRAY, getGLName(), mImage->getUseMipMaps());
+    LLRender::instance().getTexUnit(stage)->bindManual(LLTexUnit::TT_CUBE_MAP_ARRAY, getGLName(), mImage->getUseMipMaps());
 }
 
 void LLCubeMapArray::unbind()
 {
-    gGL.getTexUnit(mTextureStage)->unbind(LLTexUnit::TT_CUBE_MAP_ARRAY);
+    LLRender::instance().getTexUnit(mTextureStage)->unbind(LLTexUnit::TT_CUBE_MAP_ARRAY);
     mTextureStage = -1;
 }
 

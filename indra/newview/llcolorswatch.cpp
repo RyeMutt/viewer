@@ -224,14 +224,14 @@ void LLColorSwatchCtrl::draw()
             // Draw semi-transparent center area in filled with mColor.
             LLColor4 opaque_color = mColor;
             opaque_color.mV[VALPHA] = alpha;
-            gGL.color4fv(opaque_color.mV);
+            LLRender::instance().color4fv(opaque_color.mV);
             if (mAlphaGradientImage.notNull())
             {
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
                 {
                     mAlphaGradientImage->draw(interior, mColor % alpha);
                 }
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
         }
     }

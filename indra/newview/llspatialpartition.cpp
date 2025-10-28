@@ -1272,39 +1272,39 @@ void drawBox(const LLVector3& c, const LLVector3& r)
 {
     LLVertexBuffer::unbind();
 
-    gGL.begin(LLRender::TRIANGLE_STRIP);
+    LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
     //left front
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
     //right front
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,1,1))).mV);
     //right back
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,-1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,-1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,-1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,-1,1))).mV);
     //left back
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,-1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,-1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,-1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,-1,1))).mV);
     //left front
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
-    gGL.end();
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
+    LLRender::instance().end();
 
     //bottom
-    gGL.begin(LLRender::TRIANGLE_STRIP);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,-1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,-1,-1))).mV);
-    gGL.end();
+    LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,-1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,-1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,-1,-1))).mV);
+    LLRender::instance().end();
 
     //top
-    gGL.begin(LLRender::TRIANGLE_STRIP);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,1,1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(1,-1,1))).mV);
-    gGL.vertex3fv((c+r.scaledVec(LLVector3(-1,-1,1))).mV);
-    gGL.end();
+    LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(1,-1,1))).mV);
+    LLRender::instance().vertex3fv((c+r.scaledVec(LLVector3(-1,-1,1))).mV);
+    LLRender::instance().end();
 }
 
 void drawBox(const LLVector4a& c, const LLVector4a& r)
@@ -1322,43 +1322,43 @@ void drawBoxOutline(const LLVector3& pos, const LLVector3& size)
     LLVector3 v3 = size.scaledVec(LLVector3(-1,-1,1));
     LLVector3 v4 = size.scaledVec(LLVector3( 1,-1,1));
 
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().begin(LLRender::LINES);
 
     //top
-    gGL.vertex3fv((pos+v1).mV);
-    gGL.vertex3fv((pos+v2).mV);
-    gGL.vertex3fv((pos+v2).mV);
-    gGL.vertex3fv((pos+v3).mV);
-    gGL.vertex3fv((pos+v3).mV);
-    gGL.vertex3fv((pos+v4).mV);
-    gGL.vertex3fv((pos+v4).mV);
-    gGL.vertex3fv((pos+v1).mV);
+    LLRender::instance().vertex3fv((pos+v1).mV);
+    LLRender::instance().vertex3fv((pos+v2).mV);
+    LLRender::instance().vertex3fv((pos+v2).mV);
+    LLRender::instance().vertex3fv((pos+v3).mV);
+    LLRender::instance().vertex3fv((pos+v3).mV);
+    LLRender::instance().vertex3fv((pos+v4).mV);
+    LLRender::instance().vertex3fv((pos+v4).mV);
+    LLRender::instance().vertex3fv((pos+v1).mV);
 
     //bottom
-    gGL.vertex3fv((pos-v1).mV);
-    gGL.vertex3fv((pos-v2).mV);
-    gGL.vertex3fv((pos-v2).mV);
-    gGL.vertex3fv((pos-v3).mV);
-    gGL.vertex3fv((pos-v3).mV);
-    gGL.vertex3fv((pos-v4).mV);
-    gGL.vertex3fv((pos-v4).mV);
-    gGL.vertex3fv((pos-v1).mV);
+    LLRender::instance().vertex3fv((pos-v1).mV);
+    LLRender::instance().vertex3fv((pos-v2).mV);
+    LLRender::instance().vertex3fv((pos-v2).mV);
+    LLRender::instance().vertex3fv((pos-v3).mV);
+    LLRender::instance().vertex3fv((pos-v3).mV);
+    LLRender::instance().vertex3fv((pos-v4).mV);
+    LLRender::instance().vertex3fv((pos-v4).mV);
+    LLRender::instance().vertex3fv((pos-v1).mV);
 
     //right
-    gGL.vertex3fv((pos+v1).mV);
-    gGL.vertex3fv((pos-v3).mV);
+    LLRender::instance().vertex3fv((pos+v1).mV);
+    LLRender::instance().vertex3fv((pos-v3).mV);
 
-    gGL.vertex3fv((pos+v4).mV);
-    gGL.vertex3fv((pos-v2).mV);
+    LLRender::instance().vertex3fv((pos+v4).mV);
+    LLRender::instance().vertex3fv((pos-v2).mV);
 
     //left
-    gGL.vertex3fv((pos+v2).mV);
-    gGL.vertex3fv((pos-v4).mV);
+    LLRender::instance().vertex3fv((pos+v2).mV);
+    LLRender::instance().vertex3fv((pos-v4).mV);
 
-    gGL.vertex3fv((pos+v3).mV);
-    gGL.vertex3fv((pos-v1).mV);
+    LLRender::instance().vertex3fv((pos+v3).mV);
+    LLRender::instance().vertex3fv((pos-v1).mV);
 
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void drawBoxOutline(const LLVector4a& pos, const LLVector4a& size)
@@ -1568,7 +1568,7 @@ void pushVertsColorCoded(LLSpatialGroup* group)
         {
             params = *j;
             LLRenderPass::applyModelMatrix(*params);
-            gGL.diffuseColor4f(colors[col].mV[0], colors[col].mV[1], colors[col].mV[2], 0.5f);
+            LLRender::instance().diffuseColor4f(colors[col].mV[0], colors[col].mV[1], colors[col].mV[2], 0.5f);
             params->mVertexBuffer->setBuffer();
             params->mVertexBuffer->drawRange(LLRender::TRIANGLES,
                 params->mStart, params->mEnd, params->mCount, params->mOffset);
@@ -1646,7 +1646,7 @@ void renderOctree(LLSpatialGroup* group)
 {
     //render solid object bounding box, color
     //coded by buffer usage and activity
-    gGL.setSceneBlendType(LLRender::BT_ADD_WITH_ALPHA);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ADD_WITH_ALPHA);
     LLVector4 col;
     if (group->mBuilt > 0.f)
     {
@@ -1657,13 +1657,13 @@ void renderOctree(LLSpatialGroup* group)
             LLGLDepthTest gl_depth(false, false);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-            gGL.diffuseColor4f(1,0,0,group->mBuilt);
-            gGL.setLineWidth(5.f);
+            LLRender::instance().diffuseColor4f(1,0,0,group->mBuilt);
+            LLRender::instance().setLineWidth(5.f);
 
             const LLVector4a* bounds = group->getObjectBounds();
             drawBoxOutline(bounds[0], bounds[1]);
-            gGL.setLineWidth(1.f);
-            gGL.flush();
+            LLRender::instance().setLineWidth(1.f);
+            LLRender::instance().flush();
 
             const LLVOAvatar* lastAvatar = nullptr;
             U64 lastMeshId = 0;
@@ -1681,21 +1681,21 @@ void renderOctree(LLSpatialGroup* group)
 
                 if (!group->getSpatialPartition()->isBridge())
                 {
-                    gGL.pushMatrix();
+                    LLRender::instance().pushMatrix();
                     LLVector3 trans = drawable->getRegion()->getOriginAgent();
-                    gGL.translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
+                    LLRender::instance().translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
                 }
 
                 LLFace* face = drawable->getFace(0);
                 bool rigged = face->isState(LLFace::RIGGED);
                 gDebugProgram.bind(rigged);
 
-                gGL.diffuseColor4f(1, 0, 0, 1);
+                LLRender::instance().diffuseColor4f(1, 0, 0, 1);
 
                 if (rigged)
                 {
-                    gGL.pushMatrix();
-                    gGL.loadMatrix(gGLModelView);
+                    LLRender::instance().pushMatrix();
+                    LLRender::instance().loadMatrix(gGLModelView);
                     if (!LLRenderPass::uploadMatrixPalette(face->mAvatar, face->mSkinInfo, lastAvatar, lastMeshId, skipLastSkin))
                     {
                         continue;
@@ -1712,22 +1712,22 @@ void renderOctree(LLSpatialGroup* group)
                         {
                             if (vol && vol->isShrinkWrapped())
                             {
-                                gGL.diffuseColor4f(0, 1, 1, group->mBuilt);
+                                LLRender::instance().diffuseColor4f(0, 1, 1, group->mBuilt);
                             }
                             else
                             {
-                                gGL.diffuseColor4f(0, 1, 0, group->mBuilt);
+                                LLRender::instance().diffuseColor4f(0, 1, 0, group->mBuilt);
                             }
                         }
                         else if (gFrameTimeSeconds - face->mLastMoveTime < 0.5f)
                         {
                             if (vol && vol->isShrinkWrapped())
                             {
-                                gGL.diffuseColor4f(1, 1, 0, group->mBuilt);
+                                LLRender::instance().diffuseColor4f(1, 1, 0, group->mBuilt);
                             }
                             else
                             {
-                                gGL.diffuseColor4f(1, 0, 0, group->mBuilt);
+                                LLRender::instance().diffuseColor4f(1, 0, 0, group->mBuilt);
                             }
                         }
                         else
@@ -1742,29 +1742,29 @@ void renderOctree(LLSpatialGroup* group)
 
                 if (rigged)
                 {
-                    gGL.popMatrix();
+                    LLRender::instance().popMatrix();
                 }
 
                 if (!group->getSpatialPartition()->isBridge())
                 {
-                    gGL.popMatrix();
+                    LLRender::instance().popMatrix();
                 }
             }
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             gDebugProgram.bind(); // make sure non-rigged variant is bound
-            gGL.diffuseColor4f(1,1,1,1);
+            LLRender::instance().diffuseColor4f(1,1,1,1);
         }
     }
 
-    gGL.diffuseColor4fv(col.mV);
+    LLRender::instance().diffuseColor4fv(col.mV);
     LLVector4a fudge;
     fudge.splat(0.001f);
 
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 
     {
         //draw opaque outline
-        gGL.diffuseColor4f(0,1,1,1);
+        LLRender::instance().diffuseColor4f(0,1,1,1);
 
         const LLVector4a* bounds = group->getBounds();
         drawBoxOutline(bounds[0], bounds[1]);
@@ -1813,17 +1813,17 @@ void renderXRay(LLSpatialGroup* group, LLCamera* camera)
 
 void renderCrossHairs(LLVector3 position, F32 size, LLColor4 color)
 {
-    gGL.color4fv(color.mV);
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().color4fv(color.mV);
+    LLRender::instance().begin(LLRender::LINES);
     {
-        gGL.vertex3fv((position - LLVector3(size, 0.f, 0.f)).mV);
-        gGL.vertex3fv((position + LLVector3(size, 0.f, 0.f)).mV);
-        gGL.vertex3fv((position - LLVector3(0.f, size, 0.f)).mV);
-        gGL.vertex3fv((position + LLVector3(0.f, size, 0.f)).mV);
-        gGL.vertex3fv((position - LLVector3(0.f, 0.f, size)).mV);
-        gGL.vertex3fv((position + LLVector3(0.f, 0.f, size)).mV);
+        LLRender::instance().vertex3fv((position - LLVector3(size, 0.f, 0.f)).mV);
+        LLRender::instance().vertex3fv((position + LLVector3(size, 0.f, 0.f)).mV);
+        LLRender::instance().vertex3fv((position - LLVector3(0.f, size, 0.f)).mV);
+        LLRender::instance().vertex3fv((position + LLVector3(0.f, size, 0.f)).mV);
+        LLRender::instance().vertex3fv((position - LLVector3(0.f, 0.f, size)).mV);
+        LLRender::instance().vertex3fv((position + LLVector3(0.f, 0.f, size)).mV);
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void renderUpdateType(LLDrawable* drawablep)
@@ -1837,23 +1837,23 @@ void renderUpdateType(LLDrawable* drawablep)
     switch (vobj->getLastUpdateType())
     {
     case OUT_FULL:
-        gGL.diffuseColor4f(0,1,0,0.5f);
+        LLRender::instance().diffuseColor4f(0,1,0,0.5f);
         break;
     case OUT_TERSE_IMPROVED:
-        gGL.diffuseColor4f(0,1,1,0.5f);
+        LLRender::instance().diffuseColor4f(0,1,1,0.5f);
         break;
     case OUT_FULL_COMPRESSED:
         if (vobj->getLastUpdateCached())
         {
-            gGL.diffuseColor4f(1,0,0,0.5f);
+            LLRender::instance().diffuseColor4f(1,0,0,0.5f);
         }
         else
         {
-            gGL.diffuseColor4f(1,1,0,0.5f);
+            LLRender::instance().diffuseColor4f(1,1,0,0.5f);
         }
         break;
     case OUT_FULL_CACHED:
-        gGL.diffuseColor4f(0,0,1,0.5f);
+        LLRender::instance().diffuseColor4f(0,0,1,0.5f);
         break;
     default:
         LL_WARNS() << "Unknown update_type " << vobj->getLastUpdateType() << LL_ENDL;
@@ -1875,17 +1875,17 @@ void renderBoundingBox(LLDrawable* drawable, bool set_color = true)
     {
         if (drawable->isSpatialBridge())
         {
-            gGL.diffuseColor4f(1,0.5f,0,1); // orange
+            LLRender::instance().diffuseColor4f(1,0.5f,0,1); // orange
         }
         else if (drawable->getVOVolume())
         {
             if (drawable->isRoot())
             {
-                gGL.diffuseColor4f(1,1,0,1); // yellow
+                LLRender::instance().diffuseColor4f(1,1,0,1); // yellow
             }
             else
             {
-                gGL.diffuseColor4f(0,1,0,1); // green
+                LLRender::instance().diffuseColor4f(0,1,0,1); // green
             }
         }
         else if (drawable->getVObj())
@@ -1893,21 +1893,21 @@ void renderBoundingBox(LLDrawable* drawable, bool set_color = true)
             switch (drawable->getVObj()->getPCode())
             {
                 case LLViewerObject::LL_VO_SURFACE_PATCH:
-                        gGL.diffuseColor4f(0,1,1,1); // cyan
+                        LLRender::instance().diffuseColor4f(0,1,1,1); // cyan
                         break;
                 case LLViewerObject::LL_VO_CLOUDS:
                         // no longer used
                         break;
                 case LLViewerObject::LL_VO_PART_GROUP:
                 case LLViewerObject::LL_VO_HUD_PART_GROUP:
-                        gGL.diffuseColor4f(0,0,1,1); // blue
+                        LLRender::instance().diffuseColor4f(0,0,1,1); // blue
                         break;
                 case LLViewerObject::LL_VO_VOID_WATER:
                 case LLViewerObject::LL_VO_WATER:
-                        gGL.diffuseColor4f(0,0.5f,1,1); // medium blue
+                        LLRender::instance().diffuseColor4f(0,0.5f,1,1); // medium blue
                         break;
                 case LL_PCODE_LEGACY_TREE:
-                        gGL.diffuseColor4f(0,0.5f,0,1); // dark green
+                        LLRender::instance().diffuseColor4f(0,0.5f,0,1); // dark green
                         break;
                 default:
                         LLControlAvatar *cav = dynamic_cast<LLControlAvatar*>(drawable->getVObj()->asAvatar());
@@ -1917,23 +1917,23 @@ void renderBoundingBox(LLDrawable* drawable, bool set_color = true)
                             bool has_scale_constraint = (cav->mScaleConstraintFixup != 1.0f);
                             if (has_pos_constraint || has_scale_constraint)
                             {
-                                gGL.diffuseColor4f(1,0,0,1);
+                                LLRender::instance().diffuseColor4f(1,0,0,1);
                             }
                             else
                             {
-                                gGL.diffuseColor4f(0,1,0.5,1);
+                                LLRender::instance().diffuseColor4f(0,1,0.5,1);
                             }
                         }
                         else
                         {
-                            gGL.diffuseColor4f(1,0,1,1); // magenta
+                            LLRender::instance().diffuseColor4f(1,0,1,1); // magenta
                         }
                         break;
             }
         }
         else
         {
-            gGL.diffuseColor4f(1,0,0,1);
+            LLRender::instance().diffuseColor4f(1,0,0,1);
         }
     }
 
@@ -1971,11 +1971,11 @@ void renderBoundingBox(LLDrawable* drawable, bool set_color = true)
     LLViewerObject* vobj = drawable->getVObj();
     if (vobj && vobj->onActiveList())
     {
-        gGL.setLineWidth(llmax(4.f*sinf(gFrameTimeSeconds*2.f)+1.f, 1.f));
-        //gGL.setLineWidth(4.f*(sinf(gFrameTimeSeconds*2.f)*0.25f+0.75f));
+        LLRender::instance().setLineWidth(llmax(4.f*sinf(gFrameTimeSeconds*2.f)+1.f, 1.f));
+        //LLRender::instance().setLineWidth(4.f*(sinf(gFrameTimeSeconds*2.f)*0.25f+0.75f));
         stop_glerror();
         drawBoxOutline(pos,size);
-        gGL.setLineWidth(1.f);
+        LLRender::instance().setLineWidth(1.f);
     }
     else
     {
@@ -2030,13 +2030,13 @@ void renderNormals(LLDrawable *drawablep)
             scale_len = 1.0;
         }
 
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         if (vol)
         {
-            gGL.multMatrix((F32 *) vol->getRelativeXform().mMatrix);
+            LLRender::instance().multMatrix((F32 *) vol->getRelativeXform().mMatrix);
         }
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         // Normals &tangent line segments get scaled along with the object. Divide by scale length
         // to keep the as-viewed lengths (relatively) constant with the debug setting length
@@ -2060,9 +2060,9 @@ void renderNormals(LLDrawable *drawablep)
             {
                 const LLVolumeFace& face = *it;
 
-                gGL.flush();
-                gGL.diffuseColor4f(1, 1, 0, 1);
-                gGL.begin(LLRender::LINES);
+                LLRender::instance().flush();
+                LLRender::instance().diffuseColor4f(1, 1, 0, 1);
+                LLRender::instance().begin(LLRender::LINES);
                 for (S32 j = 0; j < face.mNumVertices; ++j)
                 {
                     LLVector4a n, p;
@@ -2073,17 +2073,17 @@ void renderNormals(LLDrawable *drawablep)
                     n.mul(draw_length);
                     p.setAdd(face.mPositions[j], n);
 
-                    gGL.vertex3fv(face.mPositions[j].getF32ptr());
-                    gGL.vertex3fv(p.getF32ptr());
+                    LLRender::instance().vertex3fv(face.mPositions[j].getF32ptr());
+                    LLRender::instance().vertex3fv(p.getF32ptr());
                 }
-                gGL.end();
+                LLRender::instance().end();
 
                 // Tangents are simple vectors and do not require reorientation via pre-scaling
                 if (face.mTangents)
                 {
-                    gGL.flush();
-                    gGL.diffuseColor4f(0, 1, 1, 1);
-                    gGL.begin(LLRender::LINES);
+                    LLRender::instance().flush();
+                    LLRender::instance().diffuseColor4f(0, 1, 1, 1);
+                    LLRender::instance().begin(LLRender::LINES);
                     for (S32 j = 0; j < face.mNumVertices; ++j)
                     {
                         LLVector4a t, p;
@@ -2093,10 +2093,10 @@ void renderNormals(LLDrawable *drawablep)
                         t.mul(draw_length);
                         p.setAdd(face.mPositions[j], t);
 
-                        gGL.vertex3fv(face.mPositions[j].getF32ptr());
-                        gGL.vertex3fv(p.getF32ptr());
+                        LLRender::instance().vertex3fv(face.mPositions[j].getF32ptr());
+                        LLRender::instance().vertex3fv(p.getF32ptr());
                     }
-                    gGL.end();
+                    LLRender::instance().end();
                 }
             }
         }
@@ -2140,7 +2140,7 @@ void renderNormals(LLDrawable *drawablep)
             }
         }
 
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
 }
 
@@ -2177,27 +2177,27 @@ void renderMeshBaseHull(LLVOVolume* volume, U32 data_mask, LLColor4& color)
     {
         if (!decomp->mBaseHullMesh.empty())
         {
-            gGL.diffuseColor4fv(color.mV);
+            LLRender::instance().diffuseColor4fv(color.mV);
             LLVertexBuffer::drawArrays(LLRender::TRIANGLES, decomp->mBaseHullMesh.mPositions);
         }
         else
         {
             gMeshRepo.buildPhysicsMesh(*decomp);
-            gGL.diffuseColor4f(0,1,1,1);
+            LLRender::instance().diffuseColor4f(0,1,1,1);
             drawBoxOutline(center, size);
         }
 
     }
     else
     {
-        gGL.diffuseColor3f(1,0,1);
+        LLRender::instance().diffuseColor3f(1,0,1);
         drawBoxOutline(center, size);
     }
 }
 
 void render_hull(LLModel::PhysicsMesh& mesh, const LLColor4& color)
 {
-    gGL.diffuseColor4fv(color.mV);
+    LLRender::instance().diffuseColor4fv(color.mV);
     LLVertexBuffer::drawArrays(LLRender::TRIANGLES, mesh.mPositions);
 }
 
@@ -2251,8 +2251,8 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
     LLVector3 center(0,0,0);
     LLVector3 size(0.25f,0.25f,0.25f);
 
-    gGL.pushMatrix();
-    gGL.multMatrix((F32*) volume->getRelativeXform().mMatrix);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().multMatrix((F32*) volume->getRelativeXform().mMatrix);
 
     if (type == LLPhysicsShapeBuilderUtil::PhysicsShapeSpecification::USER_MESH)
     {
@@ -2262,7 +2262,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
         if (decomp)
         { //render a physics based mesh
 
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
             if (!decomp->mHull.empty())
             { //decomposition exists, use that
@@ -2280,7 +2280,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             else if (!decomp->mPhysicsShapeMesh.empty())
             {
                 //decomp has physics mesh, render that mesh
-                gGL.diffuseColor4fv(color.mV);
+                LLRender::instance().diffuseColor4fv(color.mV);
 
                 LLVertexBuffer::drawArrays(LLRender::TRIANGLES, decomp->mPhysicsShapeMesh.mPositions);
             }
@@ -2297,7 +2297,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
         }
         else
         {
-            gGL.diffuseColor3f(1,1,0);
+            LLRender::instance().diffuseColor3f(1,1,0);
             drawBoxOutline(center, size);
         }
     }
@@ -2402,14 +2402,14 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             if (phys_volume->mHullPoints)
             {
                 //render hull
-                gGL.diffuseColor4fv(color.mV);
+                LLRender::instance().diffuseColor4fv(color.mV);
 
                 LLVertexBuffer::unbind();
                 LLVertexBuffer::drawElements(LLRender::TRIANGLES, phys_volume->mHullPoints, NULL, phys_volume->mNumHullIndices, phys_volume->mHullIndices);
             }
             else
             {
-                gGL.diffuseColor4f(1,0,1,1);
+                LLRender::instance().diffuseColor4f(1,0,1,1);
                 drawBoxOutline(center, size);
             }
 
@@ -2425,7 +2425,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             LLVector3 vscale = volume->getScale() * 2.f;
             scale.set(scale[0] / vscale[0], scale[1] / vscale[1], scale[2] / vscale[2]);
 
-            gGL.diffuseColor4fv(color.mV);
+            LLRender::instance().diffuseColor4fv(color.mV);
             drawBox(center, scale);
         }
     }
@@ -2441,7 +2441,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             volume_params.setShear(0, 0);
             LLVolume* sphere = LLPrimitive::sVolumeManager->refVolume(volume_params, 3);
 
-            gGL.diffuseColor4fv(color.mV);
+            LLRender::instance().diffuseColor4fv(color.mV);
             pushVerts(sphere);
             LLPrimitive::sVolumeManager->unrefVolume(sphere);
         }
@@ -2458,7 +2458,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             volume_params.setShear(0, 0);
             LLVolume* cylinder = LLPrimitive::sVolumeManager->refVolume(volume_params, 3);
 
-            gGL.diffuseColor4fv(color.mV);
+            LLRender::instance().diffuseColor4fv(color.mV);
             pushVerts(cylinder);
             LLPrimitive::sVolumeManager->unrefVolume(cylinder);
         }
@@ -2470,7 +2470,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
 
         LLVolume* phys_volume = LLPrimitive::sVolumeManager->refVolume(volume_params, detail);
 
-        gGL.diffuseColor4fv(color.mV);
+        LLRender::instance().diffuseColor4fv(color.mV);
         pushVerts(phys_volume);
 
         LLPrimitive::sVolumeManager->unrefVolume(phys_volume);
@@ -2488,14 +2488,14 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
             llassert(LLGLSLShader::sCurBoundShader != 0);
             LLVertexBuffer::unbind();
 
-            gGL.diffuseColor4fv(color.mV);
-            gGL.syncMatrices();
+            LLRender::instance().diffuseColor4fv(color.mV);
+            LLRender::instance().syncMatrices();
 
             LLVertexBuffer::drawElements(LLRender::TRIANGLES, phys_volume->mHullPoints, nullptr, phys_volume->mNumHullIndices, phys_volume->mHullIndices);
         }
         else
         {
-            gGL.diffuseColor3f(1,0,1);
+            LLRender::instance().diffuseColor3f(1,0,1);
             drawBoxOutline(center, size);
             gMeshRepo.buildHull(volume_params, detail);
         }
@@ -2510,7 +2510,7 @@ void renderPhysicsShape(LLDrawable* drawable, LLVOVolume* volume, bool wireframe
         LL_ERRS() << "Unhandled type" << LL_ENDL;
     }
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void renderPhysicsShapes(LLSpatialGroup* group, bool wireframe)
@@ -2529,10 +2529,10 @@ void renderPhysicsShapes(LLSpatialGroup* group, bool wireframe)
 
             if (bridge)
             {
-                gGL.pushMatrix();
-                gGL.multMatrix((F32*)bridge->mDrawable->getRenderMatrix().mMatrix);
+                LLRender::instance().pushMatrix();
+                LLRender::instance().multMatrix((F32*)bridge->mDrawable->getRenderMatrix().mMatrix);
                 bridge->renderPhysicsShapes(wireframe);
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
         }
         else
@@ -2542,11 +2542,11 @@ void renderPhysicsShapes(LLSpatialGroup* group, bool wireframe)
             {
                 if (!group->getSpatialPartition()->isBridge())
                 {
-                    gGL.pushMatrix();
+                    LLRender::instance().pushMatrix();
                     LLVector3 trans = drawable->getRegion()->getOriginAgent();
-                    gGL.translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
+                    LLRender::instance().translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
                     renderPhysicsShape(drawable, volume, wireframe);
-                    gGL.popMatrix();
+                    LLRender::instance().popMatrix();
                 }
                 else
                 {
@@ -2559,8 +2559,8 @@ void renderPhysicsShapes(LLSpatialGroup* group, bool wireframe)
                 LLViewerObject* object = drawable->getVObj();
                 if (object && object->getPCode() == LLViewerObject::LL_VO_SURFACE_PATCH)
                 {
-                    gGL.pushMatrix();
-                    gGL.multMatrix((F32*) object->getRegion()->mRenderMatrix.mMatrix);
+                    LLRender::instance().pushMatrix();
+                    LLRender::instance().multMatrix((F32*) object->getRegion()->mRenderMatrix.mMatrix);
                     //push face vertices for terrain
                     for (S32 i = 0; i < drawable->getNumFaces(); ++i)
                     {
@@ -2573,16 +2573,16 @@ void renderPhysicsShapes(LLSpatialGroup* group, bool wireframe)
                                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
                                 buff->setBuffer();
-                                gGL.diffuseColor4f(0.2f, 0.5f, 0.3f, 0.5f);
+                                LLRender::instance().diffuseColor4f(0.2f, 0.5f, 0.3f, 0.5f);
                                 buff->draw(LLRender::TRIANGLES, buff->getNumIndices(), 0);
 
-                                gGL.diffuseColor4f(0.2f, 1.f, 0.3f, 0.75f);
+                                LLRender::instance().diffuseColor4f(0.2f, 1.f, 0.3f, 0.75f);
                                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                                 buff->draw(LLRender::TRIANGLES, buff->getNumIndices(), 0);
                             }
                         }
                     }
-                    gGL.popMatrix();
+                    LLRender::instance().popMatrix();
                 }
 #endif
             }
@@ -2616,11 +2616,11 @@ void renderTexturePriority(LLDrawable* drawable)
             F32 t = vsize/sLastMaxTexPriority;
 
             LLVector4 col = lerp(cold, hot, t);
-            gGL.diffuseColor4fv(col.mV);
+            LLRender::instance().diffuseColor4fv(col.mV);
         }
         //else
         //{
-        //  gGL.diffuseColor4f(1,0,1,1);
+        //  LLRender::instance().diffuseColor4f(1,0,1,1);
         //}
 
         LLVector4a center;
@@ -2639,17 +2639,17 @@ void renderPoints(LLDrawable* drawablep)
     LLGLDepthTest depth(GL_FALSE, GL_FALSE);
     if (drawablep->getNumFaces())
     {
-        gGL.begin(LLRender::POINTS);
-        gGL.diffuseColor3f(1,1,1);
+        LLRender::instance().begin(LLRender::POINTS);
+        LLRender::instance().diffuseColor3f(1,1,1);
         for (S32 i = 0; i < drawablep->getNumFaces(); i++)
         {
             LLFace * face = drawablep->getFace(i);
             if (face)
             {
-                gGL.vertex3fv(face->mCenterLocal.mV);
+                LLRender::instance().vertex3fv(face->mCenterLocal.mV);
             }
         }
-        gGL.end();
+        LLRender::instance().end();
     }
 }
 
@@ -2661,7 +2661,7 @@ void renderTextureAnim(LLDrawInfo* params)
     }
 
     LLGLEnable blend(GL_BLEND);
-    gGL.diffuseColor4f(1,1,0,0.5f);
+    LLRender::instance().diffuseColor4f(1,1,0,0.5f);
     pushVerts(params);
 }
 
@@ -2673,20 +2673,20 @@ void renderBatchSize(LLDrawInfo* params)
     bool bind = false;
     if (params->mAvatar)
     {
-        gGL.pushMatrix();
-        gGL.loadMatrix(gGLModelView);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadMatrix(gGLModelView);
         bind = true;
         old_shader->mRiggedVariant->bind();
         LLRenderPass::uploadMatrixPalette(*params);
     }
 
 
-    gGL.diffuseColor4ubv(params->getDebugColor().mV);
+    LLRender::instance().diffuseColor4ubv(params->getDebugColor().mV);
     pushVerts(params);
 
     if (bind)
     {
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
         old_shader->bind();
     }
 }
@@ -2731,9 +2731,9 @@ void renderTexelDensity(LLDrawable* drawable)
 
         checkerboard_matrix.initScale(LLVector3((F32)texturep->getWidth(discard_level) / 8.f, (F32)texturep->getHeight(discard_level) / 8.f, 1.f));
 
-        gGL.getTexUnit(0)->bind(LLViewerTexture::sCheckerBoardImagep, true);
-        gGL.matrixMode(LLRender::MM_TEXTURE);
-        gGL.loadMatrix((GLfloat*)&checkerboard_matrix.mMatrix);
+        LLRender::instance().getTexUnit(0)->bind(LLViewerTexture::sCheckerBoardImagep, true);
+        LLRender::instance().matrixMode(LLRender::MM_TEXTURE);
+        LLRender::instance().loadMatrix((GLfloat*)&checkerboard_matrix.mMatrix);
 
         if (buffer && (facep->getGeomCount() >= 3))
         {
@@ -2745,8 +2745,8 @@ void renderTexelDensity(LLDrawable* drawable)
             buffer->drawRange(LLRender::TRIANGLES, start, end, count, offset);
         }
 
-        gGL.loadIdentity();
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().loadIdentity();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
     }
 
     //S32 num_textures = llmax(1, (S32)params->mTextureList.size());
@@ -2776,21 +2776,21 @@ void renderTexelDensity(LLDrawable* drawable)
     //  }
 
     //  checkboard_matrix.initScale(LLVector3(texturep->getWidth(discard_level) / 8, texturep->getHeight(discard_level) / 8, 1.f));
-    //  gGL.getTexUnit(i)->activate();
+    //  LLRender::instance().getTexUnit(i)->activate();
 
     //  glMatrixMode(GL_TEXTURE);
     //  glPushMatrix();
     //  glLoadIdentity();
-    //  //gGL.matrixMode(LLRender::MM_TEXTURE);
+    //  //LLRender::instance().matrixMode(LLRender::MM_TEXTURE);
     //  glLoadMatrixf((GLfloat*) checkboard_matrix.mMatrix);
 
-    //  gGL.getTexUnit(i)->bind(LLViewerTexture::sCheckerBoardImagep, true);
+    //  LLRender::instance().getTexUnit(i)->bind(LLViewerTexture::sCheckerBoardImagep, true);
 
     //  pushVerts(params, LLVertexBuffer::MAP_VERTEX | LLVertexBuffer::MAP_TEXCOORD0 | LLVertexBuffer::MAP_COLOR | LLVertexBuffer::MAP_NORMAL );
 
     //  glPopMatrix();
     //  glMatrixMode(GL_MODELVIEW);
-    //  //gGL.matrixMode(LLRender::MM_MODELVIEW);
+    //  //LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
     //}
 }
 
@@ -2805,7 +2805,7 @@ void renderLights(LLDrawable* drawablep)
     if (drawablep->getNumFaces())
     {
         LLGLEnable blend(GL_BLEND);
-        gGL.diffuseColor4f(0,1,1,0.5f);
+        LLRender::instance().diffuseColor4f(0,1,1,0.5f);
 
         for (S32 i = 0; i < drawablep->getNumFaces(); i++)
         {
@@ -2827,11 +2827,11 @@ void renderLights(LLDrawable* drawablep)
 
         {
             LLGLDepthTest depth(GL_FALSE, GL_TRUE);
-            gGL.diffuseColor4f(1,1,1,1);
+            LLRender::instance().diffuseColor4f(1,1,1,1);
             drawBoxOutline(pos, size);
         }
 
-        gGL.diffuseColor4f(1,1,0,1);
+        LLRender::instance().diffuseColor4f(1,1,0,1);
         F32 rad = drawablep->getVOVolume()->getLightRadius();
         drawBoxOutline(pos, LLVector4a(rad));
     }
@@ -2854,13 +2854,13 @@ public:
 
         if (branch->isEmpty())
         {
-            gGL.diffuseColor3f(1.f,0.2f,0.f);
+            LLRender::instance().diffuseColor3f(1.f,0.2f,0.f);
             center.set(branch->getCenter().getF32ptr());
             size.set(branch->getSize().getF32ptr());
         }
         else
         {
-            gGL.diffuseColor3f(0.75f, 1.f, 0.f);
+            LLRender::instance().diffuseColor3f(0.75f, 1.f, 0.f);
             center.set(vl->mBounds[0].getF32ptr());
             size.set(vl->mBounds[1].getF32ptr());
         }
@@ -2873,35 +2873,35 @@ public:
 
             if (i == 1)
             {
-                gGL.diffuseColor4f(0,1,1,0.5f);
+                LLRender::instance().diffuseColor4f(0,1,1,0.5f);
             }
             else
             {
-                gGL.diffuseColor4f(0,0.5f,0.5f, 0.25f);
+                LLRender::instance().diffuseColor4f(0,0.5f,0.5f, 0.25f);
                 drawBoxOutline(center, size);
             }
 
             if (i == 1)
             {
-                gGL.setLineWidth(3.f);
+                LLRender::instance().setLineWidth(3.f);
             }
 
-            gGL.begin(LLRender::TRIANGLES);
+            LLRender::instance().begin(LLRender::TRIANGLES);
             for (LLOctreeNode<LLVolumeTriangle, LLVolumeTriangle*>::const_element_iter iter = branch->getDataBegin();
                     iter != branch->getDataEnd();
                     ++iter)
             {
                 const LLVolumeTriangle* tri = *iter;
 
-                gGL.vertex3fv(tri->mV[0]->getF32ptr());
-                gGL.vertex3fv(tri->mV[1]->getF32ptr());
-                gGL.vertex3fv(tri->mV[2]->getF32ptr());
+                LLRender::instance().vertex3fv(tri->mV[0]->getF32ptr());
+                LLRender::instance().vertex3fv(tri->mV[1]->getF32ptr());
+                LLRender::instance().vertex3fv(tri->mV[2]->getF32ptr());
             }
-            gGL.end();
+            LLRender::instance().end();
 
             if (i == 1)
             {
-                gGL.setLineWidth(1.f);
+                LLRender::instance().setLineWidth(1.f);
             }
         }
     }
@@ -2919,7 +2919,7 @@ void renderRaycast(LLDrawable* drawablep)
     if (drawablep->getNumFaces())
     {
         LLGLEnable blend(GL_BLEND);
-        gGL.diffuseColor4f(0,1,1,0.5f);
+        LLRender::instance().diffuseColor4f(0,1,1,0.5f);
 
         LLVOVolume* vobj = drawablep->getVOVolume();
         if (vobj && !vobj->isDead())
@@ -2945,9 +2945,9 @@ void renderRaycast(LLDrawable* drawablep)
                 {
                     const LLVolumeFace& face = volume->getVolumeFace(i);
 
-                    gGL.pushMatrix();
-                    gGL.translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
-                    gGL.multMatrix((F32*) vobj->getRelativeXform().mMatrix);
+                    LLRender::instance().pushMatrix();
+                    LLRender::instance().translatef(trans.mV[0], trans.mV[1], trans.mV[2]);
+                    LLRender::instance().multMatrix((F32*) vobj->getRelativeXform().mMatrix);
 
                     LLVector4a start, end;
                     if (transform)
@@ -2970,12 +2970,12 @@ void renderRaycast(LLDrawable* drawablep)
                     LLVector4a dir;
                     dir.setSub(end, start);
 
-                    gGL.flush();
+                    LLRender::instance().flush();
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
                     {
                         //render face positions
-                        //gGL.diffuseColor4f(0,1,1,0.5f);
+                        //LLRender::instance().diffuseColor4f(0,1,1,0.5f);
                         //LLVertexBuffer::drawElements(LLRender::TRIANGLES, face.mPositions, nullptr, face.mNumIndices, face.mIndices);
                     }
 
@@ -2989,7 +2989,7 @@ void renderRaycast(LLDrawable* drawablep)
                         renderOctreeRaycast(start, end, face.getOctree());
                     }
 
-                    gGL.popMatrix();
+                    LLRender::instance().popMatrix();
                     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 }
             }
@@ -3007,10 +3007,10 @@ void renderRaycast(LLDrawable* drawablep)
         if (drawablep->getVObj() == gDebugRaycastObject)
         {
             // draw intersection point
-            gGL.pushMatrix();
-            gGL.loadMatrix(gGLModelView);
+            LLRender::instance().pushMatrix();
+            LLRender::instance().loadMatrix(gGLModelView);
             LLVector3 translate(gDebugRaycastIntersection.getF32ptr());
-            gGL.translatef(translate.mV[0], translate.mV[1], translate.mV[2]);
+            LLRender::instance().translatef(translate.mV[0], translate.mV[1], translate.mV[2]);
             LLCoordFrame orient;
             LLVector4a debug_binormal;
 
@@ -3023,15 +3023,15 @@ void renderRaycast(LLDrawable* drawablep)
             orient.lookDir(normal, binormal);
             LLMatrix4 rotation;
             orient.getRotMatrixToParent(rotation);
-            gGL.multMatrix((float*)rotation.mMatrix);
+            LLRender::instance().multMatrix((float*)rotation.mMatrix);
 
-            gGL.diffuseColor4f(1,0,0,0.5f);
+            LLRender::instance().diffuseColor4f(1,0,0,0.5f);
             drawBox(LLVector3(0, 0, 0), LLVector3(0.1f, 0.022f, 0.022f));
-            gGL.diffuseColor4f(0,1,0,0.5f);
+            LLRender::instance().diffuseColor4f(0,1,0,0.5f);
             drawBox(LLVector3(0, 0, 0), LLVector3(0.021f, 0.1f, 0.021f));
-            gGL.diffuseColor4f(0,0,1,0.5f);
+            LLRender::instance().diffuseColor4f(0,0,1,0.5f);
             drawBox(LLVector3(0, 0, 0), LLVector3(0.02f, 0.02f, 0.1f));
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
 
             // draw bounding box of prim
             const LLVector4a* ext = drawablep->getSpatialExtents();
@@ -3044,7 +3044,7 @@ void renderRaycast(LLDrawable* drawablep)
             size.mul(0.5f);
 
             LLGLDepthTest depth(GL_FALSE, GL_TRUE);
-            gGL.diffuseColor4f(0,0.5f,0.5f,1);
+            LLRender::instance().diffuseColor4f(0,0.5f,0.5f,1);
             drawBoxOutline(pos, size);
         }
     }
@@ -3177,7 +3177,7 @@ public:
         {
             if (!group->isEmpty())
             {
-                gGL.diffuseColor3f(0,0,1);
+                LLRender::instance().diffuseColor3f(0,0,1);
                 const LLVector4a* obj_bounds = group->getObjectBounds();
                 drawBoxOutline(obj_bounds[0], obj_bounds[1]);
             }
@@ -3327,14 +3327,14 @@ public:
                 group->rebuildGeom();
                 group->rebuildMesh();
 
-                gGL.flush();
-                gGL.pushMatrix();
+                LLRender::instance().flush();
+                LLRender::instance().pushMatrix();
                 gGLLastMatrix = NULL;
-                gGL.loadMatrix(gGLModelView);
+                LLRender::instance().loadMatrix(gGLModelView);
                 renderXRay(group, mCamera);
                 stop_glerror();
                 gGLLastMatrix = NULL;
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
         }
     }
@@ -3513,11 +3513,11 @@ void LLSpatialPartition::renderPhysicsShapes(bool wireframe)
         camera = NULL;
     }
 
-    gGL.flush();
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().flush();
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     LLOctreeRenderPhysicsShapes render_physics(camera, wireframe);
     render_physics.traverse(mOctree);
-    gGL.flush();
+    LLRender::instance().flush();
 }
 
 void LLSpatialPartition::renderDebug()
@@ -3553,8 +3553,8 @@ void LLSpatialPartition::renderDebug()
 
     LLGLDisable cullface(GL_CULL_FACE);
     LLGLEnable blend(GL_BLEND);
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     gPipeline.disableLights();
 
     LLSpatialBridge* bridge = asBridge();
@@ -3579,7 +3579,7 @@ void LLSpatialPartition::renderDebug()
             LLGLEnable blend(GL_BLEND);
             LLGLDepthTest depth_under(GL_TRUE, GL_FALSE, GL_GREATER);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            gGL.diffuseColor4f(0.5f, 0.0f, 0, 0.25f);
+            LLRender::instance().diffuseColor4f(0.5f, 0.0f, 0, 0.25f);
 
             LLGLEnable offset(GL_POLYGON_OFFSET_LINE);
             glPolygonOffset(-1.f, -1.f);
@@ -3595,7 +3595,7 @@ void LLSpatialPartition::renderDebug()
 
 void LLSpatialGroup::drawObjectBox(LLColor4 col)
 {
-    gGL.diffuseColor4fv(col.mV);
+    LLRender::instance().diffuseColor4fv(col.mV);
     LLVector4a size;
     size = mObjectBounds[1];
     size.mul(1.01f);

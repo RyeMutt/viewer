@@ -222,7 +222,7 @@ void LLSkyTex::createGLImage(S32 which)
 void LLSkyTex::bindTexture(bool curr)
 {
     int tex = getWhich(curr);
-    gGL.getTexUnit(0)->bind(mTexture[tex], true);
+    LLRender::instance().getTexUnit(0)->bind(mTexture[tex], true);
 }
 
 LLImageRaw* LLSkyTex::getImageRaw(bool curr)
@@ -551,7 +551,7 @@ void LLVOSky::initCubeMap()
         mCubeMap->init(images);
     }
 
-    gGL.getTexUnit(0)->disable();
+    LLRender::instance().getTexUnit(0)->disable();
 }
 
 

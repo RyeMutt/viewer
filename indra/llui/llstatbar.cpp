@@ -409,7 +409,7 @@ void LLStatBar::draw()
     {
         // Draw the tick marks.
         LLGLSUIDefault gls_ui;
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         F32 value_scale;
         if (mCurMaxBar == mCurMinBar)
@@ -459,8 +459,8 @@ void LLStatBar::draw()
                 F32 min_value = 0.f,
                     max_value = 0.f;
 
-                gGL.color4f(1.f, 0.f, 0.f, 1.f);
-                gGL.begin(LLRender::TRIANGLES);
+                LLRender::instance().color4f(1.f, 0.f, 0.f, 1.f);
+                LLRender::instance().begin(LLRender::TRIANGLES);
                 const S32 max_frame = llmin(num_frames, num_values);
                 U32 num_samples = 0;
                 for (S32 i = 1; i <= max_frame; i++)
@@ -495,26 +495,26 @@ void LLStatBar::draw()
                     F32 max = llmax(min + 1, (max_value - mCurMinBar) * value_scale);
                     if (mOrientation == HORIZONTAL)
                     {
-                        gGL.vertex2f((F32)bar_rect.mRight - offset, max);
-                        gGL.vertex2f((F32)bar_rect.mRight - offset, min);
-                        gGL.vertex2f((F32)bar_rect.mRight - offset - 1, min);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset, max);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset, min);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset - 1, min);
 
-                        gGL.vertex2f((F32)bar_rect.mRight - offset, max);
-                        gGL.vertex2f((F32)bar_rect.mRight - offset - 1, min);
-                        gGL.vertex2f((F32)bar_rect.mRight - offset - 1, max);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset, max);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset - 1, min);
+                        LLRender::instance().vertex2f((F32)bar_rect.mRight - offset - 1, max);
                     }
                     else
                     {
-                        gGL.vertex2f(min, (F32)bar_rect.mBottom + offset + 1);
-                        gGL.vertex2f(min, (F32)bar_rect.mBottom + offset);
-                        gGL.vertex2f(max, (F32)bar_rect.mBottom + offset);
+                        LLRender::instance().vertex2f(min, (F32)bar_rect.mBottom + offset + 1);
+                        LLRender::instance().vertex2f(min, (F32)bar_rect.mBottom + offset);
+                        LLRender::instance().vertex2f(max, (F32)bar_rect.mBottom + offset);
 
-                        gGL.vertex2f(min, (F32)bar_rect.mBottom + offset + 1);
-                        gGL.vertex2f(max, (F32)bar_rect.mBottom + offset);
-                        gGL.vertex2f(max, (F32)bar_rect.mBottom + offset + 1);
+                        LLRender::instance().vertex2f(min, (F32)bar_rect.mBottom + offset + 1);
+                        LLRender::instance().vertex2f(max, (F32)bar_rect.mBottom + offset);
+                        LLRender::instance().vertex2f(max, (F32)bar_rect.mBottom + offset + 1);
                     }
                 }
-                gGL.end();
+                LLRender::instance().end();
             }
             else
             {

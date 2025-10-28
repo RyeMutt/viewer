@@ -221,28 +221,28 @@ void LLNetMap::draw()
     // Prepare a scissor region
     F32 rotation = 0;
 
-    gGL.pushMatrix();
-    gGL.pushUIMatrix();
+    LLRender::instance().pushMatrix();
+    LLRender::instance().pushUIMatrix();
 
-    LLVector3 offset = gGL.getUITranslation();
-    LLVector3 scale = gGL.getUIScale();
+    LLVector3 offset = LLRender::instance().getUITranslation();
+    LLVector3 scale = LLRender::instance().getUIScale();
 
-    gGL.loadIdentity();
-    gGL.loadUIIdentity();
+    LLRender::instance().loadIdentity();
+    LLRender::instance().loadUIIdentity();
 
-    gGL.scalef(scale.mV[0], scale.mV[1], scale.mV[2]);
-    gGL.translatef(offset.mV[0], offset.mV[1], offset.mV[2]);
+    LLRender::instance().scalef(scale.mV[0], scale.mV[1], scale.mV[2]);
+    LLRender::instance().translatef(offset.mV[0], offset.mV[1], offset.mV[2]);
 
     {
         LLLocalClipRect clip(getLocalRect());
         {
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
             // Draw background rectangle
             LLColor4 background_color = mBackgroundColor.get();
-            gGL.color4fv( background_color.mV );
+            LLRender::instance().color4fv( background_color.mV );
             gl_rect_2d(0, getRect().getHeight(), getRect().getWidth(), 0);
         }
 
@@ -250,16 +250,16 @@ void LLNetMap::draw()
         S32 center_sw_left = getRect().getWidth() / 2 + llfloor(mCurPan.mV[VX]);
         S32 center_sw_bottom = getRect().getHeight() / 2 + llfloor(mCurPan.mV[VY]);
 
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
 
-        gGL.translatef( (F32) center_sw_left, (F32) center_sw_bottom, 0.f);
+        LLRender::instance().translatef( (F32) center_sw_left, (F32) center_sw_bottom, 0.f);
 
         static LLUICachedControl<bool> rotate_map("MiniMapRotate", true);
         if( rotate_map )
         {
             // rotate subsequent draws to agent rotation
             rotation = atan2( LLViewerCamera::getInstance()->getAtAxis().mV[VX], LLViewerCamera::getInstance()->getAtAxis().mV[VY] );
-            gGL.rotatef( rotation * RAD_TO_DEG, 0.f, 0.f, 1.f);
+            LLRender::instance().rotatef( rotation * RAD_TO_DEG, 0.f, 0.f, 1.f);
         }
 
         // figure out where agent is
@@ -284,39 +284,39 @@ void LLNetMap::draw()
 
             if (regionp == gAgent.getRegion())
             {
-                gGL.color4f(1.f, 1.f, 1.f, 1.f);
+                LLRender::instance().color4f(1.f, 1.f, 1.f, 1.f);
             }
             else
             {
-                gGL.color4f(0.8f, 0.8f, 0.8f, 1.f);
+                LLRender::instance().color4f(0.8f, 0.8f, 0.8f, 1.f);
             }
 
             if (!regionp->isAlive())
             {
-                gGL.color4f(1.f, 0.5f, 0.5f, 1.f);
+                LLRender::instance().color4f(1.f, 0.5f, 0.5f, 1.f);
             }
 
             // Draw using texture.
-            gGL.getTexUnit(0)->bind(regionp->getLand().getSTexture());
-            gGL.begin(LLRender::TRIANGLES);
+            LLRender::instance().getTexUnit(0)->bind(regionp->getLand().getSTexture());
+            LLRender::instance().begin(LLRender::TRIANGLES);
             {
-                gGL.texCoord2f(0.f, 1.f);
-                gGL.vertex2f(left, top);
-                gGL.texCoord2f(0.f, 0.f);
-                gGL.vertex2f(left, bottom);
-                gGL.texCoord2f(1.f, 0.f);
-                gGL.vertex2f(right, bottom);
+                LLRender::instance().texCoord2f(0.f, 1.f);
+                LLRender::instance().vertex2f(left, top);
+                LLRender::instance().texCoord2f(0.f, 0.f);
+                LLRender::instance().vertex2f(left, bottom);
+                LLRender::instance().texCoord2f(1.f, 0.f);
+                LLRender::instance().vertex2f(right, bottom);
 
-                gGL.texCoord2f(0.f, 1.f);
-                gGL.vertex2f(left, top);
-                gGL.texCoord2f(1.f, 0.f);
-                gGL.vertex2f(right, bottom);
-                gGL.texCoord2f(1.f, 1.f);
-                gGL.vertex2f(right, top);
+                LLRender::instance().texCoord2f(0.f, 1.f);
+                LLRender::instance().vertex2f(left, top);
+                LLRender::instance().texCoord2f(1.f, 0.f);
+                LLRender::instance().vertex2f(right, bottom);
+                LLRender::instance().texCoord2f(1.f, 1.f);
+                LLRender::instance().vertex2f(right, top);
             }
-            gGL.end();
+            LLRender::instance().end();
 
-            gGL.flush();
+            LLRender::instance().flush();
         }
 
         // Redraw object layer periodically
@@ -350,27 +350,27 @@ void LLNetMap::draw()
         map_center_agent.mV[VX] *= scale_pixels_per_meter;
         map_center_agent.mV[VY] *= scale_pixels_per_meter;
 
-        gGL.getTexUnit(0)->bind(mObjectImagep);
+        LLRender::instance().getTexUnit(0)->bind(mObjectImagep);
         F32 image_half_width = 0.5f*mObjectMapPixels;
         F32 image_half_height = 0.5f*mObjectMapPixels;
 
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().begin(LLRender::TRIANGLES);
         {
-            gGL.texCoord2f(0.f, 1.f);
-            gGL.vertex2f(map_center_agent.mV[VX] - image_half_width, image_half_height + map_center_agent.mV[VY]);
-            gGL.texCoord2f(0.f, 0.f);
-            gGL.vertex2f(map_center_agent.mV[VX] - image_half_width, map_center_agent.mV[VY] - image_half_height);
-            gGL.texCoord2f(1.f, 0.f);
-            gGL.vertex2f(image_half_width + map_center_agent.mV[VX], map_center_agent.mV[VY] - image_half_height);
+            LLRender::instance().texCoord2f(0.f, 1.f);
+            LLRender::instance().vertex2f(map_center_agent.mV[VX] - image_half_width, image_half_height + map_center_agent.mV[VY]);
+            LLRender::instance().texCoord2f(0.f, 0.f);
+            LLRender::instance().vertex2f(map_center_agent.mV[VX] - image_half_width, map_center_agent.mV[VY] - image_half_height);
+            LLRender::instance().texCoord2f(1.f, 0.f);
+            LLRender::instance().vertex2f(image_half_width + map_center_agent.mV[VX], map_center_agent.mV[VY] - image_half_height);
 
-            gGL.texCoord2f(0.f, 1.f);
-            gGL.vertex2f(map_center_agent.mV[VX] - image_half_width, image_half_height + map_center_agent.mV[VY]);
-            gGL.texCoord2f(1.f, 0.f);
-            gGL.vertex2f(image_half_width + map_center_agent.mV[VX], map_center_agent.mV[VY] - image_half_height);
-            gGL.texCoord2f(1.f, 1.f);
-            gGL.vertex2f(image_half_width + map_center_agent.mV[VX], image_half_height + map_center_agent.mV[VY]);
+            LLRender::instance().texCoord2f(0.f, 1.f);
+            LLRender::instance().vertex2f(map_center_agent.mV[VX] - image_half_width, image_half_height + map_center_agent.mV[VY]);
+            LLRender::instance().texCoord2f(1.f, 0.f);
+            LLRender::instance().vertex2f(image_half_width + map_center_agent.mV[VX], map_center_agent.mV[VY] - image_half_height);
+            LLRender::instance().texCoord2f(1.f, 1.f);
+            LLRender::instance().vertex2f(image_half_width + map_center_agent.mV[VX], image_half_height + map_center_agent.mV[VY]);
         }
-        gGL.end();
+        LLRender::instance().end();
 
         for (LLWorld::region_list_t::const_iterator iter = LLWorld::getInstance()->getRegionList().begin();
              iter != LLWorld::getInstance()->getRegionList().end(); ++iter)
@@ -379,7 +379,7 @@ void LLNetMap::draw()
             regionp->renderPropertyLinesOnMinimap(scale_pixels_per_meter, map_parcel_outline_color.get().mV);
         }
 
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
 
         // Mouse pointer in local coordinates
         S32 local_mouse_x;
@@ -512,28 +512,28 @@ void LLNetMap::draw()
         const F32 arc_end = (horiz_fov / 2.0f) + F_PI_BY_TWO;
         const S32 steps = llmax(1, (S32)((horiz_fov * steps_per_radian) + 0.5f));
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         if( rotate_map )
         {
-            gGL.pushMatrix();
-                gGL.translatef( ctr_x, ctr_y, 0 );
+            LLRender::instance().pushMatrix();
+                LLRender::instance().translatef( ctr_x, ctr_y, 0 );
                 gl_washer_segment_2d(far_clip_pixels, 0, arc_start, arc_end, steps, map_frustum_color(), map_frustum_color());
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
         else
         {
-            gGL.pushMatrix();
-                gGL.translatef( ctr_x, ctr_y, 0 );
+            LLRender::instance().pushMatrix();
+                LLRender::instance().translatef( ctr_x, ctr_y, 0 );
                 // If we don't rotate the map, we have to rotate the frustum.
-                gGL.rotatef( atan2( LLViewerCamera::getInstance()->getAtAxis().mV[VX], LLViewerCamera::getInstance()->getAtAxis().mV[VY] ) * RAD_TO_DEG, 0.f, 0.f, -1.f);
+                LLRender::instance().rotatef( atan2( LLViewerCamera::getInstance()->getAtAxis().mV[VX], LLViewerCamera::getInstance()->getAtAxis().mV[VY] ) * RAD_TO_DEG, 0.f, 0.f, -1.f);
                 gl_washer_segment_2d(far_clip_pixels, 0, arc_start, arc_end, steps, map_frustum_color(), map_frustum_color());
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
     }
 
-    gGL.popMatrix();
-    gGL.popUIMatrix();
+    LLRender::instance().popMatrix();
+    LLRender::instance().popUIMatrix();
 
     LLUICtrl::draw();
 }

@@ -67,95 +67,95 @@ void gl_state_for_2d(S32 width, S32 height)
     F32 window_width = (F32) width;//gViewerWindow->getWindowWidth();
     F32 window_height = (F32) height;//gViewerWindow->getWindowHeight();
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.loadIdentity();
-    gGL.ortho(0.0f, llmax(window_width, 1.f), 0.0f, llmax(window_height,1.f), -1.0f, 1.0f);
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.loadIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().loadIdentity();
+    LLRender::instance().ortho(0.0f, llmax(window_width, 1.f), 0.0f, llmax(window_height,1.f), -1.0f, 1.0f);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().loadIdentity();
     stop_glerror();
 }
 
 
 void gl_draw_x(const LLRect& rect, const LLColor4& color)
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-    gGL.color4fv( color.mV );
+    LLRender::instance().color4fv( color.mV );
 
-    gGL.begin( LLRender::LINES );
-        gGL.vertex2i( rect.mLeft,       rect.mTop );
-        gGL.vertex2i( rect.mRight,  rect.mBottom );
-        gGL.vertex2i( rect.mLeft,       rect.mBottom );
-        gGL.vertex2i( rect.mRight,  rect.mTop );
-    gGL.end();
+    LLRender::instance().begin( LLRender::LINES );
+        LLRender::instance().vertex2i( rect.mLeft,       rect.mTop );
+        LLRender::instance().vertex2i( rect.mRight,  rect.mBottom );
+        LLRender::instance().vertex2i( rect.mLeft,       rect.mBottom );
+        LLRender::instance().vertex2i( rect.mRight,  rect.mTop );
+    LLRender::instance().end();
 }
 
 
 void gl_rect_2d_offset_local( S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &color, S32 pixel_offset, bool filled)
 {
-    gGL.color4fv(color.mV);
+    LLRender::instance().color4fv(color.mV);
     gl_rect_2d_offset_local(left, top, right, bottom, pixel_offset, filled);
 }
 
 void gl_rect_2d_offset_local( S32 left, S32 top, S32 right, S32 bottom, S32 pixel_offset, bool filled)
 {
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
     left += LLFontGL::sCurOrigin.mX;
     right += LLFontGL::sCurOrigin.mX;
     bottom += LLFontGL::sCurOrigin.mY;
     top += LLFontGL::sCurOrigin.mY;
 
-    gGL.loadUIIdentity();
+    LLRender::instance().loadUIIdentity();
     gl_rect_2d(llfloor((F32)left * LLRender::sUIGLScaleFactor.mV[VX]) - pixel_offset,
                 llfloor((F32)top * LLRender::sUIGLScaleFactor.mV[VY]) + pixel_offset,
                 llfloor((F32)right * LLRender::sUIGLScaleFactor.mV[VX]) + pixel_offset,
                 llfloor((F32)bottom * LLRender::sUIGLScaleFactor.mV[VY]) - pixel_offset,
                 filled);
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 
 void gl_rect_2d(S32 left, S32 top, S32 right, S32 bottom, bool filled )
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     // Counterclockwise quad will face the viewer
     if( filled )
     {
-        gGL.begin( LLRender::TRIANGLES );
-            gGL.vertex2i(left, top);
-            gGL.vertex2i(left, bottom);
-            gGL.vertex2i(right, bottom);
+        LLRender::instance().begin( LLRender::TRIANGLES );
+            LLRender::instance().vertex2i(left, top);
+            LLRender::instance().vertex2i(left, bottom);
+            LLRender::instance().vertex2i(right, bottom);
 
-            gGL.vertex2i(left, top);
-            gGL.vertex2i(right, bottom);
-            gGL.vertex2i(right, top);
-        gGL.end();
+            LLRender::instance().vertex2i(left, top);
+            LLRender::instance().vertex2i(right, bottom);
+            LLRender::instance().vertex2i(right, top);
+        LLRender::instance().end();
     }
     else
     {
         top--;
         right--;
-        gGL.begin( LLRender::LINE_STRIP );
-            gGL.vertex2i(left, top);
-            gGL.vertex2i(left, bottom);
-            gGL.vertex2i(right, bottom);
-            gGL.vertex2i(right, top);
-            gGL.vertex2i(left, top);
-        gGL.end();
+        LLRender::instance().begin( LLRender::LINE_STRIP );
+            LLRender::instance().vertex2i(left, top);
+            LLRender::instance().vertex2i(left, bottom);
+            LLRender::instance().vertex2i(right, bottom);
+            LLRender::instance().vertex2i(right, top);
+            LLRender::instance().vertex2i(left, top);
+        LLRender::instance().end();
     }
 }
 
 void gl_rect_2d(S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &color, bool filled )
 {
-    gGL.color4fv( color.mV );
+    LLRender::instance().color4fv( color.mV );
     gl_rect_2d( left, top, right, bottom, filled );
 }
 
 
 void gl_rect_2d( const LLRect& rect, const LLColor4& color, bool filled )
 {
-    gGL.color4fv( color.mV );
+    LLRender::instance().color4fv( color.mV );
     gl_rect_2d( rect.mLeft, rect.mTop, rect.mRight, rect.mBottom, filled );
 }
 
@@ -165,7 +165,7 @@ void gl_rect_2d( const LLRect& rect, const LLColor4& color, bool filled )
 void gl_drop_shadow(S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &start_color, S32 lines)
 {
     stop_glerror();
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     // HACK: Overlap with the rectangle by a single pixel.
     right--;
@@ -175,148 +175,148 @@ void gl_drop_shadow(S32 left, S32 top, S32 right, S32 bottom, const LLColor4 &st
     LLColor4 end_color = start_color;
     end_color.mV[VALPHA] = 0.f;
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
 
     // Right edge, CCW faces screen
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, top - lines);
-    gGL.vertex2i(right, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right + lines, bottom);
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, top - lines);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right + lines, bottom);
-    gGL.vertex2i(right + lines, top - lines);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, top - lines);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right + lines, bottom);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, top - lines);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right + lines, bottom);
+    LLRender::instance().vertex2i(right + lines, top - lines);
 
     // Bottom edge, CCW faces screen
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, bottom);
-    gGL.vertex2i(left + lines, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(left + lines, bottom - lines);
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(left + lines, bottom - lines);
-    gGL.vertex2i(right, bottom - lines);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().vertex2i(left + lines, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(left + lines, bottom - lines);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(left + lines, bottom - lines);
+    LLRender::instance().vertex2i(right, bottom - lines);
 
     // bottom left Corner
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(left + lines, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(left, bottom);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(left + lines, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(left, bottom);
     // make the bottom left corner not sharp
-    gGL.vertex2i(left + 1, bottom - lines + 1);
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(left + lines, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(left + 1, bottom - lines + 1);
-    gGL.vertex2i(left + lines, bottom - lines);
+    LLRender::instance().vertex2i(left + 1, bottom - lines + 1);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(left + lines, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(left + 1, bottom - lines + 1);
+    LLRender::instance().vertex2i(left + lines, bottom - lines);
 
     // bottom right corner
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right, bottom - lines);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right, bottom - lines);
     // make the rightmost corner not sharp
-    gGL.vertex2i(right + lines - 1, bottom - lines + 1);
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, bottom);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right + lines - 1, bottom - lines + 1);
-    gGL.vertex2i(right + lines, bottom);
+    LLRender::instance().vertex2i(right + lines - 1, bottom - lines + 1);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right + lines - 1, bottom - lines + 1);
+    LLRender::instance().vertex2i(right + lines, bottom);
 
     // top right corner
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, top - lines);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right + lines, top - lines);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, top - lines);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right + lines, top - lines);
     // make the corner not sharp
-    gGL.vertex2i(right + lines - 1, top - 1);
-    gGL.color4fv(start_color.mV);
-    gGL.vertex2i(right, top - lines);
-    gGL.color4fv(end_color.mV);
-    gGL.vertex2i(right + lines - 1, top - 1);
-    gGL.vertex2i(right, top);
+    LLRender::instance().vertex2i(right + lines - 1, top - 1);
+    LLRender::instance().color4fv(start_color.mV);
+    LLRender::instance().vertex2i(right, top - lines);
+    LLRender::instance().color4fv(end_color.mV);
+    LLRender::instance().vertex2i(right + lines - 1, top - 1);
+    LLRender::instance().vertex2i(right, top);
 
-    gGL.end();
+    LLRender::instance().end();
     stop_glerror();
 }
 
 void gl_line_2d(S32 x1, S32 y1, S32 x2, S32 y2 )
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-    gGL.begin(LLRender::LINES);
-        gGL.vertex2i(x1, y1);
-        gGL.vertex2i(x2, y2);
-    gGL.end();
+    LLRender::instance().begin(LLRender::LINES);
+        LLRender::instance().vertex2i(x1, y1);
+        LLRender::instance().vertex2i(x2, y2);
+    LLRender::instance().end();
 }
 
 void gl_line_2d(S32 x1, S32 y1, S32 x2, S32 y2, const LLColor4 &color )
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-    gGL.color4fv( color.mV );
+    LLRender::instance().color4fv( color.mV );
 
-    gGL.begin(LLRender::LINES);
-        gGL.vertex2i(x1, y1);
-        gGL.vertex2i(x2, y2);
-    gGL.end();
+    LLRender::instance().begin(LLRender::LINES);
+        LLRender::instance().vertex2i(x1, y1);
+        LLRender::instance().vertex2i(x2, y2);
+    LLRender::instance().end();
 }
 
 void gl_triangle_2d(S32 x1, S32 y1, S32 x2, S32 y2, S32 x3, S32 y3, const LLColor4& color, bool filled)
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-    gGL.color4fv(color.mV);
+    LLRender::instance().color4fv(color.mV);
 
     if (filled)
     {
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().begin(LLRender::TRIANGLES);
     }
     else
     {
-        gGL.begin(LLRender::LINE_LOOP);
+        LLRender::instance().begin(LLRender::LINE_LOOP);
     }
-    gGL.vertex2i(x1, y1);
-    gGL.vertex2i(x2, y2);
-    gGL.vertex2i(x3, y3);
-    gGL.end();
+    LLRender::instance().vertex2i(x1, y1);
+    LLRender::instance().vertex2i(x2, y2);
+    LLRender::instance().vertex2i(x3, y3);
+    LLRender::instance().end();
 }
 
 void gl_corners_2d(S32 left, S32 top, S32 right, S32 bottom, S32 length, F32 max_frac)
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     length = llmin((S32)(max_frac*(right - left)), length);
     length = llmin((S32)(max_frac*(top - bottom)), length);
-    gGL.begin(LLRender::LINES);
-    gGL.vertex2i(left, top);
-    gGL.vertex2i(left + length, top);
+    LLRender::instance().begin(LLRender::LINES);
+    LLRender::instance().vertex2i(left, top);
+    LLRender::instance().vertex2i(left + length, top);
 
-    gGL.vertex2i(left, top);
-    gGL.vertex2i(left, top - length);
+    LLRender::instance().vertex2i(left, top);
+    LLRender::instance().vertex2i(left, top - length);
 
-    gGL.vertex2i(left, bottom);
-    gGL.vertex2i(left + length, bottom);
+    LLRender::instance().vertex2i(left, bottom);
+    LLRender::instance().vertex2i(left + length, bottom);
 
-    gGL.vertex2i(left, bottom);
-    gGL.vertex2i(left, bottom + length);
+    LLRender::instance().vertex2i(left, bottom);
+    LLRender::instance().vertex2i(left, bottom + length);
 
-    gGL.vertex2i(right, top);
-    gGL.vertex2i(right - length, top);
+    LLRender::instance().vertex2i(right, top);
+    LLRender::instance().vertex2i(right - length, top);
 
-    gGL.vertex2i(right, top);
-    gGL.vertex2i(right, top - length);
+    LLRender::instance().vertex2i(right, top);
+    LLRender::instance().vertex2i(right, top - length);
 
-    gGL.vertex2i(right, bottom);
-    gGL.vertex2i(right - length, bottom);
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().vertex2i(right - length, bottom);
 
-    gGL.vertex2i(right, bottom);
-    gGL.vertex2i(right, bottom + length);
-    gGL.end();
+    LLRender::instance().vertex2i(right, bottom);
+    LLRender::instance().vertex2i(right, bottom + length);
+    LLRender::instance().end();
 }
 
 
@@ -386,8 +386,8 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLTex
     else
     {
         // add in offset of current image to current UI translation
-        const LLVector3 ui_scale = gGL.getUIScale();
-        const LLVector3 ui_translation = (gGL.getUITranslation() + LLVector3((F32)x, (F32)y, 0.f)).scaledVec(ui_scale);
+        const LLVector3 ui_scale = LLRender::instance().getUIScale();
+        const LLVector3 ui_translation = (LLRender::instance().getUITranslation() + LLVector3((F32)x, (F32)y, 0.f)).scaledVec(ui_scale);
 
         F32 uv_width = uv_outer_rect.getWidth();
         F32 uv_height = uv_outer_rect.getHeight();
@@ -446,9 +446,9 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLTex
                                 ui_translation.mV[VX] + width * ui_scale.mV[VX],
                                 ui_translation.mV[VY]);
 
-        gGL.getTexUnit(0)->bind(image, true);
+        LLRender::instance().getTexUnit(0)->bind(image, true);
 
-        gGL.color4fv(color.mV);
+        LLRender::instance().color4fv(color.mV);
 
         constexpr S32 NUM_VERTICES = 9 * 2 * 3; // 9 quads, 2 triangles per quad, 3 vertices per triangle
         static thread_local LLVector2 uv[NUM_VERTICES];
@@ -456,7 +456,7 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLTex
 
         S32 index = 0;
 
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().begin(LLRender::TRIANGLES);
         {
             // draw bottom left triangles
             // 1
@@ -693,9 +693,9 @@ void gl_draw_scaled_image_with_border(S32 x, S32 y, S32 width, S32 height, LLTex
             pos[index].set(draw_center_rect.mRight, draw_outer_rect.mTop, 0.f);
             index++;
 
-            gGL.vertexBatchPreTransformed(pos, uv, NUM_VERTICES);
+            LLRender::instance().vertexBatchPreTransformed(pos, uv, NUM_VERTICES);
         }
-        gGL.end();
+        LLRender::instance().end();
     }
 
     if (solid_color)
@@ -719,14 +719,14 @@ void gl_draw_scaled_rotated_image(S32 x, S32 y, S32 width, S32 height, F32 degre
 
     if(image != NULL)
     {
-        gGL.getTexUnit(0)->bind(image, true);
+        LLRender::instance().getTexUnit(0)->bind(image, true);
     }
     else
     {
-        gGL.getTexUnit(0)->bind(target);
+        LLRender::instance().getTexUnit(0)->bind(target);
     }
 
-    gGL.color4fv(color.mV);
+    LLRender::instance().color4fv(color.mV);
 
     if (degrees == 0.f)
     {
@@ -734,10 +734,10 @@ void gl_draw_scaled_rotated_image(S32 x, S32 y, S32 width, S32 height, F32 degre
         static thread_local LLVector2 uv[NUM_VERTICES +1];
         static thread_local LLVector4a pos[NUM_VERTICES +1];
 
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().begin(LLRender::TRIANGLES);
         {
-            LLVector3 ui_scale = gGL.getUIScale();
-            LLVector3 ui_translation = gGL.getUITranslation();
+            LLVector3 ui_scale = LLRender::instance().getUIScale();
+            LLVector3 ui_translation = LLRender::instance().getUITranslation();
             ui_translation.mV[VX] += x;
             ui_translation.mV[VY] += y;
             ui_translation.scaleVec(ui_scale);
@@ -769,79 +769,79 @@ void gl_draw_scaled_rotated_image(S32 x, S32 y, S32 width, S32 height, F32 degre
             pos[index].set(ui_translation.mV[VX] + scaled_width, ui_translation.mV[VY], 0.f);
             index++;
 
-            gGL.vertexBatchPreTransformed(pos, uv, NUM_VERTICES);
+            LLRender::instance().vertexBatchPreTransformed(pos, uv, NUM_VERTICES);
         }
-        gGL.end();
+        LLRender::instance().end();
     }
     else
     {
-        gGL.pushUIMatrix();
-        gGL.translateUI((F32)x, (F32)y, 0.f);
+        LLRender::instance().pushUIMatrix();
+        LLRender::instance().translateUI((F32)x, (F32)y, 0.f);
 
         F32 offset_x = F32(width/2);
         F32 offset_y = F32(height/2);
 
-        gGL.translateUI(offset_x, offset_y, 0.f);
+        LLRender::instance().translateUI(offset_x, offset_y, 0.f);
 
         LLMatrix3 quat(0.f, 0.f, degrees*DEG_TO_RAD);
 
         if(image != NULL)
         {
-            gGL.getTexUnit(0)->bind(image, true);
+            LLRender::instance().getTexUnit(0)->bind(image, true);
         }
         else
         {
-            gGL.getTexUnit(0)->bind(target);
+            LLRender::instance().getTexUnit(0)->bind(target);
         }
 
-        gGL.color4fv(color.mV);
+        LLRender::instance().color4fv(color.mV);
 
-        gGL.begin(LLRender::TRIANGLES);
+        LLRender::instance().begin(LLRender::TRIANGLES);
         {
             LLVector3 v;
 
             v = LLVector3(offset_x, offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
-            gGL.vertex2f(v.mV[0], v.mV[1] );
+            LLRender::instance().texCoord2f(uv_rect.mRight, uv_rect.mTop);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1] );
 
             v = LLVector3(-offset_x, offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mLeft, uv_rect.mTop);
-            gGL.vertex2f(v.mV[0], v.mV[1] );
+            LLRender::instance().texCoord2f(uv_rect.mLeft, uv_rect.mTop);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1] );
 
             v = LLVector3(-offset_x, -offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
-            gGL.vertex2f(v.mV[0], v.mV[1] );
+            LLRender::instance().texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1] );
 
             v = LLVector3(offset_x, offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mRight, uv_rect.mTop);
-            gGL.vertex2f(v.mV[0], v.mV[1]);
+            LLRender::instance().texCoord2f(uv_rect.mRight, uv_rect.mTop);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1]);
 
             v = LLVector3(-offset_x, -offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
-            gGL.vertex2f(v.mV[0], v.mV[1]);
+            LLRender::instance().texCoord2f(uv_rect.mLeft, uv_rect.mBottom);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1]);
 
             v = LLVector3(offset_x, -offset_y, 0.f) * quat;
-            gGL.texCoord2f(uv_rect.mRight, uv_rect.mBottom);
-            gGL.vertex2f(v.mV[0], v.mV[1] );
+            LLRender::instance().texCoord2f(uv_rect.mRight, uv_rect.mBottom);
+            LLRender::instance().vertex2f(v.mV[0], v.mV[1] );
         }
-        gGL.end();
-        gGL.popUIMatrix();
+        LLRender::instance().end();
+        LLRender::instance().popUIMatrix();
     }
 }
 
 void gl_line_3d( const LLVector3& start, const LLVector3& end, const LLColor4& color)
 {
-    gGL.color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], color.mV[VALPHA]);
+    LLRender::instance().color4f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE], color.mV[VALPHA]);
 
-    gGL.flush();
+    LLRender::instance().flush();
     LLRender2D::setLineWidth(2.5f);
 
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().begin(LLRender::LINES);
     {
-        gGL.vertex3fv( start.mV );
-        gGL.vertex3fv( end.mV );
+        LLRender::instance().vertex3fv( start.mV );
+        LLRender::instance().vertex3fv( end.mV );
     }
-    gGL.end();
+    LLRender::instance().end();
 
     LLRender2D::setLineWidth(1.f);
 }
@@ -853,9 +853,9 @@ void gl_arc_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, bool filled, F
         end_angle += F_TWO_PI;
     }
 
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
     {
-        gGL.translateUI(center_x, center_y, 0.f);
+        LLRender::instance().translateUI(center_x, center_y, 0.f);
 
         // Inexact, but reasonably fast.
         F32 delta = (end_angle - start_angle) / steps;
@@ -866,35 +866,35 @@ void gl_arc_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, bool filled, F
 
         if (filled)
         {
-            gGL.begin(LLRender::TRIANGLE_FAN);
-            gGL.vertex2f(0.f, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLE_FAN);
+            LLRender::instance().vertex2f(0.f, 0.f);
             // make sure circle is complete
             steps += 1;
         }
         else
         {
-            gGL.begin(LLRender::LINE_STRIP);
+            LLRender::instance().begin(LLRender::LINE_STRIP);
         }
 
         while( steps-- )
         {
             // Successive rotations
-            gGL.vertex2f( x, y );
+            LLRender::instance().vertex2f( x, y );
             F32 x_new = x * cos_delta - y * sin_delta;
             y = x * sin_delta +  y * cos_delta;
             x = x_new;
         }
-        gGL.end();
+        LLRender::instance().end();
     }
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 void gl_circle_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, bool filled)
 {
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-        gGL.translateUI(center_x, center_y, 0.f);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().translateUI(center_x, center_y, 0.f);
 
         // Inexact, but reasonably fast.
         F32 delta = F_TWO_PI / steps;
@@ -905,27 +905,27 @@ void gl_circle_2d(F32 center_x, F32 center_y, F32 radius, S32 steps, bool filled
 
         if (filled)
         {
-            gGL.begin(LLRender::TRIANGLE_FAN);
-            gGL.vertex2f(0.f, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLE_FAN);
+            LLRender::instance().vertex2f(0.f, 0.f);
             // make sure circle is complete
             steps += 1;
         }
         else
         {
-            gGL.begin(LLRender::LINE_LOOP);
+            LLRender::instance().begin(LLRender::LINE_LOOP);
         }
 
         while( steps-- )
         {
             // Successive rotations
-            gGL.vertex2f( x, y );
+            LLRender::instance().vertex2f( x, y );
             F32 x_new = x * cos_delta - y * sin_delta;
             y = x * sin_delta +  y * cos_delta;
             x = x_new;
         }
-        gGL.end();
+        LLRender::instance().end();
     }
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 // Renders a ring with sides (tube shape)
@@ -934,42 +934,42 @@ void gl_deep_circle( F32 radius, F32 depth, S32 steps )
     F32 x = radius;
     F32 y = 0.f;
     F32 angle_delta = F_TWO_PI / (F32)steps;
-    gGL.begin( LLRender::TRIANGLE_STRIP  );
+    LLRender::instance().begin( LLRender::TRIANGLE_STRIP  );
     {
         S32 step = steps + 1; // An extra step to close the circle.
         while( step-- )
         {
-            gGL.vertex3f( x, y, depth );
-            gGL.vertex3f( x, y, 0.f );
+            LLRender::instance().vertex3f( x, y, depth );
+            LLRender::instance().vertex3f( x, y, 0.f );
 
             F32 x_new = x * cosf(angle_delta) - y * sinf(angle_delta);
             y = x * sinf(angle_delta) +  y * cosf(angle_delta);
             x = x_new;
         }
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void gl_ring( F32 radius, F32 width, const LLColor4& center_color, const LLColor4& side_color, S32 steps, bool render_center )
 {
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
     {
-        gGL.translateUI(0.f, 0.f, -width / 2);
+        LLRender::instance().translateUI(0.f, 0.f, -width / 2);
         if( render_center )
         {
-            gGL.color4fv(center_color.mV);
-            gGL.diffuseColor4fv(center_color.mV);
+            LLRender::instance().color4fv(center_color.mV);
+            LLRender::instance().diffuseColor4fv(center_color.mV);
             gl_deep_circle( radius, width, steps );
         }
         else
         {
-            gGL.diffuseColor4fv(side_color.mV);
+            LLRender::instance().diffuseColor4fv(side_color.mV);
             gl_washer_2d(radius, radius - width, steps, side_color, side_color);
-            gGL.translateUI(0.f, 0.f, width);
+            LLRender::instance().translateUI(0.f, 0.f, width);
             gl_washer_2d(radius - width, radius, steps, side_color, side_color);
         }
     }
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 // Draw gray and white checkerboard with black border
@@ -977,16 +977,16 @@ void gl_rect_2d_checkerboard(const LLRect& rect, GLfloat alpha)
 {
     //polygon stipple is deprecated, use "Checker" texture
     LLPointer<LLUIImage> img = LLRender2D::getInstance()->getUIImage("Checker");
-    gGL.getTexUnit(0)->bind(img->getImage());
-    gGL.getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_WRAP);
-    gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
+    LLRender::instance().getTexUnit(0)->bind(img->getImage());
+    LLRender::instance().getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_WRAP);
+    LLRender::instance().getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
 
     LLColor4 color(1.f, 1.f, 1.f, alpha);
     LLRectf uv_rect(0, 0, rect.getWidth()/32.f, rect.getHeight()/32.f);
 
     gl_draw_scaled_image(rect.mLeft, rect.mBottom, rect.getWidth(), rect.getHeight(), img->getImage(), color, uv_rect);
 
-    gGL.flush();
+    LLRender::instance().flush();
 }
 
 
@@ -1003,17 +1003,17 @@ void gl_washer_2d(F32 outer_radius, F32 inner_radius, S32 steps, const LLColor4&
     F32 x2 = inner_radius;
     F32 y2 = 0.f;
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
-    gGL.begin( LLRender::TRIANGLE_STRIP  );
+    LLRender::instance().begin( LLRender::TRIANGLE_STRIP  );
     {
         steps += 1; // An extra step to close the circle.
         while( steps-- )
         {
-            gGL.color4fv(outer_color.mV);
-            gGL.vertex2f( x1, y1 );
-            gGL.color4fv(inner_color.mV);
-            gGL.vertex2f( x2, y2 );
+            LLRender::instance().color4fv(outer_color.mV);
+            LLRender::instance().vertex2f( x1, y1 );
+            LLRender::instance().color4fv(inner_color.mV);
+            LLRender::instance().vertex2f( x2, y2 );
 
             F32 x1_new = x1 * COS_DELTA - y1 * SIN_DELTA;
             y1 = x1 * SIN_DELTA +  y1 * COS_DELTA;
@@ -1024,7 +1024,7 @@ void gl_washer_2d(F32 outer_radius, F32 inner_radius, S32 steps, const LLColor4&
             x2 = x2_new;
         }
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 // Draws the area between two concentric circles, like
@@ -1040,16 +1040,16 @@ void gl_washer_segment_2d(F32 outer_radius, F32 inner_radius, F32 start_radians,
     F32 x2 = inner_radius * cos( start_radians );
     F32 y2 = inner_radius * sin( start_radians );
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-    gGL.begin( LLRender::TRIANGLE_STRIP  );
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().begin( LLRender::TRIANGLE_STRIP  );
     {
         steps += 1; // An extra step to close the circle.
         while( steps-- )
         {
-            gGL.color4fv(outer_color.mV);
-            gGL.vertex2f( x1, y1 );
-            gGL.color4fv(inner_color.mV);
-            gGL.vertex2f( x2, y2 );
+            LLRender::instance().color4fv(outer_color.mV);
+            LLRender::instance().vertex2f( x1, y1 );
+            LLRender::instance().color4fv(inner_color.mV);
+            LLRender::instance().vertex2f( x2, y2 );
 
             F32 x1_new = x1 * COS_DELTA - y1 * SIN_DELTA;
             y1 = x1 * SIN_DELTA +  y1 * COS_DELTA;
@@ -1060,45 +1060,45 @@ void gl_washer_segment_2d(F32 outer_radius, F32 inner_radius, F32 start_radians,
             x2 = x2_new;
         }
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void gl_rect_2d_simple_tex( S32 width, S32 height )
 {
-    gGL.begin( LLRender::TRIANGLES );
+    LLRender::instance().begin( LLRender::TRIANGLES );
 
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex2i(0, height);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex2i(0, height);
 
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex2i(0, 0);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex2i(0, 0);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex2i(width, 0);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex2i(width, 0);
 
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void gl_rect_2d_simple( S32 width, S32 height )
 {
-    gGL.begin( LLRender::TRIANGLES );
-        gGL.vertex2i(width, height);
-        gGL.vertex2i(0, height);
-        gGL.vertex2i(0, 0);
+    LLRender::instance().begin( LLRender::TRIANGLES );
+        LLRender::instance().vertex2i(width, height);
+        LLRender::instance().vertex2i(0, height);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.vertex2i(width, height);
-        gGL.vertex2i(0, 0);
-        gGL.vertex2i(width, 0);
-    gGL.end();
+        LLRender::instance().vertex2i(width, height);
+        LLRender::instance().vertex2i(0, 0);
+        LLRender::instance().vertex2i(width, 0);
+    LLRender::instance().end();
 }
 
 void gl_segmented_rect_2d_tex(const S32 left,
@@ -1115,9 +1115,9 @@ void gl_segmented_rect_2d_tex(const S32 left,
     S32 width = llabs(right - left);
     S32 height = llabs(top - bottom);
 
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
 
-    gGL.translateUI((F32)left, (F32)bottom, 0.f);
+    LLRender::instance().translateUI((F32)left, (F32)bottom, 0.f);
     LLVector2 border_uv_scale((F32)border_size / (F32)texture_width, (F32)border_size / (F32)texture_height);
 
     if (border_uv_scale.mV[VX] > 0.5f)
@@ -1137,182 +1137,182 @@ void gl_segmented_rect_2d_tex(const S32 left,
     LLVector2 width_vec((F32)width, 0.f);
     LLVector2 height_vec(0.f, (F32)height);
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
         // draw bottom left
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex2f(0.f, 0.f);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex2f(0.f, 0.f);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv(border_width_left.mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv(border_width_left.mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex2f(0.f, 0.f);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex2f(0.f, 0.f);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
-        gGL.texCoord2f(0.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv(border_height_bottom.mV);
+        LLRender::instance().texCoord2f(0.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv(border_height_bottom.mV);
 
         // draw bottom middle
-        gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv(border_width_left.mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv(border_width_left.mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv((width_vec - border_width_right).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv(border_width_left.mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv(border_width_left.mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
         // draw bottom right
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv((width_vec - border_width_right).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right).mV);
 
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex2fv(width_vec.mV);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex2fv(width_vec.mV);
 
-        gGL.texCoord2f(1.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
-        gGL.vertex2fv((width_vec - border_width_right).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right).mV);
 
-        gGL.texCoord2f(1.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
         // draw left
-        gGL.texCoord2f(0.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv(border_height_bottom.mV);
+        LLRender::instance().texCoord2f(0.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv(border_height_bottom.mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(0.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv(border_height_bottom.mV);
+        LLRender::instance().texCoord2f(0.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv(border_height_bottom.mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((height_vec - border_height_top).mV);
 
         // draw middle
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
         // draw right
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f, border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f, border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + border_height_bottom).mV);
 
-        gGL.texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
         // draw top left
-        gGL.texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((border_width_left + height_vec).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((border_width_left + height_vec).mV);
 
-        gGL.texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(0.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((border_width_left + height_vec).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((border_width_left + height_vec).mV);
 
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex2fv((height_vec).mV);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex2fv((height_vec).mV);
 
         // draw top middle
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((border_width_left + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((border_width_left + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec).mV);
 
-        gGL.texCoord2f(border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((border_width_left + height_vec).mV);
+        LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((border_width_left + height_vec).mV);
 
         // draw top right
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f, 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex2fv((width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex2fv((width_vec + height_vec).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec - border_height_top).mV);
 
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex2fv((width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex2fv((width_vec + height_vec).mV);
 
-        gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
-        gGL.vertex2fv((width_vec - border_width_right + height_vec).mV);
+        LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
+        LLRender::instance().vertex2fv((width_vec - border_width_right + height_vec).mV);
     }
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
@@ -1331,9 +1331,9 @@ void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
     S32 width = llabs(right - left);
     S32 height = llabs(top - bottom);
 
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
 
-    gGL.translateUI((F32)left, (F32)bottom, 0.f);
+    LLRender::instance().translateUI((F32)left, (F32)bottom, 0.f);
     LLVector2 border_uv_scale((F32)border_size / (F32)texture_width, (F32)border_size / (F32)texture_height);
 
     if (border_uv_scale.mV[VX] > 0.5f)
@@ -1361,7 +1361,7 @@ void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
     LLVector2 x_min;
     LLVector2 x_max;
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
         if (start_fragment < middle_start)
         {
@@ -1371,61 +1371,61 @@ void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
             x_max = llmin(end_fragment / middle_start, 1.f) * border_width_left;
 
             // draw bottom left
-            gGL.texCoord2f(u_min, 0.f);
-            gGL.vertex2fv(x_min.mV);
+            LLRender::instance().texCoord2f(u_min, 0.f);
+            LLRender::instance().vertex2fv(x_min.mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-            gGL.vertex2fv(x_max.mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+            LLRender::instance().vertex2fv(x_max.mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_min, 0.f);
-            gGL.vertex2fv(x_min.mV);
+            LLRender::instance().texCoord2f(u_min, 0.f);
+            LLRender::instance().vertex2fv(x_min.mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
             // draw left
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
             // draw top left
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(u_min, 1.f);
-            gGL.vertex2fv((x_min + height_vec).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f);
+            LLRender::instance().vertex2fv((x_min + height_vec).mV);
         }
 
         if (end_fragment > middle_start || start_fragment < middle_end)
@@ -1434,61 +1434,61 @@ void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
             x_max = border_width_left + ((llclamp(end_fragment, middle_start, middle_end) - middle_start)) * width_vec;
 
             // draw bottom middle
-            gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-            gGL.vertex2fv(x_min.mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+            LLRender::instance().vertex2fv(x_min.mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
-            gGL.vertex2fv((x_max).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 0.f);
+            LLRender::instance().vertex2fv((x_max).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], 0.f);
-            gGL.vertex2fv(x_min.mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 0.f);
+            LLRender::instance().vertex2fv(x_min.mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
             // draw middle
-            gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
             // draw top middle
-            gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(1.f - border_uv_scale.mV[VX], 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(border_uv_scale.mV[VX], 1.f);
-            gGL.vertex2fv((x_min + height_vec).mV);
+            LLRender::instance().texCoord2f(border_uv_scale.mV[VX], 1.f);
+            LLRender::instance().vertex2fv((x_min + height_vec).mV);
         }
 
         if (end_fragment > middle_end)
@@ -1499,66 +1499,66 @@ void gl_segmented_rect_2d_fragment_tex(const LLRect& rect,
             x_max = width_vec   - ((1.f - ((end_fragment - middle_end) / middle_start)) * border_width_right);
 
             // draw bottom right
-            gGL.texCoord2f(u_min, 0.f);
-            gGL.vertex2fv((x_min).mV);
+            LLRender::instance().texCoord2f(u_min, 0.f);
+            LLRender::instance().vertex2fv((x_min).mV);
 
-            gGL.texCoord2f(u_max, 0.f);
-            gGL.vertex2fv(x_max.mV);
+            LLRender::instance().texCoord2f(u_max, 0.f);
+            LLRender::instance().vertex2fv(x_max.mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_min, 0.f);
-            gGL.vertex2fv((x_min).mV);
+            LLRender::instance().texCoord2f(u_min, 0.f);
+            LLRender::instance().vertex2fv((x_min).mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
             // draw right
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_max, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_min, border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + border_height_bottom).mV);
+            LLRender::instance().texCoord2f(u_min, border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + border_height_bottom).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
             // draw top right
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_max + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_max + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
-            gGL.vertex2fv((x_min + height_vec - border_height_top).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f - border_uv_scale.mV[VY]);
+            LLRender::instance().vertex2fv((x_min + height_vec - border_height_top).mV);
 
-            gGL.texCoord2f(u_max, 1.f);
-            gGL.vertex2fv((x_max + height_vec).mV);
+            LLRender::instance().texCoord2f(u_max, 1.f);
+            LLRender::instance().vertex2fv((x_max + height_vec).mV);
 
-            gGL.texCoord2f(u_min, 1.f);
-            gGL.vertex2fv((x_min + height_vec).mV);
+            LLRender::instance().texCoord2f(u_min, 1.f);
+            LLRender::instance().vertex2fv((x_min + height_vec).mV);
         }
     }
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 
 void gl_segmented_rect_3d_tex(const LLRectf& clip_rect, const LLRectf& center_uv_rect, const LLRectf& center_draw_rect,
@@ -1566,180 +1566,180 @@ void gl_segmented_rect_3d_tex(const LLRectf& clip_rect, const LLRectf& center_uv
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_UI;
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
         // draw bottom left
-        gGL.texCoord2f(clip_rect.mLeft, clip_rect.mBottom);
-        gGL.vertex3f(0.f, 0.f, 0.f);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, clip_rect.mBottom);
+        LLRender::instance().vertex3f(0.f, 0.f, 0.f);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, clip_rect.mBottom);
-        gGL.vertex3f(0.f, 0.f, 0.f);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, clip_rect.mBottom);
+        LLRender::instance().vertex3f(0.f, 0.f, 0.f);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mBottom * height_vec).mV);
 
         // draw bottom middle
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
         // draw bottom right
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, clip_rect.mBottom);
-        gGL.vertex3fv(width_vec.mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, clip_rect.mBottom);
+        LLRender::instance().vertex3fv(width_vec.mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
         // draw left
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mTop * height_vec).mV);
 
         // draw middle
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
         // draw right
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
-        gGL.vertex3fv((center_draw_rect.mRight* width_vec + center_draw_rect.mBottom * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mBottom);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight* width_vec + center_draw_rect.mBottom * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
 
         // draw top left
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mLeft, clip_rect.mTop);
-        gGL.vertex3fv((height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mLeft, clip_rect.mTop);
+        LLRender::instance().vertex3fv((height_vec).mV);
 
         // draw top middle
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight* width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight* width_vec + height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mLeft, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mLeft * width_vec + height_vec).mV);
 
         // draw top right
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, clip_rect.mTop);
-        gGL.vertex3fv((width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, clip_rect.mTop);
+        LLRender::instance().vertex3fv((width_vec + height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight* width_vec + center_draw_rect.mTop * height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, center_uv_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight* width_vec + center_draw_rect.mTop * height_vec).mV);
 
-        gGL.texCoord2f(clip_rect.mRight, clip_rect.mTop);
-        gGL.vertex3fv((width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(clip_rect.mRight, clip_rect.mTop);
+        LLRender::instance().vertex3fv((width_vec + height_vec).mV);
 
-        gGL.texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
-        gGL.vertex3fv((center_draw_rect.mRight * width_vec + height_vec).mV);
+        LLRender::instance().texCoord2f(center_uv_rect.mRight, clip_rect.mTop);
+        LLRender::instance().vertex3fv((center_draw_rect.mRight * width_vec + height_vec).mV);
     }
-    gGL.end();
+    LLRender::instance().end();
 
 }
 
@@ -1764,7 +1764,7 @@ LLRender2D::~LLRender2D()
 // static
 void LLRender2D::translate(F32 x, F32 y, F32 z)
 {
-    gGL.translateUI(x,y,z);
+    LLRender::instance().translateUI(x,y,z);
     LLFontGL::sCurOrigin.mX += (S32) x;
     LLFontGL::sCurOrigin.mY += (S32) y;
     LLFontGL::sCurDepth += z;
@@ -1773,14 +1773,14 @@ void LLRender2D::translate(F32 x, F32 y, F32 z)
 // static
 void LLRender2D::pushMatrix()
 {
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
     LLFontGL::sOriginStack.push_back(std::make_pair(LLFontGL::sCurOrigin, LLFontGL::sCurDepth));
 }
 
 // static
 void LLRender2D::popMatrix()
 {
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
     LLFontGL::sCurOrigin = LLFontGL::sOriginStack.back().first;
     LLFontGL::sCurDepth = LLFontGL::sOriginStack.back().second;
     LLFontGL::sOriginStack.pop_back();
@@ -1789,7 +1789,7 @@ void LLRender2D::popMatrix()
 // static
 void LLRender2D::loadIdentity()
 {
-    gGL.loadUIIdentity();
+    LLRender::instance().loadUIIdentity();
     LLFontGL::sCurOrigin.mX = 0;
     LLFontGL::sCurOrigin.mY = 0;
     LLFontGL::sCurDepth = 0.f;
@@ -1799,7 +1799,7 @@ void LLRender2D::loadIdentity()
 void LLRender2D::setLineWidth(F32 width)
 {
     width *= lerp(LLRender::sUIGLScaleFactor.mV[VX], LLRender::sUIGLScaleFactor.mV[VY], 0.5f);
-    gGL.setLineWidth(width);
+    LLRender::instance().setLineWidth(width);
 }
 
 LLPointer<LLUIImage> LLRender2D::getUIImageByID(const LLUUID& image_id, S32 priority)

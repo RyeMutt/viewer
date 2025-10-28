@@ -309,22 +309,22 @@ void LLHeroProbeManager::updateProbeFace(LLReflectionMap* probe, U32 face, bool 
     // Unlike the reflectionmap manager, all probes are considered "realtime" for hero probes.
     sourceIdx += 1;
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
     LLGLDepthTest depth(GL_FALSE, GL_FALSE);
     LLGLDisable cull(GL_CULL_FACE);
     LLGLDisable blend(GL_BLEND);
 
     // downsample to placeholder map
     {
-        gGL.matrixMode(gGL.MM_MODELVIEW);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::instance().MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
 
-        gGL.matrixMode(gGL.MM_PROJECTION);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::instance().MM_PROJECTION);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
 
-        gGL.flush();
+        LLRender::instance().flush();
         U32 res = mProbeResolution * 2;
 
         static LLStaticHashedString resScale("resScale");
@@ -343,7 +343,7 @@ void LLHeroProbeManager::updateProbeFace(LLReflectionMap* probe, U32 face, bool 
 
             // horizontal
             gGaussianProgram.uniform2f(direction, 1.f, 0.f);
-            gGL.getTexUnit(diffuseChannel)->bind(screen_rt);
+            LLRender::instance().getTexUnit(diffuseChannel)->bind(screen_rt);
             mRenderTarget.bindTarget();
             gPipeline.mScreenTriangleVB->setBuffer();
             gPipeline.mScreenTriangleVB->drawArrays(LLRender::TRIANGLES, 0, 3);
@@ -351,7 +351,7 @@ void LLHeroProbeManager::updateProbeFace(LLReflectionMap* probe, U32 face, bool 
 
             // vertical
             gGaussianProgram.uniform2f(direction, 0.f, 1.f);
-            gGL.getTexUnit(diffuseChannel)->bind(&mRenderTarget);
+            LLRender::instance().getTexUnit(diffuseChannel)->bind(&mRenderTarget);
             screen_rt->bindTarget();
             gPipeline.mScreenTriangleVB->setBuffer();
             gPipeline.mScreenTriangleVB->drawArrays(LLRender::TRIANGLES, 0, 3);
@@ -371,14 +371,14 @@ void LLHeroProbeManager::updateProbeFace(LLReflectionMap* probe, U32 face, bool 
             mMipChain[i].bindTarget();
             if (i == 0)
             {
-                gGL.getTexUnit(diffuseChannel)->bind(screen_rt);
+                LLRender::instance().getTexUnit(diffuseChannel)->bind(screen_rt);
             }
             else
             {
-                gGL.getTexUnit(diffuseChannel)->bind(&(mMipChain[i - 1]));
+                LLRender::instance().getTexUnit(diffuseChannel)->bind(&(mMipChain[i - 1]));
             }
 
-            gGL.getTexUnit(depthChannel)->bind(depth_rt, true);
+            LLRender::instance().getTexUnit(depthChannel)->bind(depth_rt, true);
 
             gReflectionMipProgram.uniform1f(resScale, 1.f / (mProbeResolution * 2));
             gReflectionMipProgram.uniform1f(znear, probe->getNearClip());
@@ -404,11 +404,11 @@ void LLHeroProbeManager::updateProbeFace(LLReflectionMap* probe, U32 face, bool 
             mMipChain[i].flush();
         }
 
-        gGL.popMatrix();
-        gGL.matrixMode(gGL.MM_MODELVIEW);
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
+        LLRender::instance().matrixMode(LLRender::instance().MM_MODELVIEW);
+        LLRender::instance().popMatrix();
 
-        gGL.getTexUnit(diffuseChannel)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(diffuseChannel)->unbind(LLTexUnit::TT_TEXTURE);
         gReflectionMipProgram.unbind();
     }
 }
@@ -460,9 +460,9 @@ void LLHeroProbeManager::generateRadiance(LLReflectionMap* probe)
 
                     F32 mat[16];
                     frame.getOpenGLRotation(mat);
-                    gGL.loadMatrix(mat);
+                    LLRender::instance().loadMatrix(mat);
 
-                    mVertexBuffer->drawArrays(gGL.TRIANGLE_STRIP, 0, 4);
+                    mVertexBuffer->drawArrays(LLRender::instance().TRIANGLE_STRIP, 0, 4);
 
                     glCopyTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, i, 0, 0, probe->mCubeIndex * 6 + cf, 0, 0, res, res);
                 }

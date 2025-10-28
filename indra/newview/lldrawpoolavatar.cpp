@@ -290,7 +290,7 @@ void LLDrawPoolAvatar::beginShadowPass(S32 pass)
             sVertexProgram->bind();
         }
 
-        gGL.diffuseColor4f(1, 1, 1, 1);
+        LLRender::instance().diffuseColor4f(1, 1, 1, 1);
     }
     else if (pass == SHADOW_PASS_AVATAR_ALPHA_BLEND)
     {
@@ -310,7 +310,7 @@ void LLDrawPoolAvatar::beginShadowPass(S32 pass)
             sVertexProgram->bind();
         }
 
-        gGL.diffuseColor4f(1, 1, 1, 1);
+        LLRender::instance().diffuseColor4f(1, 1, 1, 1);
     }
     else if (pass == SHADOW_PASS_AVATAR_ALPHA_MASK)
     {
@@ -330,7 +330,7 @@ void LLDrawPoolAvatar::beginShadowPass(S32 pass)
             sVertexProgram->bind();
         }
 
-        gGL.diffuseColor4f(1, 1, 1, 1);
+        LLRender::instance().diffuseColor4f(1, 1, 1, 1);
     }
 }
 
@@ -458,7 +458,7 @@ void LLDrawPoolAvatar::beginRenderPass(S32 pass)
 
     if (pass == 0)
     { //make sure no stale colors are left over from a previous render
-        gGL.diffuseColor4f(1,1,1,1);
+        LLRender::instance().diffuseColor4f(1,1,1,1);
     }
 }
 
@@ -587,7 +587,7 @@ void LLDrawPoolAvatar::endDeferredRigid()
     sShaderLevel = mShaderLevel;
     sVertexProgram->disableTexture(LLViewerShaderMgr::DIFFUSE_MAP);
     sVertexProgram->unbind();
-    gGL.getTexUnit(0)->activate();
+    LLRender::instance().getTexUnit(0)->activate();
 }
 
 
@@ -614,7 +614,7 @@ void LLDrawPoolAvatar::endSkinned()
     {
         sRenderingSkinned = false;
         sVertexProgram->disableTexture(LLViewerShaderMgr::BUMP_MAP);
-        gGL.getTexUnit(0)->activate();
+        LLRender::instance().getTexUnit(0)->activate();
         sVertexProgram->unbind();
         sShaderLevel = mShaderLevel;
     }
@@ -628,7 +628,7 @@ void LLDrawPoolAvatar::endSkinned()
         }
     }
 
-    gGL.getTexUnit(0)->activate();
+    LLRender::instance().getTexUnit(0)->activate();
 }
 
 void LLDrawPoolAvatar::beginDeferredSkinned()
@@ -642,7 +642,7 @@ void LLDrawPoolAvatar::beginDeferredSkinned()
     sVertexProgram->bind();
     sVertexProgram->setMinimumAlpha(LLDrawPoolAvatar::sMinimumAlpha);
     sDiffuseChannel = sVertexProgram->enableTexture(LLViewerShaderMgr::DIFFUSE_MAP);
-    gGL.getTexUnit(0)->activate();
+    LLRender::instance().getTexUnit(0)->activate();
 }
 
 void LLDrawPoolAvatar::endDeferredSkinned()
@@ -657,7 +657,7 @@ void LLDrawPoolAvatar::endDeferredSkinned()
 
     sShaderLevel = mShaderLevel;
 
-    gGL.getTexUnit(0)->activate();
+    LLRender::instance().getTexUnit(0)->activate();
 }
 
 void LLDrawPoolAvatar::renderAvatars(LLVOAvatar* single_avatar, S32 pass)
@@ -708,21 +708,21 @@ void LLDrawPoolAvatar::renderAvatars(LLVOAvatar* single_avatar, S32 pass)
         if (pass==0 && (!gPipeline.hasRenderType(LLPipeline::RENDER_TYPE_PARTICLES) || LLViewerPartSim::getMaxPartCount() <= 0))
         {
             // debug code to draw a sphere in place of avatar
-            gGL.getTexUnit(0)->bind(LLViewerFetchedTexture::sWhiteImagep);
-            gGL.setColorMask(true, true);
+            LLRender::instance().getTexUnit(0)->bind(LLViewerFetchedTexture::sWhiteImagep);
+            LLRender::instance().setColorMask(true, true);
             LLVector3 pos = avatarp->getPositionAgent();
-            gGL.color4f(1.0f, 1.0f, 1.0f, 0.7f);
+            LLRender::instance().color4f(1.0f, 1.0f, 1.0f, 0.7f);
 
-            gGL.pushMatrix();
-            gGL.translatef((F32)(pos.mV[VX]),
+            LLRender::instance().pushMatrix();
+            LLRender::instance().translatef((F32)(pos.mV[VX]),
                            (F32)(pos.mV[VY]),
                             (F32)(pos.mV[VZ]));
-             gGL.scalef(0.15f, 0.15f, 0.3f);
+             LLRender::instance().scalef(0.15f, 0.15f, 0.3f);
 
              gSphere.renderGGL();
 
-             gGL.popMatrix();
-             gGL.setColorMask(true, false);
+             LLRender::instance().popMatrix();
+             LLRender::instance().setColorMask(true, false);
         }
         // don't render please
         return;

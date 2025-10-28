@@ -85,7 +85,7 @@ bool LLTerrainPaintMap::bakeHeightNoiseIntoPBRPaintMapRGB(const LLViewerRegion& 
         LL_WARNS() << "Failed to allocate render target" << LL_ENDL;
         return false;
     }
-    gGL.getTexUnit(0)->disable();
+    LLRender::instance().getTexUnit(0)->disable();
     stop_glerror();
 
     scratch_target.bindTarget();
@@ -115,17 +115,17 @@ bool LLTerrainPaintMap::bakeHeightNoiseIntoPBRPaintMapRGB(const LLViewerRegion& 
     GLfloat ogl_matrix[16];
     camera.getOpenGLTransform(ogl_matrix);
     modelview *= glm::make_mat4(ogl_matrix);
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.loadMatrix(glm::value_ptr(modelview));
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().loadMatrix(glm::value_ptr(modelview));
     // Override the projection matrix from the camera
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.loadIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadIdentity();
     llassert(camera_origin.mV[VZ] >= surface.getMaxZ());
     const F32 region_high_near = camera_origin.mV[VZ] - surface.getMaxZ();
     constexpr F32 far_plane_delta = 0.25f;
     const F32 region_low_far = camera_origin.mV[VZ] - surface.getMinZ() + far_plane_delta;
-    gGL.ortho(-region_half_width, region_half_width, -region_half_width, region_half_width, region_high_near, region_low_far);
+    LLRender::instance().ortho(-region_half_width, region_half_width, -region_half_width, region_half_width, region_high_near, region_low_far);
     // No need to call camera.setPerspective because we don't need the clip planes. It would be inaccurate due to the perspective rendering anyway.
 
     // Need to get the full resolution vertices in order to get an accurate
@@ -238,8 +238,8 @@ bool LLTerrainPaintMap::bakeHeightNoiseIntoPBRPaintMapRGB(const LLViewerRegion& 
 
         S32 alpha_ramp = shader.enableTexture(LLViewerShaderMgr::TERRAIN_ALPHARAMP);
         LLPointer<LLViewerTexture> alpha_ramp_texture = LLViewerTextureManager::getFetchedTexture(IMG_ALPHA_GRAD_2D);
-        gGL.getTexUnit(alpha_ramp)->bind(alpha_ramp_texture);
-        gGL.getTexUnit(alpha_ramp)->setTextureAddressMode(LLTexUnit::TAM_CLAMP);
+        LLRender::instance().getTexUnit(alpha_ramp)->bind(alpha_ramp_texture);
+        LLRender::instance().getTexUnit(alpha_ramp)->setTextureAddressMode(LLTexUnit::TAM_CLAMP);
 
         buf->setBuffer();
         for (U32 rj = 0; rj < patch_count; ++rj)
@@ -257,17 +257,17 @@ bool LLTerrainPaintMap::bakeHeightNoiseIntoPBRPaintMapRGB(const LLViewerRegion& 
 
         shader.disableTexture(LLViewerShaderMgr::TERRAIN_ALPHARAMP);
 
-        gGL.getTexUnit(alpha_ramp)->unbind(LLTexUnit::TT_TEXTURE);
-        gGL.getTexUnit(alpha_ramp)->disable();
-        gGL.getTexUnit(alpha_ramp)->activate();
+        LLRender::instance().getTexUnit(alpha_ramp)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(alpha_ramp)->disable();
+        LLRender::instance().getTexUnit(alpha_ramp)->activate();
 
         shader.unbind();
     }
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
 
-    gGL.flush();
+    LLRender::instance().flush();
     LLVertexBuffer::unbind();
     // Final step: Copy the output to the terrain paintmap
     const bool success = tex.getGLTexture()->setSubImageFromFrameBuffer(0, 0, 0, 0, dim, dim);

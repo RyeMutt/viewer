@@ -77,7 +77,7 @@ void load_exr(const std::string& filename)
         gEXRImage->setUseMipMaps(true);
         gEXRImage->setFilteringOption(LLTexUnit::TFO_TRILINEAR);
 
-        gGL.getTexUnit(0)->bind(gEXRImage);
+        LLRender::instance().getTexUnit(0)->bind(gEXRImage);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGBA, GL_FLOAT, out);
 
@@ -87,7 +87,7 @@ void load_exr(const std::string& filename)
 
         glGenerateMipmap(GL_TEXTURE_2D);
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     }
     else
@@ -802,22 +802,22 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
         sourceIdx += 1;
     }
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
     LLGLDepthTest depth(GL_FALSE, GL_FALSE);
     LLGLDisable cull(GL_CULL_FACE);
     LLGLDisable blend(GL_BLEND);
 
     // downsample to placeholder map
     {
-        gGL.matrixMode(gGL.MM_MODELVIEW);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::instance().MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
 
-        gGL.matrixMode(gGL.MM_PROJECTION);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::instance().MM_PROJECTION);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
 
-        gGL.flush();
+        LLRender::instance().flush();
         U32 res = mProbeResolution * 2;
 
         static LLStaticHashedString resScale("resScale");
@@ -835,7 +835,7 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
 
             // horizontal
             gGaussianProgram.uniform2f(direction, 1.f, 0.f);
-            gGL.getTexUnit(diffuseChannel)->bind(screen_rt);
+            LLRender::instance().getTexUnit(diffuseChannel)->bind(screen_rt);
             mRenderTarget.bindTarget();
             gPipeline.mScreenTriangleVB->setBuffer();
             gPipeline.mScreenTriangleVB->drawArrays(LLRender::TRIANGLES, 0, 3);
@@ -843,7 +843,7 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
 
             // vertical
             gGaussianProgram.uniform2f(direction, 0.f, 1.f);
-            gGL.getTexUnit(diffuseChannel)->bind(&mRenderTarget);
+            LLRender::instance().getTexUnit(diffuseChannel)->bind(&mRenderTarget);
             screen_rt->bindTarget();
             gPipeline.mScreenTriangleVB->setBuffer();
             gPipeline.mScreenTriangleVB->drawArrays(LLRender::TRIANGLES, 0, 3);
@@ -862,11 +862,11 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
             mMipChain[i].bindTarget();
             if (i == 0)
             {
-                gGL.getTexUnit(diffuseChannel)->bind(screen_rt);
+                LLRender::instance().getTexUnit(diffuseChannel)->bind(screen_rt);
             }
             else
             {
-                gGL.getTexUnit(diffuseChannel)->bind(&(mMipChain[i - 1]));
+                LLRender::instance().getTexUnit(diffuseChannel)->bind(&(mMipChain[i - 1]));
             }
 
 
@@ -894,11 +894,11 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
             mMipChain[i].flush();
         }
 
-        gGL.popMatrix();
-        gGL.matrixMode(gGL.MM_MODELVIEW);
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
+        LLRender::instance().matrixMode(LLRender::instance().MM_MODELVIEW);
+        LLRender::instance().popMatrix();
 
-        gGL.getTexUnit(diffuseChannel)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(diffuseChannel)->unbind(LLTexUnit::TT_TEXTURE);
         gReflectionMipProgram.unbind();
     }
 
@@ -939,9 +939,9 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
 
                     F32 mat[16];
                     frame.getOpenGLRotation(mat);
-                    gGL.loadMatrix(mat);
+                    LLRender::instance().loadMatrix(mat);
 
-                    mVertexBuffer->drawArrays(gGL.TRIANGLE_STRIP, 0, 4);
+                    mVertexBuffer->drawArrays(LLRender::instance().TRIANGLE_STRIP, 0, 4);
 
                     glCopyTexSubImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, i, 0, 0, probe->mCubeIndex * 6 + cf, 0, 0, res, res);
                 }
@@ -988,9 +988,9 @@ void LLReflectionMapManager::updateProbeFace(LLReflectionMap* probe, U32 face)
 
                     F32 mat[16];
                     frame.getOpenGLRotation(mat);
-                    gGL.loadMatrix(mat);
+                    LLRender::instance().loadMatrix(mat);
 
-                    mVertexBuffer->drawArrays(gGL.TRIANGLE_STRIP, 0, 4);
+                    mVertexBuffer->drawArrays(LLRender::instance().TRIANGLE_STRIP, 0, 4);
 
                     S32 res = mMipChain[i].getWidth();
                     mIrradianceMaps->bind(channel);
@@ -1330,9 +1330,9 @@ void renderReflectionProbe(LLReflectionMap* probe)
         F32* po = probe->mOrigin.getF32ptr();
 
         //draw orange line from probe to neighbors
-        gGL.flush();
-        gGL.diffuseColor4f(1, 0.5f, 0, 1);
-        gGL.begin(gGL.LINES);
+        LLRender::instance().flush();
+        LLRender::instance().diffuseColor4f(1, 0.5f, 0, 1);
+        LLRender::instance().begin(LLRender::instance().LINES);
         for (auto& neighbor : probe->mNeighbors)
         {
             if (probe->mViewerObject && neighbor->mViewerObject)
@@ -1340,24 +1340,24 @@ void renderReflectionProbe(LLReflectionMap* probe)
                 continue;
             }
 
-            gGL.vertex3fv(po);
-            gGL.vertex3fv(neighbor->mOrigin.getF32ptr());
+            LLRender::instance().vertex3fv(po);
+            LLRender::instance().vertex3fv(neighbor->mOrigin.getF32ptr());
         }
-        gGL.end();
-        gGL.flush();
+        LLRender::instance().end();
+        LLRender::instance().flush();
 
-        gGL.diffuseColor4f(1, 1, 0, 1);
-        gGL.begin(gGL.LINES);
+        LLRender::instance().diffuseColor4f(1, 1, 0, 1);
+        LLRender::instance().begin(LLRender::instance().LINES);
         for (auto& neighbor : probe->mNeighbors)
         {
             if (probe->mViewerObject && neighbor->mViewerObject)
             {
-                gGL.vertex3fv(po);
-                gGL.vertex3fv(neighbor->mOrigin.getF32ptr());
+                LLRender::instance().vertex3fv(po);
+                LLRender::instance().vertex3fv(neighbor->mOrigin.getF32ptr());
             }
         }
-        gGL.end();
-        gGL.flush();
+        LLRender::instance().end();
+        LLRender::instance().flush();
     }
 
 #if 0
@@ -1368,42 +1368,42 @@ void renderReflectionProbe(LLReflectionMap* probe)
         const LLVector4a* bounds = group->getBounds();
         LLVector4a o = bounds[0];
 
-        gGL.flush();
-        gGL.diffuseColor4f(0, 0, 1, 1);
+        LLRender::instance().flush();
+        LLRender::instance().diffuseColor4f(0, 0, 1, 1);
         F32* c = o.getF32ptr();
 
         const F32* bc = bounds[0].getF32ptr();
         const F32* bs = bounds[1].getF32ptr();
 
         // daaw blue lines from corners to center of node
-        gGL.begin(gGL.LINES);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] + bs[0], bc[1] + bs[1], bc[2] + bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] - bs[0], bc[1] + bs[1], bc[2] + bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] + bs[0], bc[1] - bs[1], bc[2] + bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] - bs[0], bc[1] - bs[1], bc[2] + bs[2]);
+        LLRender::instance().begin(LLRender::instance().LINES);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] + bs[0], bc[1] + bs[1], bc[2] + bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] - bs[0], bc[1] + bs[1], bc[2] + bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] + bs[0], bc[1] - bs[1], bc[2] + bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] - bs[0], bc[1] - bs[1], bc[2] + bs[2]);
 
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] + bs[0], bc[1] + bs[1], bc[2] - bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] - bs[0], bc[1] + bs[1], bc[2] - bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] + bs[0], bc[1] - bs[1], bc[2] - bs[2]);
-        gGL.vertex3fv(c);
-        gGL.vertex3f(bc[0] - bs[0], bc[1] - bs[1], bc[2] - bs[2]);
-        gGL.end();
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] + bs[0], bc[1] + bs[1], bc[2] - bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] - bs[0], bc[1] + bs[1], bc[2] - bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] + bs[0], bc[1] - bs[1], bc[2] - bs[2]);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3f(bc[0] - bs[0], bc[1] - bs[1], bc[2] - bs[2]);
+        LLRender::instance().end();
 
         //draw yellow line from center of node to reflection probe origin
-        gGL.flush();
-        gGL.diffuseColor4f(1, 1, 0, 1);
-        gGL.begin(gGL.LINES);
-        gGL.vertex3fv(c);
-        gGL.vertex3fv(po);
-        gGL.end();
-        gGL.flush();
+        LLRender::instance().flush();
+        LLRender::instance().diffuseColor4f(1, 1, 0, 1);
+        LLRender::instance().begin(LLRender::instance().LINES);
+        LLRender::instance().vertex3fv(c);
+        LLRender::instance().vertex3fv(po);
+        LLRender::instance().end();
+        LLRender::instance().flush();
     }
 #endif
 }

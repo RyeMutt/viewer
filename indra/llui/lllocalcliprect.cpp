@@ -83,7 +83,7 @@ void LLScreenClipRect::updateScissorRegion()
     if (sClipRectStack.empty()) return;
 
     // finish any deferred calls in the old clipping region
-    gGL.flush();
+    LLRender::instance().flush();
 
     LLRect rect = sClipRectStack.top();
     stop_glerror();

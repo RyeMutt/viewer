@@ -70,9 +70,9 @@ static U64 sTextureBytes = 0;
 // asserts that no currently tracked alloc exists
 void LLImageGLMemory::alloc_tex_image(U32 width, U32 height, U32 intformat, U32 count)
 {
-    U32 texUnit = gGL.getCurrentTexUnitIndex();
+    U32 texUnit = LLRender::instance().getCurrentTexUnitIndex();
     llassert(texUnit == 0); // allocations should always be done on tex unit 0
-    U32 texName = gGL.getTexUnit(texUnit)->getCurrTexture();
+    U32 texName = LLRender::instance().getTexUnit(texUnit)->getCurrTexture();
     U64 size = LLImageGL::dataFormatBytes(intformat, width, height);
     size *= count;
 
@@ -118,9 +118,9 @@ void LLImageGLMemory::free_tex_images(U32 count, const U32* texNames)
 // track texture free on currently bound texture
 void LLImageGLMemory::free_cur_tex_image()
 {
-    U32 texUnit = gGL.getCurrentTexUnitIndex();
+    U32 texUnit = LLRender::instance().getCurrentTexUnitIndex();
     llassert(texUnit == 0); // frees should always be done on tex unit 0
-    U32 texName = gGL.getTexUnit(texUnit)->getCurrTexture();
+    U32 texName = LLRender::instance().getTexUnit(texUnit)->getCurrTexture();
     free_tex_image(texName);
 }
 
@@ -419,7 +419,7 @@ void LLImageGL::destroyGL()
 {
     for (S32 stage = 0; stage < gGLManager.mNumTextureImageUnits; stage++)
     {
-        gGL.getTexUnit(stage)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(stage)->unbind(LLTexUnit::TT_TEXTURE);
     }
 }
 
@@ -749,7 +749,7 @@ bool LLImageGL::setImage(const U8* data_in, bool data_hasmips /* = false */, S32
     if (mUseMipMaps)
     {
         //set has mip maps to true before binding image so tex parameters get set properly
-        gGL.getTexUnit(0)->unbind(mBindTarget);
+        LLRender::instance().getTexUnit(0)->unbind(mBindTarget);
 
         mHasMipMaps = true;
         mTexOptionsDirty = true;
@@ -760,7 +760,7 @@ bool LLImageGL::setImage(const U8* data_in, bool data_hasmips /* = false */, S32
         mHasMipMaps = false;
     }
 
-    gGL.getTexUnit(0)->bind(this, false, false, usename);
+    LLRender::instance().getTexUnit(0)->bind(this, false, false, usename);
 
     if (data_in == nullptr)
     {
@@ -1187,7 +1187,7 @@ bool LLImageGL::setSubImage(const U8* datap, S32 data_width, S32 data_height, S3
 
         const U8* sub_datap = datap + (y_pos * data_width + x_pos) * getComponents();
         // Update the GL texture
-        bool res = gGL.getTexUnit(0)->bindManual(mBindTarget, tex_name);
+        bool res = LLRender::instance().getTexUnit(0)->bindManual(mBindTarget, tex_name);
         if (!res) LL_ERRS() << "LLImageGL::setSubImage(): bindTexture failed" << LL_ENDL;
         stop_glerror();
 
@@ -1204,7 +1204,7 @@ bool LLImageGL::setSubImage(const U8* datap, S32 data_width, S32 data_height, S3
         {
             sub_image_lines(mTarget, 0, x_pos, y_pos, width, height, mFormatPrimary, mFormatType, sub_datap, data_width);
         }
-        gGL.getTexUnit(0)->disable();
+        LLRender::instance().getTexUnit(0)->disable();
         stop_glerror();
 
         if(mFormatSwapBytes)
@@ -1229,7 +1229,7 @@ bool LLImageGL::setSubImage(const LLImageRaw* imageraw, S32 x_pos, S32 y_pos, S3
 // Copy sub image from frame buffer
 bool LLImageGL::setSubImageFromFrameBuffer(S32 fb_x, S32 fb_y, S32 x_pos, S32 y_pos, S32 width, S32 height)
 {
-    if (gGL.getTexUnit(0)->bind(this, false, true))
+    if (LLRender::instance().getTexUnit(0)->bind(this, false, true))
     {
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, fb_x, fb_y, x_pos, y_pos, width, height);
         mGLTextureCreated = true;
@@ -1670,7 +1670,7 @@ bool LLImageGL::createGLTexture(S32 discard_level, const U8* data_in, bool data_
     {
         LLImageGL::generateTextures(1, &new_texname);
         {
-            gGL.getTexUnit(0)->bind(this, false, false, new_texname);
+            LLRender::instance().getTexUnit(0)->bind(this, false, false, new_texname);
             glTexParameteri(LLTexUnit::getInternalType(mBindTarget), GL_TEXTURE_BASE_LEVEL, 0);
             glTexParameteri(LLTexUnit::getInternalType(mBindTarget), GL_TEXTURE_MAX_LEVEL, mMaxDiscardLevel - discard_level);
         }
@@ -1697,12 +1697,12 @@ bool LLImageGL::createGLTexture(S32 discard_level, const U8* data_in, bool data_
     }
 
     // Set texture options to our defaults.
-    gGL.getTexUnit(0)->setHasMipMaps(mHasMipMaps);
-    gGL.getTexUnit(0)->setTextureAddressMode(mAddressMode);
-    gGL.getTexUnit(0)->setTextureFilteringOption(mFilterOption);
+    LLRender::instance().getTexUnit(0)->setHasMipMaps(mHasMipMaps);
+    LLRender::instance().getTexUnit(0)->setTextureAddressMode(mAddressMode);
+    LLRender::instance().getTexUnit(0)->setTextureFilteringOption(mFilterOption);
 
     // things will break if we don't unbind after creation
-    gGL.getTexUnit(0)->unbind(mBindTarget);
+    LLRender::instance().getTexUnit(0)->unbind(mBindTarget);
 
     //if we're on the image loading thread, be sure to delete old_texname and update mTexName on the main thread
     if (!defer_copy)
@@ -1816,8 +1816,8 @@ bool LLImageGL::readBackRaw(S32 discard_level, LLImageRaw* imageraw, bool compre
     S32 gl_discard = discard_level - mCurrentDiscardLevel;
 
     //explicitly unbind texture
-    gGL.getTexUnit(0)->unbind(mBindTarget);
-    llverify(gGL.getTexUnit(0)->bindManual(mBindTarget, mTexName));
+    LLRender::instance().getTexUnit(0)->unbind(mBindTarget);
+    llverify(LLRender::instance().getTexUnit(0)->bindManual(mBindTarget, mTexName));
 
     //debug code, leave it there commented.
     //checkTexSize() ;
@@ -1972,9 +1972,9 @@ void LLImageGL::setAddressMode(LLTexUnit::eTextureAddressMode mode)
         mAddressMode = mode;
     }
 
-    if (gGL.getTexUnit(gGL.getCurrentTexUnitIndex())->getCurrTexture() == mTexName)
+    if (LLRender::instance().getTexUnit(LLRender::instance().getCurrentTexUnitIndex())->getCurrTexture() == mTexName)
     {
-        gGL.getTexUnit(gGL.getCurrentTexUnitIndex())->setTextureAddressMode(mode);
+        LLRender::instance().getTexUnit(LLRender::instance().getCurrentTexUnitIndex())->setTextureAddressMode(mode);
         mTexOptionsDirty = false;
     }
 }
@@ -1987,9 +1987,9 @@ void LLImageGL::setFilteringOption(LLTexUnit::eTextureFilterOptions option)
         mFilterOption = option;
     }
 
-    if (mTexName != 0 && gGL.getTexUnit(gGL.getCurrentTexUnitIndex())->getCurrTexture() == mTexName)
+    if (mTexName != 0 && LLRender::instance().getTexUnit(LLRender::instance().getCurrentTexUnitIndex())->getCurrTexture() == mTexName)
     {
-        gGL.getTexUnit(gGL.getCurrentTexUnitIndex())->setTextureFilteringOption(option);
+        LLRender::instance().getTexUnit(LLRender::instance().getCurrentTexUnitIndex())->setTextureFilteringOption(option);
         mTexOptionsDirty = false;
         stop_glerror();
     }
@@ -2480,7 +2480,7 @@ bool LLImageGL::scaleDown(S32 desired_discard)
         glViewport(0, 0, desired_width, desired_height);
 
         // draw a full screen triangle
-        if (gGL.getTexUnit(0)->bind(this, true, true))
+        if (LLRender::instance().getTexUnit(0)->bind(this, true, true))
         {
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -2494,9 +2494,9 @@ bool LLImageGL::scaleDown(S32 desired_discard)
             if (mHasMipMaps)
             { // generate mipmaps if needed
                 LL_PROFILE_ZONE_NAMED_CATEGORY_TEXTURE("scaleDown - glGenerateMipmap");
-                gGL.getTexUnit(0)->bind(this);
+                LLRender::instance().getTexUnit(0)->bind(this);
                 glGenerateMipmap(mTarget);
-                gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
             }
         }
         else
@@ -2509,7 +2509,7 @@ bool LLImageGL::scaleDown(S32 desired_discard)
     { // use a PBO to downscale the texture
         U64 size = getBytes(desired_discard);
         llassert(size <= 2048 * 2048 * 4); // we shouldn't be using this method to downscale huge textures, but it'll work
-        gGL.getTexUnit(0)->bind(this, false, true);
+        LLRender::instance().getTexUnit(0)->bind(this, false, true);
 
         if (sScratchPBO == 0)
         {
@@ -2543,7 +2543,7 @@ bool LLImageGL::scaleDown(S32 desired_discard)
             glGenerateMipmap(mTarget);
         }
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     }
 
     mCurrentDiscardLevel = desired_discard;
@@ -2631,9 +2631,9 @@ void LLImageGLThread::run()
     // We must perform setup on this thread before actually servicing our
     // WorkQueue, likewise cleanup afterwards.
     mWindow->makeContextCurrent(mContext);
-    gGL.init(false);
+    LLRender::instance().init(false);
     LL::ThreadPool::run();
-    gGL.shutdown();
+    LLRender::instance().shutdown();
     mWindow->destroySharedContext(mContext);
 }
 

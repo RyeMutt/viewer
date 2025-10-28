@@ -178,7 +178,7 @@ public:
 
     // bind implementation for inner loops
     // makes the following assumptions:
-    //  - No need for gGL.flush()
+    //  - No need for LLRender::instance().flush()
     //  - texture is not null
     //  - gl_tex->getTexName() is not zero
     //  - This texture is not being bound redundantly
@@ -377,6 +377,9 @@ public:
         MM_TEXTURE
     };
 
+    // returns a thread_local instance of LLRender
+    static LLRender& instance();
+
     LLRender();
     ~LLRender();
     bool init(bool needs_vertex_buffer);
@@ -550,8 +553,6 @@ extern F32 gGLProjection[16];
 extern S32 gGLViewport[4];
 extern glm::mat4 gGLDeltaModelView;
 extern glm::mat4 gGLInverseDeltaModelView;
-
-extern thread_local LLRender gGL;
 
 // This rotation matrix moves the default OpenGL reference frame
 // (-Z at, Y up) to Cory's favorite reference frame (X at, Z up)

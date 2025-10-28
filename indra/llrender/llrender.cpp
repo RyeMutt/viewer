@@ -53,8 +53,6 @@ extern void APIENTRY gl_debug_callback(GLenum source,
 ;
 #endif
 
-thread_local LLRender gGL;
-
 // Handy copies of last good GL matrices
 F32 gGLModelView[16];
 F32 gGLLastModelView[16];
@@ -131,7 +129,7 @@ void LLTexUnit::refreshState(void)
     // We set dirty to true so that the tex unit knows to ignore caching
     // and we reset the cached tex unit state
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     glActiveTexture(GL_TEXTURE0 + mIndex);
 
@@ -149,11 +147,11 @@ void LLTexUnit::activate(void)
 {
     if (mIndex < 0) return;
 
-    if ((S32)gGL.mCurrTextureUnitIndex != mIndex || gGL.mDirty)
+    if ((S32)LLRender::instance().mCurrTextureUnitIndex != mIndex || LLRender::instance().mDirty)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glActiveTexture(GL_TEXTURE0 + mIndex);
-        gGL.mCurrTextureUnitIndex = mIndex;
+        LLRender::instance().mCurrTextureUnitIndex = mIndex;
     }
 }
 
@@ -161,16 +159,16 @@ void LLTexUnit::enable(eTextureType type)
 {
     if (mIndex < 0) return;
 
-    if ( (mCurrTexType != type || gGL.mDirty) && (type != TT_NONE) )
+    if ( (mCurrTexType != type || LLRender::instance().mDirty) && (type != TT_NONE) )
     {
         activate();
-        if (mCurrTexType != TT_NONE && !gGL.mDirty)
+        if (mCurrTexType != TT_NONE && !LLRender::instance().mDirty)
         {
             disable(); // Force a disable of a previous texture type if it's enabled.
         }
         mCurrTexType = type;
 
-        gGL.flush();
+        LLRender::instance().flush();
     }
 }
 
@@ -190,7 +188,7 @@ void LLTexUnit::bindFast(LLTexture* texture)
     LLImageGL* gl_tex = texture->getGLTexture();
     texture->setActive();
     glActiveTexture(GL_TEXTURE0 + mIndex);
-    gGL.mCurrTextureUnitIndex = mIndex;
+    LLRender::instance().mCurrTextureUnitIndex = mIndex;
     mCurrTexture = gl_tex->getTexName();
     if (!mCurrTexture)
     {
@@ -216,7 +214,7 @@ bool LLTexUnit::bind(LLTexture* texture, bool for_rendering, bool forceBind)
     stop_glerror();
     if (mIndex >= 0)
     {
-        gGL.flush();
+        LLRender::instance().flush();
 
         LLImageGL* gl_tex = NULL ;
 
@@ -300,7 +298,7 @@ bool LLTexUnit::bind(LLImageGL* texture, bool for_rendering, bool forceBind, S32
 
     if ((mCurrTexture != texname) || forceBind)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         stop_glerror();
         activate();
         stop_glerror();
@@ -330,7 +328,7 @@ bool LLTexUnit::bind(LLCubeMap* cubeMap)
 {
     if (mIndex < 0) return false;
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     if (cubeMap == NULL)
     {
@@ -370,7 +368,7 @@ bool LLTexUnit::bind(LLRenderTarget* renderTarget, bool bindDepth)
 {
     if (mIndex < 0) return false;
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     if (bindDepth)
     {
@@ -395,7 +393,7 @@ bool LLTexUnit::bindManual(eTextureType type, U32 texture, bool hasMips)
 
     if(mCurrTexture != texture)
     {
-        gGL.flush();
+        LLRender::instance().flush();
 
         activate();
         enable(type);
@@ -414,7 +412,7 @@ void LLTexUnit::unbind(eTextureType type)
 
     //always flush and activate for consistency
     //   some code paths assume unbind always flushes and sets the active texture
-    gGL.flush();
+    LLRender::instance().flush();
     activate();
 
     // Disabled caching of binding state.
@@ -458,7 +456,7 @@ void LLTexUnit::setTextureAddressMode(eTextureAddressMode mode)
 {
     if (mIndex < 0 || mCurrTexture == 0) return;
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     activate();
 
@@ -479,7 +477,7 @@ void LLTexUnit::setTextureFilteringOption(LLTexUnit::eTextureFilterOptions optio
 {
     if (mIndex < 0 || mCurrTexture == 0 || mCurrTexType == LLTexUnit::TT_MULTISAMPLE_TEXTURE) return;
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     setTextureFilteringOptionFast(option, mCurrTexType);
 }
@@ -587,7 +585,7 @@ void LLLightState::setDiffuse(const LLColor4& diffuse)
 {
     if (mDiffuse != diffuse)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mDiffuse = diffuse;
     }
 }
@@ -596,7 +594,7 @@ void LLLightState::setDiffuseB(const LLColor4& diffuse)
 {
     if (mDiffuseB != diffuse)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mDiffuseB = diffuse;
     }
 }
@@ -605,7 +603,7 @@ void LLLightState::setSunPrimary(bool v)
 {
     if (mSunIsPrimary != v)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mSunIsPrimary = v;
     }
 }
@@ -614,7 +612,7 @@ void LLLightState::setSize(F32 v)
 {
     if (mSize != v)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mSize = v;
     }
 }
@@ -623,7 +621,7 @@ void LLLightState::setFalloff(F32 v)
 {
     if (mFalloff != v)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mFalloff = v;
     }
 }
@@ -632,7 +630,7 @@ void LLLightState::setAmbient(const LLColor4& ambient)
 {
     if (mAmbient != ambient)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mAmbient = ambient;
     }
 }
@@ -641,7 +639,7 @@ void LLLightState::setSpecular(const LLColor4& specular)
 {
     if (mSpecular != specular)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mSpecular = specular;
     }
 }
@@ -649,11 +647,11 @@ void LLLightState::setSpecular(const LLColor4& specular)
 void LLLightState::setPosition(const LLVector4& position)
 {
     //always set position because modelview matrix may have changed
-    ++gGL.mLightHash;
+    ++LLRender::instance().mLightHash;
     mPosition = position;
     //transform position by current modelview matrix
     glm::vec4 pos(position);
-    pos = gGL.getModelviewMatrix() * pos;
+    pos = LLRender::instance().getModelviewMatrix() * pos;
     mPosition.set(glm::value_ptr(pos));
 }
 
@@ -662,7 +660,7 @@ void LLLightState::setConstantAttenuation(const F32& atten)
     if (mConstantAtten != atten)
     {
         mConstantAtten = atten;
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
     }
 }
 
@@ -670,7 +668,7 @@ void LLLightState::setLinearAttenuation(const F32& atten)
 {
     if (mLinearAtten != atten)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mLinearAtten = atten;
     }
 }
@@ -679,7 +677,7 @@ void LLLightState::setQuadraticAttenuation(const F32& atten)
 {
     if (mQuadraticAtten != atten)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mQuadraticAtten = atten;
     }
 }
@@ -688,7 +686,7 @@ void LLLightState::setSpotExponent(const F32& exponent)
 {
     if (mSpotExponent != exponent)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mSpotExponent = exponent;
     }
 }
@@ -697,7 +695,7 @@ void LLLightState::setSpotCutoff(const F32& cutoff)
 {
     if (mSpotCutoff != cutoff)
     {
-        ++gGL.mLightHash;
+        ++LLRender::instance().mLightHash;
         mSpotCutoff = cutoff;
     }
 }
@@ -705,14 +703,25 @@ void LLLightState::setSpotCutoff(const F32& cutoff)
 void LLLightState::setSpotDirection(const LLVector3& direction)
 {
     //always set direction because modelview matrix may have changed
-    ++gGL.mLightHash;
+    ++LLRender::instance().mLightHash;
 
     //transform direction by current modelview matrix
     glm::vec3 dir(direction);
-    const glm::mat3 mat(gGL.getModelviewMatrix());
+    const glm::mat3 mat(LLRender::instance().getModelviewMatrix());
     dir = mat * dir;
 
     mSpotDirection.set(glm::value_ptr(dir));
+}
+
+// static
+LLRender& LLRender::instance()
+{
+    static thread_local std::unique_ptr<LLRender> glrender_ptr;
+    if (!glrender_ptr)
+    {
+        glrender_ptr = std::make_unique<LLRender>();
+    }
+    return *glrender_ptr;
 }
 
 LLRender::LLRender()
@@ -776,8 +785,8 @@ bool LLRender::init(bool needs_vertex_buffer)
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
-    gGL.setAmbientLightColor(LLColor4::black);
+    setSceneBlendType(LLRender::BT_ALPHA);
+    setAmbientLightColor(LLColor4::black);
 
     glCullFace(GL_BACK);
 
@@ -1144,7 +1153,7 @@ void LLRender::matrixMode(eMatrixMode mode)
 {
     if (mode == MM_TEXTURE)
     {
-        U32 tex_index = gGL.getCurrentTexUnitIndex();
+        U32 tex_index = getCurrentTexUnitIndex();
         // the shaders don't actually reference anything beyond texture_matrix0/1 outside of terrain rendering
         llassert(tex_index <= 3);
         mode = eMatrixMode(MM_TEXTURE0 + tex_index);
@@ -1461,7 +1470,7 @@ void LLRender::begin(const GLuint& mode)
         }
         else if (mCount != 0)
         {
-            LL_ERRS() << "gGL.begin() called redundantly." << LL_ENDL;
+            LL_ERRS() << "LLRender::instance().begin() called redundantly." << LL_ENDL;
         }
 
         mMode = mode;
@@ -1536,7 +1545,7 @@ void LLRender::flush()
                     vb,
                     mMode,
                     count,
-                    gGL.getTexUnit(0)->mCurrTexture,
+                    getTexUnit(0)->mCurrTexture,
                     mMatrix[MM_MODELVIEW][mMatIdx[MM_MODELVIEW]],
                     mMatrix[MM_PROJECTION][mMatIdx[MM_PROJECTION]],
                     mMatrix[MM_TEXTURE0][mMatIdx[MM_TEXTURE0]]
@@ -1925,7 +1934,7 @@ void LLRender::diffuseColor4ub(U8 r, U8 g, U8 b, U8 a)
 
 void LLRender::setLineWidth(F32 width)
 {
-    gGL.flush();
+    flush();
 
     width = llclamp(width, gGLManager.mMinSmoothLineWidth, gGLManager.mMaxSmoothLineWidth);
     if(mLineWidth != width)

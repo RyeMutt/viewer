@@ -238,11 +238,11 @@ void LLSnapshotLivePreview::drawPreviewRect(S32 offset_x, S32 offset_y, LLColor4
 {
     F32 line_width ;
     glGetFloatv(GL_LINE_WIDTH, &line_width) ;
-    gGL.setLineWidth(2.0f * line_width) ;
+    LLRender::instance().setLineWidth(2.0f * line_width) ;
     LLColor4 color(0.0f, 0.0f, 0.0f, 1.0f) ;
     gl_rect_2d( mPreviewRect.mLeft + offset_x, mPreviewRect.mTop + offset_y,
         mPreviewRect.mRight + offset_x, mPreviewRect.mBottom + offset_y, color, false ) ;
-    gGL.setLineWidth(line_width) ;
+    LLRender::instance().setLineWidth(line_width) ;
 
     //draw four alpha rectangles to cover areas outside of the snapshot image
     if(!mKeepAspectRatio)
@@ -287,40 +287,40 @@ void LLSnapshotLivePreview::draw()
         gl_drop_shadow(shadow_rect.mLeft, shadow_rect.mTop, shadow_rect.mRight, shadow_rect.mBottom, LLColor4(0.f, 0.f, 0.f, mNeedsFlash ? 0.f :0.5f), 10);
 
         LLColor4 image_color(1.f, 1.f, 1.f, 1.f);
-        gGL.color4fv(image_color.mV);
-        gGL.getTexUnit(0)->bind(getCurrentImage());
+        LLRender::instance().color4fv(image_color.mV);
+        LLRender::instance().getTexUnit(0)->bind(getCurrentImage());
         // calculate UV scale
         F32 uv_width = isImageScaled() ? 1.f : llmin((F32)getWidth() / (F32)getCurrentImage()->getWidth(), 1.f);
         F32 uv_height = isImageScaled() ? 1.f : llmin((F32)getHeight() / (F32)getCurrentImage()->getHeight(), 1.f);
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         {
-            gGL.translatef((F32)rect.mLeft, (F32)rect.mBottom + TOP_PANEL_HEIGHT, 0.f);
-            gGL.begin(LLRender::TRIANGLES);
+            LLRender::instance().translatef((F32)rect.mLeft, (F32)rect.mBottom + TOP_PANEL_HEIGHT, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLES);
             {
-                gGL.texCoord2f(uv_width, uv_height);
-                gGL.vertex2i(rect.getWidth(), rect.getHeight());
+                LLRender::instance().texCoord2f(uv_width, uv_height);
+                LLRender::instance().vertex2i(rect.getWidth(), rect.getHeight());
 
-                gGL.texCoord2f(0.f, uv_height);
-                gGL.vertex2i(0, rect.getHeight());
+                LLRender::instance().texCoord2f(0.f, uv_height);
+                LLRender::instance().vertex2i(0, rect.getHeight());
 
-                gGL.texCoord2f(0.f, 0.f);
-                gGL.vertex2i(0, 0);
+                LLRender::instance().texCoord2f(0.f, 0.f);
+                LLRender::instance().vertex2i(0, 0);
 
 
-                gGL.texCoord2f(uv_width, uv_height);
-                gGL.vertex2i(rect.getWidth(), rect.getHeight());
+                LLRender::instance().texCoord2f(uv_width, uv_height);
+                LLRender::instance().vertex2i(rect.getWidth(), rect.getHeight());
 
-                gGL.texCoord2f(0.f, 0.f);
-                gGL.vertex2i(0, 0);
+                LLRender::instance().texCoord2f(0.f, 0.f);
+                LLRender::instance().vertex2i(0, 0);
 
-                gGL.texCoord2f(uv_width, 0.f);
-                gGL.vertex2i(rect.getWidth(), 0);
+                LLRender::instance().texCoord2f(uv_width, 0.f);
+                LLRender::instance().vertex2i(rect.getWidth(), 0);
             }
-            gGL.end();
+            LLRender::instance().end();
         }
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
 
-        gGL.color4f(1.f, 1.f, 1.f, mFlashAlpha);
+        LLRender::instance().color4f(1.f, 1.f, 1.f, mFlashAlpha);
         gl_rect_2d(getRect());
         if (mNeedsFlash)
         {
@@ -363,34 +363,34 @@ void LLSnapshotLivePreview::draw()
                 S32 y1 = 0;
                 S32 y2 = gViewerWindow->getWindowHeightScaled() + TOP_PANEL_HEIGHT;
 
-                gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-                gGL.begin(LLRender::TRIANGLES);
+                LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                LLRender::instance().begin(LLRender::TRIANGLES);
                 {
-                    gGL.color4f(1.f, 1.f, 1.f, 0.f);
-                    gGL.vertex2i(x1, y1);
-                    gGL.vertex2i(x1 + gViewerWindow->getWindowWidthScaled(), y2);
-                    gGL.color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
-                    gGL.vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, 0.f);
+                    LLRender::instance().vertex2i(x1, y1);
+                    LLRender::instance().vertex2i(x1 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
+                    LLRender::instance().vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
 
-                    gGL.color4f(1.f, 1.f, 1.f, 0.f);
-                    gGL.vertex2i(x1, y1);
-                    gGL.color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
-                    gGL.vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
-                    gGL.vertex2i(x2, y1);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, 0.f);
+                    LLRender::instance().vertex2i(x1, y1);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
+                    LLRender::instance().vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().vertex2i(x2, y1);
 
-                    gGL.color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
-                    gGL.vertex2i(x2, y1);
-                    gGL.vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
-                    gGL.color4f(1.f, 1.f, 1.f, 0.f);
-                    gGL.vertex2i(x3 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
+                    LLRender::instance().vertex2i(x2, y1);
+                    LLRender::instance().vertex2i(x2 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, 0.f);
+                    LLRender::instance().vertex2i(x3 + gViewerWindow->getWindowWidthScaled(), y2);
 
-                    gGL.color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
-                    gGL.vertex2i(x2, y1);
-                    gGL.color4f(1.f, 1.f, 1.f, 0.f);
-                    gGL.vertex2i(x3 + gViewerWindow->getWindowWidthScaled(), y2);
-                    gGL.vertex2i(x3, y1);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, SHINE_OPACITY);
+                    LLRender::instance().vertex2i(x2, y1);
+                    LLRender::instance().color4f(1.f, 1.f, 1.f, 0.f);
+                    LLRender::instance().vertex2i(x3 + gViewerWindow->getWindowWidthScaled(), y2);
+                    LLRender::instance().vertex2i(x3, y1);
                 }
-                gGL.end();
+                LLRender::instance().end();
             }
 
             // if we're at the end of the animation, stop
@@ -411,41 +411,41 @@ void LLSnapshotLivePreview::draw()
             F32 fall_interp = mFallAnimTimer.getElapsedTimeF32() / FALL_TIME;
             F32 alpha = clamp_rescale(fall_interp, 0.f, 1.f, 0.8f, 0.4f);
             LLColor4 image_color(1.f, 1.f, 1.f, alpha);
-            gGL.color4fv(image_color.mV);
-            gGL.getTexUnit(0)->bind(mViewerImage[old_image_index]);
+            LLRender::instance().color4fv(image_color.mV);
+            LLRender::instance().getTexUnit(0)->bind(mViewerImage[old_image_index]);
             // calculate UV scale
             // *FIX get this to work with old image
             bool rescale = !mImageScaled[old_image_index] && mViewerImage[mCurImageIndex].notNull();
             F32 uv_width = rescale ? llmin((F32)mWidth[old_image_index] / (F32)mViewerImage[mCurImageIndex]->getWidth(), 1.f) : 1.f;
             F32 uv_height = rescale ? llmin((F32)mHeight[old_image_index] / (F32)mViewerImage[mCurImageIndex]->getHeight(), 1.f) : 1.f;
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
             {
                 LLRect& rect = mImageRect[old_image_index];
-                gGL.translatef((F32)rect.mLeft, (F32)rect.mBottom - ll_round(getRect().getHeight() * 2.f * (fall_interp * fall_interp)), 0.f);
-                gGL.rotatef(-45.f * fall_interp, 0.f, 0.f, 1.f);
-                gGL.begin(LLRender::TRIANGLES);
+                LLRender::instance().translatef((F32)rect.mLeft, (F32)rect.mBottom - ll_round(getRect().getHeight() * 2.f * (fall_interp * fall_interp)), 0.f);
+                LLRender::instance().rotatef(-45.f * fall_interp, 0.f, 0.f, 1.f);
+                LLRender::instance().begin(LLRender::TRIANGLES);
                 {
-                    gGL.texCoord2f(uv_width, uv_height);
-                    gGL.vertex2i(rect.getWidth(), rect.getHeight());
+                    LLRender::instance().texCoord2f(uv_width, uv_height);
+                    LLRender::instance().vertex2i(rect.getWidth(), rect.getHeight());
 
-                    gGL.texCoord2f(0.f, uv_height);
-                    gGL.vertex2i(0, rect.getHeight());
+                    LLRender::instance().texCoord2f(0.f, uv_height);
+                    LLRender::instance().vertex2i(0, rect.getHeight());
 
-                    gGL.texCoord2f(0.f, 0.f);
-                    gGL.vertex2i(0, 0);
+                    LLRender::instance().texCoord2f(0.f, 0.f);
+                    LLRender::instance().vertex2i(0, 0);
 
-                    gGL.texCoord2f(uv_width, uv_height);
-                    gGL.vertex2i(rect.getWidth(), rect.getHeight());
+                    LLRender::instance().texCoord2f(uv_width, uv_height);
+                    LLRender::instance().vertex2i(rect.getWidth(), rect.getHeight());
 
-                    gGL.texCoord2f(0.f, 0.f);
-                    gGL.vertex2i(0, 0);
+                    LLRender::instance().texCoord2f(0.f, 0.f);
+                    LLRender::instance().vertex2i(0, 0);
 
-                    gGL.texCoord2f(uv_width, 0.f);
-                    gGL.vertex2i(rect.getWidth(), 0);
+                    LLRender::instance().texCoord2f(uv_width, 0.f);
+                    LLRender::instance().vertex2i(rect.getWidth(), 0);
                 }
-                gGL.end();
+                LLRender::instance().end();
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
     }
 }
@@ -826,7 +826,7 @@ void LLSnapshotLivePreview::prepareFreezeFrame()
 
         mViewerImage[mCurImageIndex] = LLViewerTextureManager::getLocalTexture(scaled.get(), false);
         LLPointer<LLViewerTexture> curr_preview_image = mViewerImage[mCurImageIndex];
-        gGL.getTexUnit(0)->bind(curr_preview_image);
+        LLRender::instance().getTexUnit(0)->bind(curr_preview_image);
         curr_preview_image->setFilteringOption(getSnapshotType() == LLSnapshotModel::SNAPSHOT_TEXTURE ? LLTexUnit::TFO_ANISOTROPIC : LLTexUnit::TFO_POINT);
         curr_preview_image->setAddressMode(LLTexUnit::TAM_CLAMP);
 

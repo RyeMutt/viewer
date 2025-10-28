@@ -183,17 +183,17 @@ bool LLVisualParamHint::render()
 {
     LLVisualParamReset::sDirty = true;
 
-    gGL.pushUIMatrix();
-    gGL.loadUIIdentity();
+    LLRender::instance().pushUIMatrix();
+    LLRender::instance().loadUIIdentity();
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.loadIdentity();
-    gGL.ortho(0.0f, (F32)mFullWidth, 0.0f, (F32)mFullHeight, -1.0f, 1.0f);
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadIdentity();
+    LLRender::instance().ortho(0.0f, (F32)mFullWidth, 0.0f, (F32)mFullHeight, -1.0f, 1.0f);
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
-    gGL.loadIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadIdentity();
 
     gUIProgram.bind();
 
@@ -201,11 +201,11 @@ bool LLVisualParamHint::render()
     //LLGLState::verify(true);
     mBackgroundp->draw(0, 0, mFullWidth, mFullHeight);
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().popMatrix();
 
     mNeedsUpdate = false;
     mIsVisible = true;
@@ -236,7 +236,7 @@ bool LLVisualParamHint::render()
         mVisualParam->getCameraElevation() );
     LLVector3 camera_pos = target_joint_pos + (camera_snapshot_offset * avatar_rotation);
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     LLViewerCamera::getInstance()->setAspect((F32)mFullWidth / (F32)mFullHeight);
     LLViewerCamera::getInstance()->setOriginAndLookAt(
@@ -249,11 +249,11 @@ bool LLVisualParamHint::render()
     if (gAgentAvatarp->mDrawable.notNull())
     {
         LLGLDepthTest gls_depth(GL_TRUE, GL_TRUE);
-        gGL.flush();
-        gGL.setSceneBlendType(LLRender::BT_REPLACE);
+        LLRender::instance().flush();
+        LLRender::instance().setSceneBlendType(LLRender::BT_REPLACE);
         gPipeline.generateImpostor(gAgentAvatarp, true);
-        gGL.setSceneBlendType(LLRender::BT_ALPHA);
-        gGL.flush();
+        LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
+        LLRender::instance().flush();
     }
 
     gAgentAvatarp->setVisualParamWeight(mVisualParam->getID(), mLastParamWeight);
@@ -265,9 +265,9 @@ bool LLVisualParamHint::render()
     }
 
     gAgentAvatarp->updateVisualParams();
-    gGL.color4f(1,1,1,1);
+    LLRender::instance().color4f(1,1,1,1);
     mGLTexturep->setGLTextureCreated(true);
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 
     return true;
 }
@@ -280,30 +280,30 @@ void LLVisualParamHint::draw(F32 alpha)
 {
     if (!mIsVisible) return;
 
-    gGL.getTexUnit(0)->bind(this);
+    LLRender::instance().getTexUnit(0)->bind(this);
 
-    gGL.color4f(1.f, 1.f, 1.f, alpha);
+    LLRender::instance().color4f(1.f, 1.f, 1.f, alpha);
 
     LLGLSUIDefault gls_ui;
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.texCoord2i(0, 1);
-        gGL.vertex2i(0, mFullHeight);
-        gGL.texCoord2i(0, 0);
-        gGL.vertex2i(0, 0);
-        gGL.texCoord2i(1, 0);
-        gGL.vertex2i(mFullWidth, 0);
+        LLRender::instance().texCoord2i(0, 1);
+        LLRender::instance().vertex2i(0, mFullHeight);
+        LLRender::instance().texCoord2i(0, 0);
+        LLRender::instance().vertex2i(0, 0);
+        LLRender::instance().texCoord2i(1, 0);
+        LLRender::instance().vertex2i(mFullWidth, 0);
 
-        gGL.texCoord2i(0, 1);
-        gGL.vertex2i(0, mFullHeight);
-        gGL.texCoord2i(1, 0);
-        gGL.vertex2i(mFullWidth, 0);
-        gGL.texCoord2i(1, 1);
-        gGL.vertex2i(mFullWidth, mFullHeight);
+        LLRender::instance().texCoord2i(0, 1);
+        LLRender::instance().vertex2i(0, mFullHeight);
+        LLRender::instance().texCoord2i(1, 0);
+        LLRender::instance().vertex2i(mFullWidth, 0);
+        LLRender::instance().texCoord2i(1, 1);
+        LLRender::instance().vertex2i(mFullWidth, mFullHeight);
     }
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 }
 
 //-----------------------------------------------------------------------------

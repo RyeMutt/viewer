@@ -86,14 +86,14 @@ void LLRenderTarget::resize(U32 resx, U32 resy)
 
     for (U32 i = 0; i < mTex.size(); ++i)
     { //resize color attachments
-        gGL.getTexUnit(0)->bindManual(mUsage, mTex[i]);
+        LLRender::instance().getTexUnit(0)->bindManual(mUsage, mTex[i]);
         LLImageGL::setManualImage(LLTexUnit::getInternalType(mUsage), 0, mInternalFormat[i], mResX, mResY, GL_RGBA, GL_UNSIGNED_BYTE, NULL, false);
         sBytesAllocated += pix_diff*4;
     }
 
     if (mDepth)
     {
-        gGL.getTexUnit(0)->bindManual(mUsage, mDepth);
+        LLRender::instance().getTexUnit(0)->bindManual(mUsage, mDepth);
         U32 internal_type = LLTexUnit::getInternalType(mUsage);
         LLImageGL::setManualImage(internal_type, 0, GL_DEPTH_COMPONENT24, mResX, mResY, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL, false);
 
@@ -224,7 +224,7 @@ bool LLRenderTarget::addColorAttachment(U32 color_fmt)
 
     U32 tex;
     LLImageGL::generateTextures(1, &tex);
-    gGL.getTexUnit(0)->bindManual(mUsage, tex);
+    LLRender::instance().getTexUnit(0)->bindManual(mUsage, tex);
 
     stop_glerror();
 
@@ -246,24 +246,24 @@ bool LLRenderTarget::addColorAttachment(U32 color_fmt)
 
     if (offset == 0)
     { //use bilinear filtering on single texture render targets that aren't multisampled
-        gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_BILINEAR);
+        LLRender::instance().getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_BILINEAR);
         stop_glerror();
     }
     else
     { //don't filter data attachments
-        gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
+        LLRender::instance().getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
         stop_glerror();
     }
 
     if (mUsage != LLTexUnit::TT_RECT_TEXTURE)
     {
-        gGL.getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_MIRROR);
+        LLRender::instance().getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_MIRROR);
         stop_glerror();
     }
     else
     {
         // ATI doesn't support mirrored repeat for rectangular textures.
-        gGL.getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_CLAMP);
+        LLRender::instance().getTexUnit(0)->setTextureAddressMode(LLTexUnit::TAM_CLAMP);
         stop_glerror();
     }
 
@@ -295,13 +295,13 @@ bool LLRenderTarget::allocateDepth()
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_DISPLAY;
     LLImageGL::generateTextures(1, &mDepth);
-    gGL.getTexUnit(0)->bindManual(mUsage, mDepth);
+    LLRender::instance().getTexUnit(0)->bindManual(mUsage, mDepth);
 
     U32 internal_type = LLTexUnit::getInternalType(mUsage);
     stop_glerror();
     clear_glerror();
     LLImageGL::setManualImage(internal_type, 0, GL_DEPTH_COMPONENT24, mResX, mResY, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL, false);
-    gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
+    LLRender::instance().getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
 
     sBytesAllocated += mResX*mResY*4;
 
@@ -491,14 +491,14 @@ U32 LLRenderTarget::getNumTextures() const
 
 void LLRenderTarget::bindTexture(U32 index, S32 channel, LLTexUnit::eTextureFilterOptions filter_options)
 {
-    gGL.getTexUnit(channel)->bindManual(mUsage, getTexture(index), filter_options == LLTexUnit::TFO_TRILINEAR || filter_options == LLTexUnit::TFO_ANISOTROPIC);
-    gGL.getTexUnit(channel)->setTextureFilteringOption(filter_options);
+    LLRender::instance().getTexUnit(channel)->bindManual(mUsage, getTexture(index), filter_options == LLTexUnit::TFO_TRILINEAR || filter_options == LLTexUnit::TFO_ANISOTROPIC);
+    LLRender::instance().getTexUnit(channel)->setTextureFilteringOption(filter_options);
 }
 
 void LLRenderTarget::flush()
 {
     LL_PROFILE_GPU_ZONE("rt flush");
-    gGL.flush();
+    LLRender::instance().flush();
     llassert(mFBO);
     llassert(sCurFBO == mFBO);
     llassert(sBoundTarget == this);

@@ -184,10 +184,10 @@ void LLFontVertexBuffer::genBuffers(
     // so will need to rerender previous characters
     mLastFontCacheGen = fontp->getCacheGeneration();
 
-    gGL.beginList(&mBufferList);
+    LLRender::instance().beginList(&mBufferList);
     mChars = fontp->render(text, begin_offset, x, y, color, halign, valign,
         style, shadow, max_chars, max_pixels, right_x, use_ellipses, use_color);
-    gGL.endList();
+    LLRender::instance().endList();
 
     mLastFont = fontp;
     mLastOffset = begin_offset;
@@ -216,16 +216,16 @@ void LLFontVertexBuffer::genBuffers(
 
 void LLFontVertexBuffer::renderBuffers()
 {
-    gGL.flush(); // deliberately empty pending verts
-    gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
-    gGL.pushUIMatrix();
+    LLRender::instance().flush(); // deliberately empty pending verts
+    LLRender::instance().getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().pushUIMatrix();
 
-    gGL.loadUIIdentity();
+    LLRender::instance().loadUIIdentity();
 
     // Depth translation, so that floating text appears 'in-world'
     // and is correctly occluded.
-    gGL.translatef(0.f, 0.f, LLFontGL::sCurDepth);
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().translatef(0.f, 0.f, LLFontGL::sCurDepth);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 
     // Note: ellipses should technically be covered by push/load/translate of their own
     // but it's more complexity, values do not change, skipping doesn't appear to break
@@ -234,6 +234,6 @@ void LLFontVertexBuffer::renderBuffers()
     {
         buffer.draw();
     }
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 }
 

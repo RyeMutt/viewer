@@ -242,7 +242,7 @@ void LLHUDNameTag::renderText()
 
     LL_PROFILE_ZONE_SCOPED_CATEGORY_UI;
 
-    gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
 
     LLColor4 shadow_color(0.f, 0.f, 0.f, 1.f);
     F32 alpha_factor = 1.f;
@@ -377,7 +377,7 @@ void LLHUDNameTag::renderText()
         }
     }
     /// Reset the default color to white.  The renderer expects this to be the default.
-    gGL.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+    LLRender::instance().color4f(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void LLHUDNameTag::setString(const std::string &text_utf8)

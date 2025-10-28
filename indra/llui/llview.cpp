@@ -1303,7 +1303,7 @@ void LLView::drawDebugRect()
     LLUI::pushMatrix();
     {
         // drawing solids requires texturing be disabled
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         if (getUseBoundingRect())
         {
@@ -1331,21 +1331,21 @@ void LLView::drawDebugRect()
             border_color.mV[sDepth%3] = 1.f;
         }
 
-        gGL.color4fv( border_color.mV );
+        LLRender::instance().color4fv( border_color.mV );
 
-        gGL.begin(LLRender::LINES);
-            gGL.vertex2i(0, debug_rect.getHeight() - 1);
-            gGL.vertex2i(0, 0);
+        LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().vertex2i(0, debug_rect.getHeight() - 1);
+            LLRender::instance().vertex2i(0, 0);
 
-            gGL.vertex2i(0, 0);
-            gGL.vertex2i(debug_rect.getWidth() - 1, 0);
+            LLRender::instance().vertex2i(0, 0);
+            LLRender::instance().vertex2i(debug_rect.getWidth() - 1, 0);
 
-            gGL.vertex2i(debug_rect.getWidth() - 1, 0);
-            gGL.vertex2i(debug_rect.getWidth() - 1, debug_rect.getHeight() - 1);
+            LLRender::instance().vertex2i(debug_rect.getWidth() - 1, 0);
+            LLRender::instance().vertex2i(debug_rect.getWidth() - 1, debug_rect.getHeight() - 1);
 
-            gGL.vertex2i(debug_rect.getWidth() - 1, debug_rect.getHeight() - 1);
-            gGL.vertex2i(0, debug_rect.getHeight() - 1);
-        gGL.end();
+            LLRender::instance().vertex2i(debug_rect.getWidth() - 1, debug_rect.getHeight() - 1);
+            LLRender::instance().vertex2i(0, debug_rect.getHeight() - 1);
+        LLRender::instance().end();
 
         // Draw the name if it's not a leaf node or not in editing or preview mode
         if (mChildList.size()
@@ -1353,7 +1353,7 @@ void LLView::drawDebugRect()
             && sDebugRectsShowNames)
         {
             S32 x, y;
-            gGL.color4fv( border_color.mV );
+            LLRender::instance().color4fv( border_color.mV );
 
             x = debug_rect.getWidth() / 2;
 
@@ -1388,7 +1388,7 @@ void LLView::drawChild(LLView* childp, S32 x_offset, S32 y_offset, bool force_dr
         if ((childp->getVisible() && childp->getRect().isValid())
             || force_draw)
         {
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
             LLUI::pushMatrix();
             {
                 LLUI::translate((F32)childp->getRect().mLeft + x_offset, (F32)childp->getRect().mBottom + y_offset);

@@ -337,25 +337,25 @@ void LLHUDEffectPointAt::render()
     if (sDebugPointAt && mTargetType != POINTAT_TARGET_NONE)
     {
         //LLGLDisable gls_stencil(GL_STENCIL_TEST);
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         LLVector3 target = mTargetPos + mSourceObject->getRenderPosition();
-        gGL.pushMatrix();
-        gGL.translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
-        gGL.scalef(0.3f, 0.3f, 0.3f);
-        gGL.begin(LLRender::LINES);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
+        LLRender::instance().scalef(0.3f, 0.3f, 0.3f);
+        LLRender::instance().begin(LLRender::LINES);
         {
-            gGL.color3f(1.f, 0.f, 0.f);
-            gGL.vertex3f(-1.f, 0.f, 0.f);
-            gGL.vertex3f(1.f, 0.f, 0.f);
+            LLRender::instance().color3f(1.f, 0.f, 0.f);
+            LLRender::instance().vertex3f(-1.f, 0.f, 0.f);
+            LLRender::instance().vertex3f(1.f, 0.f, 0.f);
 
-            gGL.vertex3f(0.f, -1.f, 0.f);
-            gGL.vertex3f(0.f, 1.f, 0.f);
+            LLRender::instance().vertex3f(0.f, -1.f, 0.f);
+            LLRender::instance().vertex3f(0.f, 1.f, 0.f);
 
-            gGL.vertex3f(0.f, 0.f, -1.f);
-            gGL.vertex3f(0.f, 0.f, 1.f);
-        } gGL.end();
-        gGL.popMatrix();
+            LLRender::instance().vertex3f(0.f, 0.f, -1.f);
+            LLRender::instance().vertex3f(0.f, 0.f, 1.f);
+        } LLRender::instance().end();
+        LLRender::instance().popMatrix();
     }
 }
 

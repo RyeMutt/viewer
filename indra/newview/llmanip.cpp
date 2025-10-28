@@ -386,51 +386,51 @@ void LLManip::renderGuidelines(bool draw_x, bool draw_y, bool draw_z)
     //LLVector3  center_agent  = LLSelectMgr::getInstance()->getBBoxOfSelection().getCenterAgent();
     LLVector3  center_agent  = getPivotPoint();
 
-    gGL.pushMatrix();
+    LLRender::instance().pushMatrix();
     {
-        gGL.translatef(center_agent.mV[VX], center_agent.mV[VY], center_agent.mV[VZ]);
+        LLRender::instance().translatef(center_agent.mV[VX], center_agent.mV[VY], center_agent.mV[VZ]);
 
         F32 angle_radians, x, y, z;
 
         grid_rot.getAngleAxis(&angle_radians, &x, &y, &z);
-        gGL.rotatef(angle_radians * RAD_TO_DEG, x, y, z);
+        LLRender::instance().rotatef(angle_radians * RAD_TO_DEG, x, y, z);
 
         F32 region_size = LLWorld::getInstance()->getRegionWidthInMeters();
 
         const F32 LINE_ALPHA = 0.33f;
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
         LLUI::setLineWidth(1.5f);
 
         if (draw_x)
         {
-            gGL.color4f(1.f, 0.f, 0.f, LINE_ALPHA);
-            gGL.begin(LLRender::LINES);
-            gGL.vertex3f( -region_size, 0.f, 0.f );
-            gGL.vertex3f(  region_size, 0.f, 0.f );
-            gGL.end();
+            LLRender::instance().color4f(1.f, 0.f, 0.f, LINE_ALPHA);
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().vertex3f( -region_size, 0.f, 0.f );
+            LLRender::instance().vertex3f(  region_size, 0.f, 0.f );
+            LLRender::instance().end();
         }
 
         if (draw_y)
         {
-            gGL.color4f(0.f, 1.f, 0.f, LINE_ALPHA);
-            gGL.begin(LLRender::LINES);
-            gGL.vertex3f( 0.f, -region_size, 0.f );
-            gGL.vertex3f( 0.f,  region_size, 0.f );
-            gGL.end();
+            LLRender::instance().color4f(0.f, 1.f, 0.f, LINE_ALPHA);
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().vertex3f( 0.f, -region_size, 0.f );
+            LLRender::instance().vertex3f( 0.f,  region_size, 0.f );
+            LLRender::instance().end();
         }
 
         if (draw_z)
         {
-            gGL.color4f(0.f, 0.f, 1.f, LINE_ALPHA);
-            gGL.begin(LLRender::LINES);
-            gGL.vertex3f( 0.f, 0.f, -region_size );
-            gGL.vertex3f( 0.f, 0.f,  region_size );
-            gGL.end();
+            LLRender::instance().color4f(0.f, 0.f, 1.f, LINE_ALPHA);
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().vertex3f( 0.f, 0.f, -region_size );
+            LLRender::instance().vertex3f( 0.f, 0.f,  region_size );
+            LLRender::instance().end();
         }
         LLUI::setLineWidth(1.0f);
     }
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void LLManip::renderXYZ(const LLVector3 &vec)
@@ -442,12 +442,12 @@ void LLManip::renderXYZ(const LLVector3 &vec)
     S32 vertical_offset = window_center_y - VERTICAL_OFFSET;
 
 
-    gGL.pushMatrix();
+    LLRender::instance().pushMatrix();
     {
         LLUIImagePtr imagep = LLUI::getUIImage("Rounded_Square");
         gViewerWindow->setup2DRender();
         const LLVector2& display_scale = gViewerWindow->getDisplayScale();
-        gGL.color4f(0.f, 0.f, 0.f, 0.7f);
+        LLRender::instance().color4f(0.f, 0.f, 0.f, 0.7f);
 
         imagep->draw(
             (S32)((window_center_x - 115) * display_scale.mV[VX]),
@@ -493,7 +493,7 @@ void LLManip::renderXYZ(const LLVector3 &vec)
             LLFontGL::LEFT, LLFontGL::BASELINE,
             LLFontGL::NORMAL, LLFontGL::NO_SHADOW, S32_MAX, 1000, &right_x);
     }
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 
     gViewerWindow->setup3DRender();
 }
@@ -503,8 +503,8 @@ void LLManip::renderTickText(const LLVector3& pos, const std::string& text, cons
     const LLFontGL* big_fontp = LLFontGL::getFontSansSerif();
 
     bool hud_selection = mObjectSelection->getSelectType() == SELECT_TYPE_HUD;
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
     LLVector3 render_pos = pos;
     if (hud_selection)
     {
@@ -512,7 +512,7 @@ void LLManip::renderTickText(const LLVector3& pos, const std::string& text, cons
         F32 inv_zoom_amt = 1.f / zoom_amt;
         // scale text back up to counter-act zoom level
         render_pos = pos * zoom_amt;
-        gGL.scalef(inv_zoom_amt, inv_zoom_amt, inv_zoom_amt);
+        LLRender::instance().scalef(inv_zoom_amt, inv_zoom_amt, inv_zoom_amt);
     }
 
     // render shadow first
@@ -523,7 +523,7 @@ void LLManip::renderTickText(const LLVector3& pos, const std::string& text, cons
     gViewerWindow->setup3DViewport();
     hud_render_utf8text(text, render_pos, *big_fontp, LLFontGL::NORMAL, LLFontGL::NO_SHADOW, -0.5f * big_fontp->getWidthF32(text), 3.f, color, mObjectSelection->getSelectType() == SELECT_TYPE_HUD);
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void LLManip::renderTickValue(const LLVector3& pos, F32 value, const std::string& suffix, const LLColor4 &color)
@@ -561,8 +561,8 @@ void LLManip::renderTickValue(const LLVector3& pos, F32 value, const std::string
     }
 
     bool hud_selection = mObjectSelection->getSelectType() == SELECT_TYPE_HUD;
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
     {
         LLVector3 render_pos = pos;
         if (hud_selection)
@@ -571,7 +571,7 @@ void LLManip::renderTickValue(const LLVector3& pos, F32 value, const std::string
             F32 inv_zoom_amt = 1.f / zoom_amt;
             // scale text back up to counter-act zoom level
             render_pos = pos * zoom_amt;
-            gGL.scalef(inv_zoom_amt, inv_zoom_amt, inv_zoom_amt);
+            LLRender::instance().scalef(inv_zoom_amt, inv_zoom_amt, inv_zoom_amt);
         }
 
         LLColor4 shadow_color = LLColor4::black;
@@ -589,7 +589,7 @@ void LLManip::renderTickValue(const LLVector3& pos, F32 value, const std::string
             hud_render_utf8text(val_string, render_pos, *big_fontp, LLFontGL::NORMAL, LLFontGL::DROP_SHADOW, -0.5f * big_fontp->getWidthF32(val_string), 3.f, color, hud_selection);
         }
     }
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 LLColor4 LLManip::setupSnapGuideRenderPass(S32 pass)

@@ -277,14 +277,14 @@ bool LLTexLayerParamAlpha::render(S32 x, S32 y, S32 width, S32 height)
     }
 
     LLTexLayerParamAlphaInfo *info = (LLTexLayerParamAlphaInfo *)getInfo();
-    gGL.flush();
+    LLRender::instance().flush();
     if (info->mMultiplyBlend)
     {
-        gGL.blendFunc(LLRender::BF_DEST_ALPHA, LLRender::BF_ZERO); // Multiplication: approximates a min() function
+        LLRender::instance().blendFunc(LLRender::BF_DEST_ALPHA, LLRender::BF_ZERO); // Multiplication: approximates a min() function
     }
     else
     {
-        gGL.setSceneBlendType(LLRender::BT_ADD);  // Addition: approximates a max() function
+        LLRender::instance().setSceneBlendType(LLRender::BT_ADD);  // Addition: approximates a max() function
     }
 
     if (!info->mStaticImageFileName.empty() && !mStaticImageInvalid)
@@ -340,13 +340,13 @@ bool LLTexLayerParamAlpha::render(S32 x, S32 y, S32 width, S32 height)
                 {
                     mCachedProcessedTexture->createGLTexture(0, mStaticImageRaw);
                     mNeedsCreateTexture = false;
-                    gGL.getTexUnit(0)->bind(mCachedProcessedTexture);
+                    LLRender::instance().getTexUnit(0)->bind(mCachedProcessedTexture);
                     mCachedProcessedTexture->setAddressMode(LLTexUnit::TAM_CLAMP);
                 }
 
-                gGL.getTexUnit(0)->bind(mCachedProcessedTexture);
+                LLRender::instance().getTexUnit(0)->bind(mCachedProcessedTexture);
                 gl_rect_2d_simple_tex(width, height);
-                gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
                 stop_glerror();
             }
         }
@@ -360,8 +360,8 @@ bool LLTexLayerParamAlpha::render(S32 x, S32 y, S32 width, S32 height)
     }
     else
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-        gGL.color4f(0.f, 0.f, 0.f, effective_weight);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().color4f(0.f, 0.f, 0.f, effective_weight);
         gl_rect_2d_simple(width, height);
     }
 

@@ -148,27 +148,27 @@ void LLHUDIcon::render()
     {
         LLColor4 icon_color = LLColor4::white;
         icon_color.mV[VALPHA] = alpha_factor;
-        gGL.color4fv(icon_color.mV);
-        gGL.getTexUnit(0)->bind(mImagep);
+        LLRender::instance().color4fv(icon_color.mV);
+        LLRender::instance().getTexUnit(0)->bind(mImagep);
     }
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex3fv(upper_left.mV);
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex3fv(lower_left.mV);
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex3fv(lower_right.mV);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex3fv(upper_left.mV);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex3fv(lower_left.mV);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex3fv(lower_right.mV);
 
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex3fv(upper_left.mV);
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex3fv(lower_right.mV);
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex3fv(upper_right.mV);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex3fv(upper_left.mV);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex3fv(lower_right.mV);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex3fv(upper_right.mV);
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void LLHUDIcon::setImage(LLViewerTexture* imagep)

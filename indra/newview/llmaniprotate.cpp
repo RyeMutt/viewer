@@ -115,7 +115,7 @@ void LLManipRotate::handleSelect()
 void LLManipRotate::render()
 {
     LLGLSUIDefault gls_ui;
-    gGL.getTexUnit(0)->bind(LLViewerFetchedTexture::sWhiteImagep);
+    LLRender::instance().getTexUnit(0)->bind(LLViewerFetchedTexture::sWhiteImagep);
     LLGLDepthTest gls_depth(GL_TRUE);
     LLGLEnable gl_blend(GL_BLEND);
 
@@ -131,12 +131,12 @@ void LLManipRotate::render()
         return;
     }
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
     if (mObjectSelection->getSelectType() == SELECT_TYPE_HUD)
     {
         F32 zoom = gAgentCamera.mHUDCurZoom;
-        gGL.scalef(zoom, zoom, zoom);
+        LLRender::instance().scalef(zoom, zoom, zoom);
     }
 
 
@@ -146,7 +146,7 @@ void LLManipRotate::render()
     LLColor4 highlight_inside( 0.7f, 0.7f, 0.f, 0.5f );
     F32 width_meters = WIDTH_PIXELS * mRadiusMeters / RADIUS_PIXELS;
 
-    gGL.pushMatrix();
+    LLRender::instance().pushMatrix();
     {
 
         // are we in the middle of a constrained drag?
@@ -160,11 +160,11 @@ void LLManipRotate::render()
 
             LLGLEnable cull_face(GL_CULL_FACE);
             LLGLDepthTest gls_depth(GL_FALSE);
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
             {
                 // Draw "sphere" (intersection of sphere with tangent cone that has apex at camera)
-                gGL.translatef( mCenterToProfilePlane.mV[VX], mCenterToProfilePlane.mV[VY], mCenterToProfilePlane.mV[VZ] );
-                gGL.translatef( center.mV[VX], center.mV[VY], center.mV[VZ] );
+                LLRender::instance().translatef( mCenterToProfilePlane.mV[VX], mCenterToProfilePlane.mV[VY], mCenterToProfilePlane.mV[VZ] );
+                LLRender::instance().translatef( center.mV[VX], center.mV[VY], center.mV[VZ] );
 
                 // Inverse change of basis vectors
                 LLVector3 forward = mCenterToCamNorm;
@@ -181,38 +181,38 @@ void LLManipRotate::render()
                 LLMatrix4 mat;
                 mat.initRows(a, b, c, LLVector4(0.f, 0.f, 0.f, 1.f));
 
-                gGL.multMatrix( &mat.mMatrix[0][0] );
+                LLRender::instance().multMatrix( &mat.mMatrix[0][0] );
 
-                gGL.rotatef( -90, 0.f, 1.f, 0.f);
+                LLRender::instance().rotatef( -90, 0.f, 1.f, 0.f);
                 LLColor4 color;
                 if (mManipPart == LL_ROT_ROLL || mHighlightedPart == LL_ROT_ROLL)
                 {
                     color.setVec(0.8f, 0.8f, 0.8f, 0.8f);
-                    gGL.scalef(mManipulatorScales.mV[VW], mManipulatorScales.mV[VW], mManipulatorScales.mV[VW]);
+                    LLRender::instance().scalef(mManipulatorScales.mV[VW], mManipulatorScales.mV[VW], mManipulatorScales.mV[VW]);
                 }
                 else
                 {
                     color.setVec( 0.7f, 0.7f, 0.7f, 0.6f );
                 }
-                gGL.diffuseColor4fv(color.mV);
+                LLRender::instance().diffuseColor4fv(color.mV);
                 gl_washer_2d(mRadiusMeters + width_meters, mRadiusMeters, CIRCLE_STEPS, color, color);
 
 
                 if (mManipPart == LL_NO_PART)
                 {
-                    gGL.color4f( 0.7f, 0.7f, 0.7f, 0.3f );
-                    gGL.diffuseColor4f(0.7f, 0.7f, 0.7f, 0.3f);
+                    LLRender::instance().color4f( 0.7f, 0.7f, 0.7f, 0.3f );
+                    LLRender::instance().diffuseColor4f(0.7f, 0.7f, 0.7f, 0.3f);
                     gl_circle_2d( 0, 0,  mRadiusMeters, CIRCLE_STEPS, true );
                 }
 
-                gGL.flush();
+                LLRender::instance().flush();
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
 
             gUIProgram.bind();
         }
 
-        gGL.translatef( center.mV[VX], center.mV[VY], center.mV[VZ] );
+        LLRender::instance().translatef( center.mV[VX], center.mV[VY], center.mV[VZ] );
 
         LLQuaternion rot;
         F32 angle_radians, x, y, z;
@@ -224,7 +224,7 @@ void LLManipRotate::render()
         LLSelectMgr::getInstance()->getGrid(grid_origin, grid_rotation, grid_scale);
 
         grid_rotation.getAngleAxis(&angle_radians, &x, &y, &z);
-        gGL.rotatef(angle_radians * RAD_TO_DEG, x, y, z);
+        LLRender::instance().rotatef(angle_radians * RAD_TO_DEG, x, y, z);
 
 
         gDebugProgram.bind();
@@ -232,35 +232,35 @@ void LLManipRotate::render()
         if (mManipPart == LL_ROT_Z)
         {
             mManipulatorScales = lerp(mManipulatorScales, LLVector4(1.f, 1.f, SELECTED_MANIPULATOR_SCALE, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
             {
                 // selected part
-                gGL.scalef(mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ]);
+                LLRender::instance().scalef(mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ]);
                 renderActiveRing( mRadiusMeters, width_meters, LLColor4( 0.f, 0.f, 1.f, 1.f) , LLColor4( 0.f, 0.f, 1.f, 0.3f ));
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
         else if (mManipPart == LL_ROT_Y)
         {
             mManipulatorScales = lerp(mManipulatorScales, LLVector4(1.f, SELECTED_MANIPULATOR_SCALE, 1.f, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
             {
-                gGL.rotatef( 90.f, 1.f, 0.f, 0.f );
-                gGL.scalef(mManipulatorScales.mV[VY], mManipulatorScales.mV[VY], mManipulatorScales.mV[VY]);
+                LLRender::instance().rotatef( 90.f, 1.f, 0.f, 0.f );
+                LLRender::instance().scalef(mManipulatorScales.mV[VY], mManipulatorScales.mV[VY], mManipulatorScales.mV[VY]);
                 renderActiveRing( mRadiusMeters, width_meters, LLColor4( 0.f, 1.f, 0.f, 1.f), LLColor4( 0.f, 1.f, 0.f, 0.3f));
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
         else if (mManipPart == LL_ROT_X)
         {
             mManipulatorScales = lerp(mManipulatorScales, LLVector4(SELECTED_MANIPULATOR_SCALE, 1.f, 1.f, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
             {
-                gGL.rotatef( 90.f, 0.f, 1.f, 0.f );
-                gGL.scalef(mManipulatorScales.mV[VX], mManipulatorScales.mV[VX], mManipulatorScales.mV[VX]);
+                LLRender::instance().rotatef( 90.f, 0.f, 1.f, 0.f );
+                LLRender::instance().scalef(mManipulatorScales.mV[VX], mManipulatorScales.mV[VX], mManipulatorScales.mV[VX]);
                 renderActiveRing( mRadiusMeters, width_meters, LLColor4( 1.f, 0.f, 0.f, 1.f), LLColor4( 1.f, 0.f, 0.f, 0.3f));
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
         else if (mManipPart == LL_ROT_ROLL)
         {
@@ -281,12 +281,12 @@ void LLManipRotate::render()
             for( S32 i=0; i<2; i++ )
             {
 
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
                 {
                     if (mHighlightedPart == LL_ROT_Z)
                     {
                         mManipulatorScales = lerp(mManipulatorScales, LLVector4(1.f, 1.f, SELECTED_MANIPULATOR_SCALE, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-                        gGL.scalef(mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ]);
+                        LLRender::instance().scalef(mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ], mManipulatorScales.mV[VZ]);
                         // hovering over part
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 0.f, 0.f, 1.f, 1.f ), LLColor4( 0.f, 0.f, 1.f, 0.5f ), CIRCLE_STEPS, i);
                     }
@@ -296,15 +296,15 @@ void LLManipRotate::render()
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 0.f, 0.f, 0.8f, 0.8f ), LLColor4( 0.f, 0.f, 0.8f, 0.4f ), CIRCLE_STEPS, i);
                     }
                 }
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
 
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
                 {
-                    gGL.rotatef( 90.f, 1.f, 0.f, 0.f );
+                    LLRender::instance().rotatef( 90.f, 1.f, 0.f, 0.f );
                     if (mHighlightedPart == LL_ROT_Y)
                     {
                         mManipulatorScales = lerp(mManipulatorScales, LLVector4(1.f, SELECTED_MANIPULATOR_SCALE, 1.f, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-                        gGL.scalef(mManipulatorScales.mV[VY], mManipulatorScales.mV[VY], mManipulatorScales.mV[VY]);
+                        LLRender::instance().scalef(mManipulatorScales.mV[VY], mManipulatorScales.mV[VY], mManipulatorScales.mV[VY]);
                         // hovering over part
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 0.f, 1.f, 0.f, 1.f ), LLColor4( 0.f, 1.f, 0.f, 0.5f ), CIRCLE_STEPS, i);
                     }
@@ -314,15 +314,15 @@ void LLManipRotate::render()
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 0.f, 0.8f, 0.f, 0.8f ), LLColor4( 0.f, 0.8f, 0.f, 0.4f ), CIRCLE_STEPS, i);
                     }
                 }
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
 
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
                 {
-                    gGL.rotatef( 90.f, 0.f, 1.f, 0.f );
+                    LLRender::instance().rotatef( 90.f, 0.f, 1.f, 0.f );
                     if (mHighlightedPart == LL_ROT_X)
                     {
                         mManipulatorScales = lerp(mManipulatorScales, LLVector4(SELECTED_MANIPULATOR_SCALE, 1.f, 1.f, 1.f), LLSmoothInterpolation::getInterpolant(MANIPULATOR_SCALE_HALF_LIFE));
-                        gGL.scalef(mManipulatorScales.mV[VX], mManipulatorScales.mV[VX], mManipulatorScales.mV[VX]);
+                        LLRender::instance().scalef(mManipulatorScales.mV[VX], mManipulatorScales.mV[VX], mManipulatorScales.mV[VX]);
 
                         // hovering over part
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 1.f, 0.f, 0.f, 1.f ), LLColor4( 1.f, 0.f, 0.f, 0.5f ), CIRCLE_STEPS, i);
@@ -333,7 +333,7 @@ void LLManipRotate::render()
                         gl_ring( mRadiusMeters, width_meters, LLColor4( 0.8f, 0.f, 0.f, 0.8f ), LLColor4( 0.8f, 0.f, 0.f, 0.4f ), CIRCLE_STEPS, i);
                     }
                 }
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
 
                 if (mHighlightedPart == LL_ROT_ROLL)
                 {
@@ -346,8 +346,8 @@ void LLManipRotate::render()
 
         gUIProgram.bind();
     }
-    gGL.popMatrix();
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
+    LLRender::instance().popMatrix();
 
 
     LLVector3 euler_angles;
@@ -873,18 +873,18 @@ void LLManipRotate::renderSnapGuides()
         for (S32 pass = 0; pass < 3; pass++)
         {
             // render snap guide ring
-            gGL.pushMatrix();
+            LLRender::instance().pushMatrix();
 
             LLQuaternion snap_guide_rot;
             F32 angle_radians, x, y, z;
             snap_guide_rot.shortestArc(LLVector3::z_axis, getConstraintAxis());
             snap_guide_rot.getAngleAxis(&angle_radians, &x, &y, &z);
-            gGL.translatef(center.mV[VX], center.mV[VY], center.mV[VZ]);
-            gGL.rotatef(angle_radians * RAD_TO_DEG, x, y, z);
+            LLRender::instance().translatef(center.mV[VX], center.mV[VY], center.mV[VZ]);
+            LLRender::instance().rotatef(angle_radians * RAD_TO_DEG, x, y, z);
 
             LLColor4 line_color = setupSnapGuideRenderPass(pass);
 
-            gGL.color4fv(line_color.mV);
+            LLRender::instance().color4fv(line_color.mV);
 
             if (mCamEdgeOn)
             {
@@ -903,7 +903,7 @@ void LLManipRotate::renderSnapGuides()
             {
                 gl_circle_2d(0.f, 0.f, mRadiusMeters * SNAP_GUIDE_INNER_RADIUS, CIRCLE_STEPS, false);
             }
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
 
             for (S32 i = 0; i < 64; i++)
             {
@@ -913,7 +913,7 @@ void LLManipRotate::renderSnapGuides()
                 LLVector3 outer_point;
                 LLVector3 text_point;
                 LLQuaternion rot(deg * DEG_TO_RAD, constraint_axis);
-                gGL.begin(LLRender::LINES);
+                LLRender::instance().begin(LLRender::LINES);
                 {
                     inner_point = (projected_snap_axis * mRadiusMeters * SNAP_GUIDE_INNER_RADIUS * rot) + center;
                     F32 tick_length = 0.f;
@@ -966,10 +966,10 @@ void LLManipRotate::renderSnapGuides()
 
                     text_point = outer_point + (projected_snap_axis * mRadiusMeters * 0.1f) * rot;
 
-                    gGL.vertex3fv(inner_point.mV);
-                    gGL.vertex3fv(outer_point.mV);
+                    LLRender::instance().vertex3fv(inner_point.mV);
+                    LLRender::instance().vertex3fv(outer_point.mV);
                 }
-                gGL.end();
+                LLRender::instance().end();
 
                 //RN: text rendering does own shadow pass, so only render once
                 if (pass == 1 && render_text && i % 16 == 0)
@@ -1074,7 +1074,7 @@ void LLManipRotate::renderSnapGuides()
                         }
                     }
                 }
-                gGL.color4fv(line_color.mV);
+                LLRender::instance().color4fv(line_color.mV);
             }
 
             // now render projected object axis
@@ -1091,15 +1091,15 @@ void LLManipRotate::renderSnapGuides()
                 object_axis = object_axis * SNAP_GUIDE_INNER_RADIUS * mRadiusMeters + center;
                 LLVector3 line_start = center;
 
-                gGL.begin(LLRender::LINES);
+                LLRender::instance().begin(LLRender::LINES);
                 {
-                    gGL.vertex3fv(line_start.mV);
-                    gGL.vertex3fv(object_axis.mV);
+                    LLRender::instance().vertex3fv(line_start.mV);
+                    LLRender::instance().vertex3fv(object_axis.mV);
                 }
-                gGL.end();
+                LLRender::instance().end();
 
                 // draw snap guide arrow
-                gGL.begin(LLRender::TRIANGLES);
+                LLRender::instance().begin(LLRender::TRIANGLES);
                 {
                     LLVector3 arrow_dir;
                     LLVector3 arrow_span = (object_axis - line_start) % getConstraintAxis();
@@ -1111,23 +1111,23 @@ void LLManipRotate::renderSnapGuides()
                     {
                         arrow_dir *= -1.f;
                     }
-                    gGL.vertex3fv((object_axis + arrow_dir * mRadiusMeters * 0.1f).mV);
-                    gGL.vertex3fv((object_axis + arrow_span * mRadiusMeters * 0.1f).mV);
-                    gGL.vertex3fv((object_axis - arrow_span * mRadiusMeters * 0.1f).mV);
+                    LLRender::instance().vertex3fv((object_axis + arrow_dir * mRadiusMeters * 0.1f).mV);
+                    LLRender::instance().vertex3fv((object_axis + arrow_span * mRadiusMeters * 0.1f).mV);
+                    LLRender::instance().vertex3fv((object_axis - arrow_span * mRadiusMeters * 0.1f).mV);
                 }
-                gGL.end();
+                LLRender::instance().end();
 
                 {
                     LLGLDepthTest gls_depth(GL_TRUE);
-                    gGL.begin(LLRender::LINES);
+                    LLRender::instance().begin(LLRender::LINES);
                     {
-                        gGL.vertex3fv(line_start.mV);
-                        gGL.vertex3fv(object_axis.mV);
+                        LLRender::instance().vertex3fv(line_start.mV);
+                        LLRender::instance().vertex3fv(object_axis.mV);
                     }
-                    gGL.end();
+                    LLRender::instance().end();
 
                     // draw snap guide arrow
-                    gGL.begin(LLRender::TRIANGLES);
+                    LLRender::instance().begin(LLRender::TRIANGLES);
                     {
                         LLVector3 arrow_dir;
                         LLVector3 arrow_span = (object_axis - line_start) % getConstraintAxis();
@@ -1140,11 +1140,11 @@ void LLManipRotate::renderSnapGuides()
                             arrow_dir *= -1.f;
                         }
 
-                        gGL.vertex3fv((object_axis + arrow_dir * mRadiusMeters * 0.1f).mV);
-                        gGL.vertex3fv((object_axis + arrow_span * mRadiusMeters * 0.1f).mV);
-                        gGL.vertex3fv((object_axis - arrow_span * mRadiusMeters * 0.1f).mV);
+                        LLRender::instance().vertex3fv((object_axis + arrow_dir * mRadiusMeters * 0.1f).mV);
+                        LLRender::instance().vertex3fv((object_axis + arrow_span * mRadiusMeters * 0.1f).mV);
+                        LLRender::instance().vertex3fv((object_axis - arrow_span * mRadiusMeters * 0.1f).mV);
                     }
-                    gGL.end();
+                    LLRender::instance().end();
                 }
             }
         }

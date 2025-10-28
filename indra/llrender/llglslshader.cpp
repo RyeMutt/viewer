@@ -1051,7 +1051,7 @@ void LLGLSLShader::bind()
 
     llassert_always(mProgramObject != 0);
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     if (sCurBoundShader != mProgramObject)  // Don't re-bind current shader
     {
@@ -1100,7 +1100,7 @@ void LLGLSLShader::bind(bool rigged)
 void LLGLSLShader::unbind(void)
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_SHADER;
-    gGL.flush();
+    LLRender::instance().flush();
     LLVertexBuffer::unbind();
 
     if (sCurBoundShaderPtr)
@@ -1138,7 +1138,7 @@ S32 LLGLSLShader::bindTexture(S32 uniform, LLTexture* texture, LLTexUnit::eTextu
 
     if (uniform > -1)
     {
-        gGL.getTexUnit(uniform)->bindFast(texture);
+        LLRender::instance().getTexUnit(uniform)->bindFast(texture);
     }
 
     return uniform;
@@ -1160,14 +1160,14 @@ S32 LLGLSLShader::bindTexture(S32 uniform, LLRenderTarget* texture, bool depth, 
     if (uniform > -1)
     {
         if (depth) {
-            gGL.getTexUnit(uniform)->bind(texture, true);
+            LLRender::instance().getTexUnit(uniform)->bind(texture, true);
         }
         else {
             bool has_mips = mode == LLTexUnit::TFO_TRILINEAR || mode == LLTexUnit::TFO_ANISOTROPIC;
-            gGL.getTexUnit(uniform)->bindManual(texture->getUsage(), texture->getTexture(index), has_mips);
+            LLRender::instance().getTexUnit(uniform)->bindManual(texture->getUsage(), texture->getTexture(index), has_mips);
         }
 
-        gGL.getTexUnit(uniform)->setTextureFilteringOption(mode);
+        LLRender::instance().getTexUnit(uniform)->setTextureFilteringOption(mode);
     }
 
     return uniform;
@@ -1208,7 +1208,7 @@ S32 LLGLSLShader::unbindTexture(S32 uniform, LLTexUnit::eTextureType mode)
 
     if (uniform > -1)
     {
-        gGL.getTexUnit(uniform)->unbindFast(mode);
+        LLRender::instance().getTexUnit(uniform)->unbindFast(mode);
     }
 
     return uniform;
@@ -1234,8 +1234,8 @@ S32 LLGLSLShader::enableTexture(S32 uniform, LLTexUnit::eTextureType mode)
     S32 index = mTexture[uniform];
     if (index != -1)
     {
-        gGL.getTexUnit(index)->activate();
-        gGL.getTexUnit(index)->enable(mode);
+        LLRender::instance().getTexUnit(index)->activate();
+        LLRender::instance().getTexUnit(index)->enable(mode);
     }
     return index;
 }
@@ -1258,7 +1258,7 @@ S32 LLGLSLShader::disableTexture(S32 uniform, LLTexUnit::eTextureType mode)
         return index;
     }
 
-    LLTexUnit* tex_unit = gGL.getTexUnit(index);
+    LLTexUnit* tex_unit = LLRender::instance().getTexUnit(index);
     if (!tex_unit)
     {
         // Invalid texture unit
@@ -2023,7 +2023,7 @@ void LLGLSLShader::vertexAttrib4fv(U32 index, GLfloat* v)
 void LLGLSLShader::setMinimumAlpha(F32 minimum)
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_SHADER;
-    gGL.flush();
+    LLRender::instance().flush();
     uniform1f(LLShaderMgr::MINIMUM_ALPHA, minimum);
 }
 

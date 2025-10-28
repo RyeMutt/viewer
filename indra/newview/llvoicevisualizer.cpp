@@ -377,24 +377,24 @@ void LLVoiceVisualizer::render()
         //-----------------------------
         // bind texture 0 (the dot)
         //-----------------------------
-        gGL.getTexUnit(0)->bind(mSoundSymbol.mTexture[0]);
+        LLRender::instance().getTexUnit(0)->bind(mSoundSymbol.mTexture[0]);
 
         //-------------------------------------------------------------
         // now render the dot
         //-------------------------------------------------------------
-        gGL.color4fv( LLColor4( 1.0f, 1.0f, 1.0f, DOT_OPACITY ).mV );
+        LLRender::instance().color4fv( LLColor4( 1.0f, 1.0f, 1.0f, DOT_OPACITY ).mV );
 
-        gGL.begin( LLRender::TRIANGLE_STRIP );
-            gGL.texCoord2i( 0,  0   ); gGL.vertex3fv( bottomLeft.mV );
-            gGL.texCoord2i( 1,  0   ); gGL.vertex3fv( bottomRight.mV );
-            gGL.texCoord2i( 0,  1   ); gGL.vertex3fv( topLeft.mV );
-        gGL.end();
+        LLRender::instance().begin( LLRender::TRIANGLE_STRIP );
+            LLRender::instance().texCoord2i( 0,  0   ); LLRender::instance().vertex3fv( bottomLeft.mV );
+            LLRender::instance().texCoord2i( 1,  0   ); LLRender::instance().vertex3fv( bottomRight.mV );
+            LLRender::instance().texCoord2i( 0,  1   ); LLRender::instance().vertex3fv( topLeft.mV );
+        LLRender::instance().end();
 
-        gGL.begin( LLRender::TRIANGLE_STRIP );
-            gGL.texCoord2i( 1,  0   ); gGL.vertex3fv( bottomRight.mV );
-            gGL.texCoord2i( 1,  1   ); gGL.vertex3fv( topRight.mV );
-            gGL.texCoord2i( 0,  1   ); gGL.vertex3fv( topLeft.mV );
-        gGL.end();
+        LLRender::instance().begin( LLRender::TRIANGLE_STRIP );
+            LLRender::instance().texCoord2i( 1,  0   ); LLRender::instance().vertex3fv( bottomRight.mV );
+            LLRender::instance().texCoord2i( 1,  1   ); LLRender::instance().vertex3fv( topRight.mV );
+            LLRender::instance().texCoord2i( 0,  1   ); LLRender::instance().vertex3fv( topLeft.mV );
+        LLRender::instance().end();
 
 
 
@@ -501,24 +501,24 @@ void LLVoiceVisualizer::render()
                 LLVector3 topLeft       = mSoundSymbol.mPosition + l + u;
                 LLVector3 topRight      = mSoundSymbol.mPosition - l + u;
 
-                gGL.color4fv( LLColor4( red, green, blue, mSoundSymbol.mWaveOpacity[i] ).mV );
-                gGL.getTexUnit(0)->bind(mSoundSymbol.mTexture[i]);
+                LLRender::instance().color4fv( LLColor4( red, green, blue, mSoundSymbol.mWaveOpacity[i] ).mV );
+                LLRender::instance().getTexUnit(0)->bind(mSoundSymbol.mTexture[i]);
 
 
                 //---------------------------------------------------
                 // now, render the mofo
                 //---------------------------------------------------
-                gGL.begin( LLRender::TRIANGLE_STRIP );
-                    gGL.texCoord2i( 0, 0 ); gGL.vertex3fv( bottomLeft.mV );
-                    gGL.texCoord2i( 1, 0 ); gGL.vertex3fv( bottomRight.mV );
-                    gGL.texCoord2i( 0, 1 ); gGL.vertex3fv( topLeft.mV );
-                gGL.end();
+                LLRender::instance().begin( LLRender::TRIANGLE_STRIP );
+                    LLRender::instance().texCoord2i( 0, 0 ); LLRender::instance().vertex3fv( bottomLeft.mV );
+                    LLRender::instance().texCoord2i( 1, 0 ); LLRender::instance().vertex3fv( bottomRight.mV );
+                    LLRender::instance().texCoord2i( 0, 1 ); LLRender::instance().vertex3fv( topLeft.mV );
+                LLRender::instance().end();
 
-                gGL.begin( LLRender::TRIANGLE_STRIP );
-                    gGL.texCoord2i( 1, 0 ); gGL.vertex3fv( bottomRight.mV );
-                    gGL.texCoord2i( 1, 1 ); gGL.vertex3fv( topRight.mV );
-                    gGL.texCoord2i( 0, 1 ); gGL.vertex3fv( topLeft.mV );
-                gGL.end();
+                LLRender::instance().begin( LLRender::TRIANGLE_STRIP );
+                    LLRender::instance().texCoord2i( 1, 0 ); LLRender::instance().vertex3fv( bottomRight.mV );
+                    LLRender::instance().texCoord2i( 1, 1 ); LLRender::instance().vertex3fv( topRight.mV );
+                    LLRender::instance().texCoord2i( 0, 1 ); LLRender::instance().vertex3fv( topLeft.mV );
+                LLRender::instance().end();
 
             } //if ( mSoundSymbol.mWaveActive[i] )
 

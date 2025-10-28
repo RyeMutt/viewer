@@ -107,7 +107,7 @@ S32 LLDrawPoolWater::getNumPostDeferredPasses()
 void LLDrawPoolWater::beginPostDeferredPass(S32 pass)
 {
     LL_PROFILE_GPU_ZONE("water beginPostDeferredPass")
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
 
     if (LLPipeline::sRenderTransparentWater)
     {
@@ -125,8 +125,8 @@ void LLDrawPoolWater::beginPostDeferredPass(S32 pass)
         S32 diff_map = gCopyDepthProgram.getTextureChannel(LLShaderMgr::DIFFUSE_MAP);
         S32 depth_map = gCopyDepthProgram.getTextureChannel(LLShaderMgr::DEFERRED_DEPTH);
 
-        gGL.getTexUnit(diff_map)->bind(&src);
-        gGL.getTexUnit(depth_map)->bind(&depth_src, true);
+        LLRender::instance().getTexUnit(diff_map)->bind(&src);
+        LLRender::instance().getTexUnit(depth_map)->bind(&depth_src, true);
 
         gPipeline.mScreenTriangleVB->setBuffer();
         gPipeline.mScreenTriangleVB->drawArrays(LLRender::TRIANGLES, 0, 3);
@@ -140,7 +140,7 @@ void LLDrawPoolWater::renderPostDeferred(S32 pass)
     LL_PROFILE_ZONE_SCOPED_CATEGORY_DRAWPOOL;
     LLGLDisable blend(GL_BLEND);
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
 
     LLColor3 light_diffuse(0, 0, 0);
 
@@ -302,7 +302,7 @@ void LLDrawPoolWater::renderPostDeferred(S32 pass)
     // clean up
     gPipeline.unbindDeferredShader(*shader);
 
-    gGL.setColorMask(true, false);
+    LLRender::instance().setColorMask(true, false);
 }
 
 void LLDrawPoolWater::pushWaterPlanes(int pass)

@@ -393,7 +393,7 @@ void fixup_shader_constants(LLGLSLShader& shader)
         const S32 channel = shader.getTextureChannel(LLShaderMgr::DEFERRED_SHADOW0+i);
         if (channel != -1)
         {
-            gGL.getTexUnit(channel)->bind(LLViewerFetchedTexture::sWhiteImagep, true);
+            LLRender::instance().getTexUnit(channel)->bind(LLViewerFetchedTexture::sWhiteImagep, true);
         }
     }
 }
@@ -478,7 +478,7 @@ bool LLGLTFPreviewTexture::render()
     // Override lights to ensure the sun is always shining from a certain direction (low graphics)
     // See also force_sun_direction_high_graphics and fixup_shader_constants
     {
-        LLLightState* light = gGL.getLight(0);
+        LLLightState* light = LLRender::instance().getLight(0);
         light->setPosition(light_dir);
         constexpr bool sun_up = true;
         light->setSunPrimary(sun_up);

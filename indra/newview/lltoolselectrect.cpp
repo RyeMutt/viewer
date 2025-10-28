@@ -163,13 +163,13 @@ void LLToolSelectRect::draw()
     {
         if (gKeyboard->currentMask(true) == MASK_CONTROL)
         {
-            gGL.color4f(1.f, 0.f, 0.f, 1.f);
+            LLRender::instance().color4f(1.f, 0.f, 0.f, 1.f);
         }
         else
         {
-            gGL.color4f(1.f, 1.f, 0.f, 1.f);
+            LLRender::instance().color4f(1.f, 1.f, 0.f, 1.f);
         }
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
         gl_rect_2d(
             llmin(mDragStartX, mDragEndX),
             llmax(mDragStartY, mDragEndY),
@@ -178,11 +178,11 @@ void LLToolSelectRect::draw()
             false);
         if (gKeyboard->currentMask(true) == MASK_CONTROL)
         {
-            gGL.color4f(1.f, 0.f, 0.f, 0.1f);
+            LLRender::instance().color4f(1.f, 0.f, 0.f, 0.1f);
         }
         else
         {
-            gGL.color4f(1.f, 1.f, 0.f, 0.1f);
+            LLRender::instance().color4f(1.f, 1.f, 0.f, 0.1f);
         }
         gl_rect_2d(
             llmin(mDragStartX, mDragEndX),

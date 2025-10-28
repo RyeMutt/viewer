@@ -247,7 +247,7 @@ void LLTextureBar::draw()
     LLFontGL::getFontMonospace()->renderUTF8(fetch_state_desc[state].desc, 0, title_x2, getRect().getHeight(),
                                      fetch_state_desc[state].color,
                                      LLFontGL::LEFT, LLFontGL::TOP);
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     // Draw the progress bar.
     S32 bar_width = 100;
@@ -255,7 +255,7 @@ void LLTextureBar::draw()
     left = bar_left;
     right = left + bar_width;
 
-    gGL.color4f(0.f, 0.f, 0.f, 0.75f);
+    LLRender::instance().color4f(0.f, 0.f, 0.f, 0.75f);
     gl_rect_2d(left, top, right, bottom);
 
     F32 data_progress = mImagep->mDownloadProgress;
@@ -266,7 +266,7 @@ void LLTextureBar::draw()
         right = left + llfloor(data_progress * (F32)bar_width);
         if (right > left)
         {
-            gGL.color4f(0.f, 0.f, 1.f, 0.75f);
+            LLRender::instance().color4f(0.f, 0.f, 1.f, 0.75f);
             gl_rect_2d(left, top, right, bottom);
         }
     }
@@ -301,7 +301,7 @@ void LLTextureBar::draw()
     if (last_event < pip_max_time)
     {
         clr.setAlpha(1.f - last_event/pip_max_time);
-        gGL.color4fv(clr.mV);
+        LLRender::instance().color4fv(clr.mV);
         gl_rect_2d(pip_x, top, pip_x + pip_width, bottom);
     }
     pip_x += pip_width + pip_space;
@@ -315,7 +315,7 @@ void LLTextureBar::draw()
         {
             clr = mImagep->getMissed() ? LLColor4::red : LLColor4::magenta1;
             clr.setAlpha(1.f - last_event);
-            gGL.color4fv(clr.mV);
+            LLRender::instance().color4fv(clr.mV);
             gl_rect_2d(pip_x, top, pip_x + pip_width, bottom);
         }
     }
@@ -557,7 +557,7 @@ void LLGLTexMemBar::draw()
     U32 texFetchLatMax = U32(recording.getMax(LLTextureFetch::sTexFetchLatency).value() * 1000.0f);
 
     // draw a background above first line.... no idea where the rest of the background comes from for the below text
-    gGL.color4f(0.f, 0.f, 0.f, 0.25f);
+    LLRender::instance().color4f(0.f, 0.f, 0.f, 0.25f);
     gl_rect_2d(-10, getRect().getHeight() + line_height*2 + 1, getRect().getWidth()+2, getRect().getHeight()+2);
 
     text = llformat("Est. Free: %d MB Sys Free: %d MB FBO: %d MB Probe#: %d Probe Mem: %d MB Bias: %.2f Cache: %.1f/%.1f MB",

@@ -2204,7 +2204,7 @@ void rotate_quat(LLQuaternion& rotation)
 {
     F32 angle_radians, x, y, z;
     rotation.getAngleAxis(&angle_radians, &x, &y, &z);
-    gGL.rotatef(angle_radians * RAD_TO_DEG, x, y, z);
+    LLRender::instance().rotatef(angle_radians * RAD_TO_DEG, x, y, z);
 }
 
 void flush_glerror()
@@ -2358,14 +2358,14 @@ void LLGLState::restoreGL()
 // Really shouldn't be needed, but seems we sometimes do.
 void LLGLState::resetTextureStates()
 {
-    gGL.flush();
+    LLRender::instance().flush();
     GLint maxTextureUnits;
 
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
     for (S32 j = maxTextureUnits-1; j >=0; j--)
     {
-        gGL.getTexUnit(j)->activate();
-        j == 0 ? gGL.getTexUnit(j)->enable(LLTexUnit::TT_TEXTURE) : gGL.getTexUnit(j)->disable();
+        LLRender::instance().getTexUnit(j)->activate();
+        j == 0 ? LLRender::instance().getTexUnit(j)->enable(LLTexUnit::TT_TEXTURE) : LLRender::instance().getTexUnit(j)->disable();
     }
 }
 
@@ -2444,13 +2444,13 @@ void LLGLState::setEnabled(S32 enabled)
     }
     else if (enabled == ENABLED_STATE && sStateMap[mState] != GL_TRUE)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glEnable(mState);
         sStateMap[mState] = GL_TRUE;
     }
     else if (enabled == DISABLED_STATE && sStateMap[mState] != GL_FALSE)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glDisable(mState);
         sStateMap[mState] = GL_FALSE;
     }
@@ -2479,7 +2479,7 @@ LLGLState::~LLGLState()
 
         if (mIsEnabled != mWasEnabled)
         {
-            gGL.flush();
+            LLRender::instance().flush();
             if (mWasEnabled)
             {
                 glEnable(mState);
@@ -2654,9 +2654,9 @@ void LLGLUserClipPlane::disable()
 {
     if (mApply)
     {
-        gGL.matrixMode(LLRender::MM_PROJECTION);
-        gGL.popMatrix();
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+        LLRender::instance().popMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
     }
     mApply = false;
 }
@@ -2679,11 +2679,11 @@ void LLGLUserClipPlane::setPlane(F32 a, F32 b, F32 c, F32 d)
     glm::mat4 suffix = glm::identity<glm::mat4>();
     suffix = glm::row(suffix, 2, cplane);
     glm::mat4 newP = suffix * P;
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.loadMatrix(glm::value_ptr(newP));
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(glm::value_ptr(newP));
     gGLObliqueProjectionInverse = LLMatrix4(glm::value_ptr(glm::transpose(glm::inverse(newP))));
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 }
 
 LLGLUserClipPlane::~LLGLUserClipPlane()
@@ -2707,20 +2707,20 @@ LLGLDepthTest::LLGLDepthTest(GLboolean depth_enabled, GLboolean write_enabled, G
 
     if (depth_enabled != sDepthEnabled)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         if (depth_enabled) glEnable(GL_DEPTH_TEST);
         else glDisable(GL_DEPTH_TEST);
         sDepthEnabled = depth_enabled;
     }
     if (depth_func != sDepthFunc)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glDepthFunc(depth_func);
         sDepthFunc = depth_func;
     }
     if (write_enabled != sWriteEnabled)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glDepthMask(write_enabled);
         sWriteEnabled = write_enabled;
     }
@@ -2732,20 +2732,20 @@ LLGLDepthTest::~LLGLDepthTest()
     checkState();
     if (sDepthEnabled != mPrevDepthEnabled )
     {
-        gGL.flush();
+        LLRender::instance().flush();
         if (mPrevDepthEnabled) glEnable(GL_DEPTH_TEST);
         else glDisable(GL_DEPTH_TEST);
         sDepthEnabled = mPrevDepthEnabled;
     }
     if (sDepthFunc != mPrevDepthFunc)
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glDepthFunc(mPrevDepthFunc);
         sDepthFunc = mPrevDepthFunc;
     }
     if (sWriteEnabled != mPrevWriteEnabled )
     {
-        gGL.flush();
+        LLRender::instance().flush();
         glDepthMask(mPrevWriteEnabled);
         sWriteEnabled = mPrevWriteEnabled;
     }
@@ -2795,23 +2795,23 @@ void LLGLSquashToFarClip::setProjectionMatrix(glm::mat4 projection, U32 layer)
     glm::vec4 P_row_3 = glm::row(projection, 3) * depth;
     projection = glm::row(projection, 2, P_row_3);
 
-    LLRender::eMatrixMode last_matrix_mode = gGL.getMatrixMode();
+    LLRender::eMatrixMode last_matrix_mode = LLRender::instance().getMatrixMode();
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.loadMatrix(glm::value_ptr(projection));
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(glm::value_ptr(projection));
 
-    gGL.matrixMode(last_matrix_mode);
+    LLRender::instance().matrixMode(last_matrix_mode);
 }
 
 LLGLSquashToFarClip::~LLGLSquashToFarClip()
 {
-    LLRender::eMatrixMode last_matrix_mode = gGL.getMatrixMode();
+    LLRender::eMatrixMode last_matrix_mode = LLRender::instance().getMatrixMode();
 
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
 
-    gGL.matrixMode(last_matrix_mode);
+    LLRender::instance().matrixMode(last_matrix_mode);
 }
 
 
@@ -2883,7 +2883,7 @@ LLGLSPipelineBlendSkyBox::LLGLSPipelineBlendSkyBox(bool depth_test, bool depth_w
 : LLGLSPipelineDepthTestSkyBox(depth_test, depth_write)
 , mBlend(GL_BLEND)
 {
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 }
 
 #if LL_WINDOWS

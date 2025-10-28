@@ -186,7 +186,7 @@ void display_startup()
     gViewerWindow->setup2DRender();
     if (gViewerWindow)
     gViewerWindow->draw();
-    gGL.flush();
+    LLRender::instance().flush();
 
     LLVertexBuffer::unbind();
 
@@ -417,7 +417,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
     { //skip render on frames where window has been resized
         LL_DEBUGS("Window") << "Resizing window" << LL_ENDL;
         LL_PROFILE_ZONE_NAMED_CATEGORY_DISPLAY("Resize Window");
-        gGL.flush();
+        LLRender::instance().flush();
         glClear(GL_COLOR_BUFFER_BIT);
         gViewerWindow->getWindow()->swapBuffers();
         LLPipeline::refreshCachedSettings();
@@ -681,7 +681,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
     // Note that these are not the same as GL defaults...
 
     stop_glerror();
-    gGL.setAmbientLightColor(LLColor4::white);
+    LLRender::instance().setAmbientLightColor(LLColor4::white);
     stop_glerror();
 
     /////////////////////////////////////
@@ -698,7 +698,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
         LL_PROFILE_ZONE_NAMED_CATEGORY_DISPLAY("Update Dynamic Textures");
         if (LLViewerDynamicTexture::updateAllInstances())
         {
-            gGL.setColorMask(true, true);
+            LLRender::instance().setColorMask(true, true);
             glClear(GL_DEPTH_BUFFER_BIT);
         }
     }
@@ -797,7 +797,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
                 gResizeScreenTexture = false;
             }
 
-            gGL.setColorMask(true, true);
+            LLRender::instance().setColorMask(true, true);
             glClearColor(0.f, 0.f, 0.f, 0.f);
 
             LLGLState::checkStates();
@@ -822,10 +822,10 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
 
                 set_current_projection(proj);
                 set_current_modelview(mod);
-                gGL.matrixMode(LLRender::MM_PROJECTION);
-                gGL.loadMatrix(glm::value_ptr(proj));
-                gGL.matrixMode(LLRender::MM_MODELVIEW);
-                gGL.loadMatrix(glm::value_ptr(mod));
+                LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+                LLRender::instance().loadMatrix(glm::value_ptr(proj));
+                LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+                LLRender::instance().loadMatrix(glm::value_ptr(mod));
                 gViewerWindow->setup3DViewport();
 
                 LLGLState::checkStates();
@@ -923,13 +923,13 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
         //// assumes frontmost floater with focus is opaque
         //if (frontmost_floaterp && gFocusMgr.childHasKeyboardFocus(frontmost_floaterp))
         //{
-        //  gGL.matrixMode(LLRender::MM_MODELVIEW);
-        //  gGL.pushMatrix();
+        //  LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        //  LLRender::instance().pushMatrix();
         //  {
-        //      gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        //      LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         //      glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
-        //      gGL.loadIdentity();
+        //      LLRender::instance().loadIdentity();
 
         //      LLRect floater_rect = frontmost_floaterp->calcScreenRect();
         //      // deflate by one pixel so rounding errors don't occlude outside of floater extents
@@ -939,20 +939,20 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
         //                              (F32)floater_rect.mRight / (F32)gViewerWindow->getWindowWidthScaled(),
         //                              (F32)floater_rect.mBottom / (F32)gViewerWindow->getWindowHeightScaled());
         //      floater_3d_rect.translate(-0.5f, -0.5f);
-        //      gGL.translatef(0.f, 0.f, -LLViewerCamera::getInstance()->getNear());
-        //      gGL.scalef(LLViewerCamera::getInstance()->getNear() * LLViewerCamera::getInstance()->getAspect() / sinf(LLViewerCamera::getInstance()->getView()), LLViewerCamera::getInstance()->getNear() / sinf(LLViewerCamera::getInstance()->getView()), 1.f);
-        //      gGL.color4fv(LLColor4::white.mV);
-        //      gGL.begin(LLVertexBuffer::QUADS);
+        //      LLRender::instance().translatef(0.f, 0.f, -LLViewerCamera::getInstance()->getNear());
+        //      LLRender::instance().scalef(LLViewerCamera::getInstance()->getNear() * LLViewerCamera::getInstance()->getAspect() / sinf(LLViewerCamera::getInstance()->getView()), LLViewerCamera::getInstance()->getNear() / sinf(LLViewerCamera::getInstance()->getView()), 1.f);
+        //      LLRender::instance().color4fv(LLColor4::white.mV);
+        //      LLRender::instance().begin(LLVertexBuffer::QUADS);
         //      {
-        //          gGL.vertex3f(floater_3d_rect.mLeft, floater_3d_rect.mBottom, 0.f);
-        //          gGL.vertex3f(floater_3d_rect.mLeft, floater_3d_rect.mTop, 0.f);
-        //          gGL.vertex3f(floater_3d_rect.mRight, floater_3d_rect.mTop, 0.f);
-        //          gGL.vertex3f(floater_3d_rect.mRight, floater_3d_rect.mBottom, 0.f);
+        //          LLRender::instance().vertex3f(floater_3d_rect.mLeft, floater_3d_rect.mBottom, 0.f);
+        //          LLRender::instance().vertex3f(floater_3d_rect.mLeft, floater_3d_rect.mTop, 0.f);
+        //          LLRender::instance().vertex3f(floater_3d_rect.mRight, floater_3d_rect.mTop, 0.f);
+        //          LLRender::instance().vertex3f(floater_3d_rect.mRight, floater_3d_rect.mBottom, 0.f);
         //      }
-        //      gGL.end();
+        //      LLRender::instance().end();
         //      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         //  }
-        //  gGL.popMatrix();
+        //  LLRender::instance().popMatrix();
         //}
 
         LLPipeline::sUnderWaterRender = LLViewerCamera::getInstance()->cameraUnderWater();
@@ -961,7 +961,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
 
         stop_glerror();
 
-        gGL.setColorMask(true, true);
+        LLRender::instance().setColorMask(true, true);
 
         gPipeline.mRT->deferredScreen.bindTarget();
         if (gUseWireframe)
@@ -975,7 +975,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
         }
         gPipeline.mRT->deferredScreen.clear();
 
-        gGL.setColorMask(true, false);
+        LLRender::instance().setColorMask(true, false);
 
         LLAppViewer::instance()->pingMainloopTimeout("Display:RenderGeom");
 
@@ -988,7 +988,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
             static LLCachedControl<bool> render_depth_pre_pass(gSavedSettings, "RenderDepthPrePass", false);
             if (render_depth_pre_pass)
             {
-                gGL.setColorMask(false, false);
+                LLRender::instance().setColorMask(false, false);
 
                 constexpr U32 types[] = {
                     LLRenderPass::PASS_SIMPLE,
@@ -1007,7 +1007,7 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
 
             }
 
-            gGL.setColorMask(true, true);
+            LLRender::instance().setColorMask(true, true);
             gPipeline.renderGeomDeferred(*LLViewerCamera::getInstance(), true);
         }
 
@@ -1015,10 +1015,10 @@ void display(bool rebuild, F32 zoom_factor, int subfield, bool for_snapshot)
             LL_PROFILE_ZONE_NAMED_CATEGORY_DISPLAY("Texture Unbind");
             for (S32 i = 0; i < gGLManager.mNumTextureImageUnits; i++)
             { //dummy cleanup of any currently bound textures
-                if (gGL.getTexUnit(i)->getCurrType() != LLTexUnit::TT_NONE)
+                if (LLRender::instance().getTexUnit(i)->getCurrType() != LLTexUnit::TT_NONE)
                 {
-                    gGL.getTexUnit(i)->unbind(gGL.getTexUnit(i)->getCurrType());
-                    gGL.getTexUnit(i)->disable();
+                    LLRender::instance().getTexUnit(i)->unbind(LLRender::instance().getTexUnit(i)->getCurrType());
+                    LLRender::instance().getTexUnit(i)->disable();
                 }
             }
         }
@@ -1202,7 +1202,7 @@ void display_cube_face()
     LLPipeline::sUnderWaterRender = LLViewerCamera::getInstance()->cameraUnderWater();
     gPipeline.updateCull(*LLViewerCamera::getInstance(), result);
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
 
     glClearColor(0.f, 0.f, 0.f, 0.f);
     gPipeline.generateSunShadow(*LLViewerCamera::getInstance());
@@ -1231,7 +1231,7 @@ void display_cube_face()
 
     LLPipeline::sUnderWaterRender = LLViewerCamera::getInstance()->cameraUnderWater();
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
 
     gPipeline.mRT->deferredScreen.bindTarget();
     if (gUseWireframe)
@@ -1264,10 +1264,10 @@ void display_cube_face()
 void render_hud_attachments()
 {
     LLPerfStats::RecordSceneTime T ( LLPerfStats::StatType_t::RENDER_HUDS); // render time capture - Primary contributor to HUDs (though these end up in render batches)
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
 
     glm::mat4 current_proj = get_current_projection();
     glm::mat4 current_mod = get_current_modelview();
@@ -1366,10 +1366,10 @@ void render_hud_attachments()
         LLPipeline::sUseOcclusion = use_occlusion;
         LLPipeline::sRenderingHUDs = false;
     }
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().popMatrix();
 
     set_current_projection(current_proj);
     set_current_modelview(current_mod);
@@ -1453,12 +1453,12 @@ bool setup_hud_matrices(const LLRect& screen_region)
     if (!result) return result;
 
     // set up transform to keep HUD objects in front of camera
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.loadMatrix(glm::value_ptr(proj));
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().loadMatrix(glm::value_ptr(proj));
     set_current_projection(proj);
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.loadMatrix(glm::value_ptr(model));
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().loadMatrix(glm::value_ptr(model));
     set_current_modelview(model);
     return true;
 }
@@ -1474,18 +1474,18 @@ void render_ui(F32 zoom_factor, int subfield)
 
     if (!gSnapshot)
     {
-        gGL.pushMatrix();
-        gGL.loadMatrix(gGLLastModelView);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadMatrix(gGLLastModelView);
         set_current_modelview(glm::make_mat4(gGLLastModelView));
     }
 
     if(LLSceneMonitor::getInstance()->needsUpdate())
     {
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         gViewerWindow->setup2DRender();
         LLSceneMonitor::getInstance()->compare();
         gViewerWindow->setup3DRender();
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
 
     // apply gamma correction and post effects
@@ -1544,7 +1544,7 @@ void render_ui(F32 zoom_factor, int subfield)
     if (!gSnapshot)
     {
         set_current_modelview(saved_view);
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
 }
 
@@ -1562,70 +1562,70 @@ void swap()
 
 void renderCoordinateAxes()
 {
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-    gGL.begin(LLRender::LINES);
-        gGL.color3f(1.0f, 0.0f, 0.0f);   // i direction = X-Axis = red
-        gGL.vertex3f(0.0f, 0.0f, 0.0f);
-        gGL.vertex3f(2.0f, 0.0f, 0.0f);
-        gGL.vertex3f(3.0f, 0.0f, 0.0f);
-        gGL.vertex3f(5.0f, 0.0f, 0.0f);
-        gGL.vertex3f(6.0f, 0.0f, 0.0f);
-        gGL.vertex3f(8.0f, 0.0f, 0.0f);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().begin(LLRender::LINES);
+        LLRender::instance().color3f(1.0f, 0.0f, 0.0f);   // i direction = X-Axis = red
+        LLRender::instance().vertex3f(0.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(2.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(3.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(5.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(6.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(8.0f, 0.0f, 0.0f);
         // Make an X
-        gGL.vertex3f(11.0f, 1.0f, 1.0f);
-        gGL.vertex3f(11.0f, -1.0f, -1.0f);
-        gGL.vertex3f(11.0f, 1.0f, -1.0f);
-        gGL.vertex3f(11.0f, -1.0f, 1.0f);
+        LLRender::instance().vertex3f(11.0f, 1.0f, 1.0f);
+        LLRender::instance().vertex3f(11.0f, -1.0f, -1.0f);
+        LLRender::instance().vertex3f(11.0f, 1.0f, -1.0f);
+        LLRender::instance().vertex3f(11.0f, -1.0f, 1.0f);
 
-        gGL.color3f(0.0f, 1.0f, 0.0f);   // j direction = Y-Axis = green
-        gGL.vertex3f(0.0f, 0.0f, 0.0f);
-        gGL.vertex3f(0.0f, 2.0f, 0.0f);
-        gGL.vertex3f(0.0f, 3.0f, 0.0f);
-        gGL.vertex3f(0.0f, 5.0f, 0.0f);
-        gGL.vertex3f(0.0f, 6.0f, 0.0f);
-        gGL.vertex3f(0.0f, 8.0f, 0.0f);
+        LLRender::instance().color3f(0.0f, 1.0f, 0.0f);   // j direction = Y-Axis = green
+        LLRender::instance().vertex3f(0.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 2.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 3.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 5.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 6.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 8.0f, 0.0f);
         // Make a Y
-        gGL.vertex3f(1.0f, 11.0f, 1.0f);
-        gGL.vertex3f(0.0f, 11.0f, 0.0f);
-        gGL.vertex3f(-1.0f, 11.0f, 1.0f);
-        gGL.vertex3f(0.0f, 11.0f, 0.0f);
-        gGL.vertex3f(0.0f, 11.0f, 0.0f);
-        gGL.vertex3f(0.0f, 11.0f, -1.0f);
+        LLRender::instance().vertex3f(1.0f, 11.0f, 1.0f);
+        LLRender::instance().vertex3f(0.0f, 11.0f, 0.0f);
+        LLRender::instance().vertex3f(-1.0f, 11.0f, 1.0f);
+        LLRender::instance().vertex3f(0.0f, 11.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 11.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 11.0f, -1.0f);
 
-        gGL.color3f(0.0f, 0.0f, 1.0f);   // Z-Axis = blue
-        gGL.vertex3f(0.0f, 0.0f, 0.0f);
-        gGL.vertex3f(0.0f, 0.0f, 2.0f);
-        gGL.vertex3f(0.0f, 0.0f, 3.0f);
-        gGL.vertex3f(0.0f, 0.0f, 5.0f);
-        gGL.vertex3f(0.0f, 0.0f, 6.0f);
-        gGL.vertex3f(0.0f, 0.0f, 8.0f);
+        LLRender::instance().color3f(0.0f, 0.0f, 1.0f);   // Z-Axis = blue
+        LLRender::instance().vertex3f(0.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 2.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 3.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 5.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 6.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 8.0f);
         // Make a Z
-        gGL.vertex3f(-1.0f, 1.0f, 11.0f);
-        gGL.vertex3f(1.0f, 1.0f, 11.0f);
-        gGL.vertex3f(1.0f, 1.0f, 11.0f);
-        gGL.vertex3f(-1.0f, -1.0f, 11.0f);
-        gGL.vertex3f(-1.0f, -1.0f, 11.0f);
-        gGL.vertex3f(1.0f, -1.0f, 11.0f);
-    gGL.end();
+        LLRender::instance().vertex3f(-1.0f, 1.0f, 11.0f);
+        LLRender::instance().vertex3f(1.0f, 1.0f, 11.0f);
+        LLRender::instance().vertex3f(1.0f, 1.0f, 11.0f);
+        LLRender::instance().vertex3f(-1.0f, -1.0f, 11.0f);
+        LLRender::instance().vertex3f(-1.0f, -1.0f, 11.0f);
+        LLRender::instance().vertex3f(1.0f, -1.0f, 11.0f);
+    LLRender::instance().end();
 }
 
 
 void draw_axes()
 {
     LLGLSUIDefault gls_ui;
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     // A vertical white line at origin
     LLVector3 v = gAgent.getPositionAgent();
-    gGL.begin(LLRender::LINES);
-        gGL.color3f(1.0f, 1.0f, 1.0f);
-        gGL.vertex3f(0.0f, 0.0f, 0.0f);
-        gGL.vertex3f(0.0f, 0.0f, 40.0f);
-    gGL.end();
+    LLRender::instance().begin(LLRender::LINES);
+        LLRender::instance().color3f(1.0f, 1.0f, 1.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 0.0f);
+        LLRender::instance().vertex3f(0.0f, 0.0f, 40.0f);
+    LLRender::instance().end();
     // Some coordinate axes
-    gGL.pushMatrix();
-        gGL.translatef( v.mV[VX], v.mV[VY], v.mV[VZ] );
+    LLRender::instance().pushMatrix();
+        LLRender::instance().translatef( v.mV[VX], v.mV[VY], v.mV[VZ] );
         renderCoordinateAxes();
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void render_ui_3d()
@@ -1651,7 +1651,7 @@ void render_ui_3d()
     stop_glerror();
 
     gUIProgram.bind();
-    gGL.color4f(1.f, 1.f, 1.f, 1.f);
+    LLRender::instance().color4f(1.f, 1.f, 1.f, 1.f);
 
     // Coordinate axes
     static LLCachedControl<bool> show_axes(gSavedSettings, "ShowAxes");
@@ -1712,16 +1712,16 @@ void render_ui_2d()
     if (isAgentAvatarValid() && gAgentCamera.mHUDCurZoom < 0.98f)
     {
         gUIProgram.bind();
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         S32 half_width = (gViewerWindow->getWorldViewWidthScaled() / 2);
         S32 half_height = (gViewerWindow->getWorldViewHeightScaled() / 2);
-        gGL.scalef(LLUI::getScaleFactor().mV[VX], LLUI::getScaleFactor().mV[VY], 1.f);
-        gGL.translatef((F32)half_width, (F32)half_height, 0.f);
+        LLRender::instance().scalef(LLUI::getScaleFactor().mV[VX], LLUI::getScaleFactor().mV[VY], 1.f);
+        LLRender::instance().translatef((F32)half_width, (F32)half_height, 0.f);
         F32 zoom = gAgentCamera.mHUDCurZoom;
-        gGL.scalef(zoom,zoom,1.f);
-        gGL.color4fv(LLColor4::white.mV);
+        LLRender::instance().scalef(zoom,zoom,1.f);
+        LLRender::instance().color4fv(LLColor4::white.mV);
         gl_rect_2d(-half_width, half_height, half_width, -half_height, false);
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
         gUIProgram.unbind();
         stop_glerror();
     }
@@ -1735,7 +1735,7 @@ void render_ui_2d()
             LLRect t_rect;
 
             gPipeline.mUIScreen.bindTarget();
-            gGL.setColorMask(true, true);
+            LLRender::instance().setColorMask(true, true);
             {
                 constexpr S32 pad = 8;
 
@@ -1767,7 +1767,7 @@ void render_ui_2d()
             }
 
             gPipeline.mUIScreen.flush();
-            gGL.setColorMask(true, false);
+            LLRender::instance().setColorMask(true, false);
 
             LLView::sDirtyRect = t_rect;
         }
@@ -1776,14 +1776,14 @@ void render_ui_2d()
         LLGLDisable blend(GL_BLEND);
         S32 width = gViewerWindow->getWindowWidthScaled();
         S32 height = gViewerWindow->getWindowHeightScaled();
-        gGL.getTexUnit(0)->bind(&gPipeline.mUIScreen);
-        gGL.begin(LLRender::TRIANGLE_STRIP);
-        gGL.color4f(1.f,1.f,1.f,1.f);
-        gGL.texCoord2f(0.f, 0.f);                 gGL.vertex2i(0, 0);
-        gGL.texCoord2f((F32)width, 0.f);          gGL.vertex2i(width, 0);
-        gGL.texCoord2f(0.f, (F32)height);         gGL.vertex2i(0, height);
-        gGL.texCoord2f((F32)width, (F32)height);  gGL.vertex2i(width, height);
-        gGL.end();
+        LLRender::instance().getTexUnit(0)->bind(&gPipeline.mUIScreen);
+        LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+        LLRender::instance().color4f(1.f,1.f,1.f,1.f);
+        LLRender::instance().texCoord2f(0.f, 0.f);                 LLRender::instance().vertex2i(0, 0);
+        LLRender::instance().texCoord2f((F32)width, 0.f);          LLRender::instance().vertex2i(width, 0);
+        LLRender::instance().texCoord2f(0.f, (F32)height);         LLRender::instance().vertex2i(0, height);
+        LLRender::instance().texCoord2f((F32)width, (F32)height);  LLRender::instance().vertex2i(width, height);
+        LLRender::instance().end();
     }
     else
     {
@@ -1798,7 +1798,7 @@ void render_disconnected_background()
 {
     gUIProgram.bind();
 
-    gGL.color4f(1.f, 1.f, 1.f, 1.f);
+    LLRender::instance().color4f(1.f, 1.f, 1.f, 1.f);
     if (!gDisconnectedImagep && gDisconnected)
     {
         LL_INFOS() << "Loading last bitmap..." << LL_ENDL;
@@ -1840,7 +1840,7 @@ void render_disconnected_background()
         raw->expandToPowerOfTwo();
         gDisconnectedImagep = LLViewerTextureManager::getLocalTexture(raw.get(), false);
         gStartTexture = gDisconnectedImagep;
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     }
 
     // Make sure the progress view always fills the entire window.
@@ -1851,22 +1851,22 @@ void render_disconnected_background()
     {
         LLGLSUIDefault gls_ui;
         gViewerWindow->setup2DRender();
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         {
             // scale ui to reflect UIScaleFactor
             // this can't be done in setup2DRender because it requires a
             // pushMatrix/popMatrix pair
             const LLVector2& display_scale = gViewerWindow->getDisplayScale();
-            gGL.scalef(display_scale.mV[VX], display_scale.mV[VY], 1.f);
+            LLRender::instance().scalef(display_scale.mV[VX], display_scale.mV[VY], 1.f);
 
-            gGL.getTexUnit(0)->bind(gDisconnectedImagep);
-            gGL.color4f(1.f, 1.f, 1.f, 1.f);
+            LLRender::instance().getTexUnit(0)->bind(gDisconnectedImagep);
+            LLRender::instance().color4f(1.f, 1.f, 1.f, 1.f);
             gl_rect_2d_simple_tex(width, height);
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
         }
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
-    gGL.flush();
+    LLRender::instance().flush();
 
     gUIProgram.unbind();
 }

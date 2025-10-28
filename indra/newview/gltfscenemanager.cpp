@@ -620,18 +620,18 @@ void GLTFSceneManager::render(U8 variant)
         }
 
         Asset* asset = mObjects[i]->mGLTFAsset.get();
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
 
         LLMatrix4a mat = mObjects[i]->getGLTFAssetToAgentTransform();
 
         // provide a modelview matrix that goes from asset to camera space
         // (matrix palettes are in asset space)
-        gGL.loadMatrix(gGLModelView);
-        gGL.multMatrix(mat.getF32ptr());
+        LLRender::instance().loadMatrix(gGLModelView);
+        LLRender::instance().multMatrix(mat.getF32ptr());
 
         render(*asset, variant);
 
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
 }
 
@@ -699,7 +699,7 @@ void GLTFSceneManager::render(Asset& asset, U8 variant)
                     mLastTexture[i] = -2;
                 }
 
-                gGL.syncMatrices();
+                LLRender::instance().syncMatrices();
                 shader_bound = true;
             }
 
@@ -987,11 +987,11 @@ void renderAssetDebug(LLViewerObject* obj, Asset* asset)
     // assumes appropriate shader is already bound
     // assumes modelview matrix is already set
 
-    gGL.pushMatrix();
+    LLRender::instance().pushMatrix();
     // get raycast in asset space
     LLMatrix4a agent_to_asset = obj->getAgentToGLTFAssetTransform();
 
-    gGL.multMatrix(agent_to_asset.getF32ptr());
+    LLRender::instance().multMatrix(agent_to_asset.getF32ptr());
 
     vec4 start;
     vec4 end;
@@ -1010,13 +1010,13 @@ void renderAssetDebug(LLViewerObject* obj, Asset* asset)
 
         if (node.mMesh != INVALID_INDEX)
         {
-            gGL.pushMatrix();
-            gGL.multMatrix((F32*)glm::value_ptr(node.mAssetMatrix));
+            LLRender::instance().pushMatrix();
+            LLRender::instance().multMatrix((F32*)glm::value_ptr(node.mAssetMatrix));
 
             // draw bounding box of mesh primitives
             if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_BBOXES))
             {
-                gGL.color3f(0.f, 1.f, 1.f);
+                LLRender::instance().color3f(0.f, 1.f, 1.f);
 
                 for (auto& primitive : mesh.mPrimitives)
                 {
@@ -1032,7 +1032,7 @@ void renderAssetDebug(LLViewerObject* obj, Asset* asset)
 #if 1
             if (gPipeline.hasRenderDebugMask(LLPipeline::RENDER_DEBUG_RAYCAST))
             {
-                gGL.flush();
+                LLRender::instance().flush();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
                 // convert raycast to node local space
@@ -1050,15 +1050,15 @@ void renderAssetDebug(LLViewerObject* obj, Asset* asset)
                     }
                 }
 
-                gGL.flush();
+                LLRender::instance().flush();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             }
 #endif
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
     }
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void GLTFSceneManager::renderDebug()
@@ -1073,13 +1073,13 @@ void GLTFSceneManager::renderDebug()
 
     gDebugProgram.bind();
 
-    gGL.pushMatrix();
-    gGL.loadMatrix(gGLModelView);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(gGLModelView);
 
     LLGLDisable cullface(GL_CULL_FACE);
     LLGLEnable blend(GL_BLEND);
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     gPipeline.disableLights();
 
     for (auto& obj : mObjects)
@@ -1109,55 +1109,55 @@ void GLTFSceneManager::renderDebug()
                     continue;
                 }
 
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
 
-                gGL.multMatrix(obj->getGLTFAssetToAgentTransform().getF32ptr());
+                LLRender::instance().multMatrix(obj->getGLTFAssetToAgentTransform().getF32ptr());
 
                 Asset* asset = obj->mGLTFAsset.get();
 
                 for (auto& node : asset->mNodes)
                 {
-                    gGL.pushMatrix();
-                    gGL.multMatrix(glm::value_ptr(node.mAssetMatrix));
+                    LLRender::instance().pushMatrix();
+                    LLRender::instance().multMatrix(glm::value_ptr(node.mAssetMatrix));
                     // render x-axis red, y-axis green, z-axis blue
-                    gGL.color4f(1.f, 0.f, 0.f, 0.5f);
-                    gGL.begin(LLRender::LINES);
-                    gGL.vertex3f(0.f, 0.f, 0.f);
-                    gGL.vertex3f(1.f, 0.f, 0.f);
-                    gGL.end();
-                    gGL.flush();
+                    LLRender::instance().color4f(1.f, 0.f, 0.f, 0.5f);
+                    LLRender::instance().begin(LLRender::LINES);
+                    LLRender::instance().vertex3f(0.f, 0.f, 0.f);
+                    LLRender::instance().vertex3f(1.f, 0.f, 0.f);
+                    LLRender::instance().end();
+                    LLRender::instance().flush();
 
-                    gGL.color4f(0.f, 1.f, 0.f, 0.5f);
-                    gGL.begin(LLRender::LINES);
-                    gGL.vertex3f(0.f, 0.f, 0.f);
-                    gGL.vertex3f(0.f, 1.f, 0.f);
-                    gGL.end();
-                    gGL.flush();
+                    LLRender::instance().color4f(0.f, 1.f, 0.f, 0.5f);
+                    LLRender::instance().begin(LLRender::LINES);
+                    LLRender::instance().vertex3f(0.f, 0.f, 0.f);
+                    LLRender::instance().vertex3f(0.f, 1.f, 0.f);
+                    LLRender::instance().end();
+                    LLRender::instance().flush();
 
-                    gGL.begin(LLRender::LINES);
-                    gGL.color4f(0.f, 0.f, 1.f, 0.5f);
-                    gGL.vertex3f(0.f, 0.f, 0.f);
-                    gGL.vertex3f(0.f, 0.f, 1.f);
-                    gGL.end();
-                    gGL.flush();
+                    LLRender::instance().begin(LLRender::LINES);
+                    LLRender::instance().color4f(0.f, 0.f, 1.f, 0.5f);
+                    LLRender::instance().vertex3f(0.f, 0.f, 0.f);
+                    LLRender::instance().vertex3f(0.f, 0.f, 1.f);
+                    LLRender::instance().end();
+                    LLRender::instance().flush();
 
                     // render path to child nodes cyan
-                    gGL.color4f(0.f, 1.f, 1.f, 0.5f);
-                    gGL.begin(LLRender::LINES);
+                    LLRender::instance().color4f(0.f, 1.f, 1.f, 0.5f);
+                    LLRender::instance().begin(LLRender::LINES);
                     for (auto& child_idx : node.mChildren)
                     {
                         Node& child = asset->mNodes[child_idx];
-                        gGL.vertex3f(0.f, 0.f, 0.f);
+                        LLRender::instance().vertex3f(0.f, 0.f, 0.f);
 
 
-                        gGL.vertex3fv(glm::value_ptr(child.mMatrix[3]));
+                        LLRender::instance().vertex3fv(glm::value_ptr(child.mMatrix[3]));
                     }
-                    gGL.end();
-                    gGL.flush();
-                    gGL.popMatrix();
+                    LLRender::instance().end();
+                    LLRender::instance().flush();
+                    LLRender::instance().popMatrix();
                 }
 
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
         }
     }
@@ -1177,30 +1177,30 @@ void GLTFSceneManager::renderDebug()
             LLViewerObject* obj = drawable->getVObj();
             if (obj)
             {
-                gGL.pushMatrix();
-                gGL.multMatrix(obj->getGLTFAssetToAgentTransform().getF32ptr());
+                LLRender::instance().pushMatrix();
+                LLRender::instance().multMatrix(obj->getGLTFAssetToAgentTransform().getF32ptr());
                 Asset* asset = obj->mGLTFAsset.get();
                 Node* node = &asset->mNodes[node_hit];
                 Primitive* primitive = &asset->mMeshes[node->mMesh].mPrimitives[primitive_hit];
 
-                gGL.flush();
+                LLRender::instance().flush();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                gGL.color3f(1, 0, 1);
+                LLRender::instance().color3f(1, 0, 1);
                 drawBoxOutline(intersection, LLVector4a(0.1f, 0.1f, 0.1f, 0.f));
 
-                gGL.multMatrix(glm::value_ptr(node->mAssetMatrix));
+                LLRender::instance().multMatrix(glm::value_ptr(node->mAssetMatrix));
 
                 auto* listener = (LLVolumeOctreeListener*)primitive->mOctree->getListener(0);
                 drawBoxOutline(listener->mBounds[0], listener->mBounds[1]);
 
-                gGL.flush();
+                LLRender::instance().flush();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
         }
     }
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
     gDebugProgram.unbind();
 
 }

@@ -780,29 +780,29 @@ void LLFloaterModelPreview::onLODParamCommit(S32 lod, bool enforce_tri_limit)
 
 void LLFloaterModelPreview::draw3dPreview()
 {
-    gGL.color3f(1.f, 1.f, 1.f);
+    LLRender::instance().color3f(1.f, 1.f, 1.f);
 
-    gGL.getTexUnit(0)->bind(mModelPreview);
+    LLRender::instance().getTexUnit(0)->bind(mModelPreview);
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mTop - 1);
-        gGL.texCoord2f(0.f, 0.f);
-        gGL.vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mBottom + 1);
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mBottom + 1);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mTop - 1);
+        LLRender::instance().texCoord2f(0.f, 0.f);
+        LLRender::instance().vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mBottom + 1);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mBottom + 1);
 
-        gGL.texCoord2f(1.f, 0.f);
-        gGL.vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mBottom + 1);
-        gGL.texCoord2f(1.f, 1.f);
-        gGL.vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mTop - 1);
-        gGL.texCoord2f(0.f, 1.f);
-        gGL.vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mTop - 1);
+        LLRender::instance().texCoord2f(1.f, 0.f);
+        LLRender::instance().vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mBottom + 1);
+        LLRender::instance().texCoord2f(1.f, 1.f);
+        LLRender::instance().vertex2i(mPreviewRect.mRight - 1, mPreviewRect.mTop - 1);
+        LLRender::instance().texCoord2f(0.f, 1.f);
+        LLRender::instance().vertex2i(mPreviewRect.mLeft + 1, mPreviewRect.mTop - 1);
     }
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 }
 
 //-----------------------------------------------------------------------------

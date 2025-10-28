@@ -403,7 +403,7 @@ void LLFastTimerView::draw()
     legend_panel->localRectToOtherView(legend_panel->getLocalRect(), &mLegendRect, this);
 
     // Draw the window background
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     gl_rect_2d(getLocalRect(), LLColor4(0.f, 0.f, 0.f, 0.25f));
 
     drawHelp(getRect().getHeight() - MARGIN);
@@ -509,14 +509,14 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
     //allocate raw scratch space
     LLPointer<LLImageRaw> scratch = new LLImageRaw(1024, 512, 3);
 
-    gGL.pushMatrix();
-    gGL.loadIdentity();
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.loadIdentity();
-    gGL.ortho(-0.05f, 1.05f, -0.05f, 1.05f, -1.0f, 1.0f);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().loadIdentity();
+    LLRender::instance().ortho(-0.05f, 1.05f, -0.05f, 1.05f, -1.0f, 1.0f);
 
     //render charts
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     buffer.bindTarget();
 
@@ -618,40 +618,40 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
         LLVector3 base_col(0, 0.7f, 0.f);
         LLVector3 cur_col(1.f, 0.f, 0.f);
 
-        gGL.setSceneBlendType(LLRender::BT_ADD);
+        LLRender::instance().setSceneBlendType(LLRender::BT_ADD);
 
-        gGL.color3fv(base_col.mV);
+        LLRender::instance().color3fv(base_col.mV);
         for (U32 i = 0; i < base_times.size(); ++i)
         {
-            gGL.begin(LLRender::TRIANGLE_STRIP);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
             last_p.set((F32)i/(F32) base_times.size(), (F32)(base_times[i]/max_time), 0.f);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-            gGL.end();
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().end();
         }
 
-        gGL.flush();
+        LLRender::instance().flush();
 
 
         last_p.clear();
         {
             LLGLEnable blend(GL_BLEND);
 
-            gGL.color3fv(cur_col.mV);
+            LLRender::instance().color3fv(cur_col.mV);
             for (U32 i = 0; i < cur_times.size(); ++i)
             {
-                gGL.begin(LLRender::TRIANGLE_STRIP);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
+                LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
                 last_p.set((F32) i / (F32) cur_times.size(), (F32)(cur_times[i]/max_time), 0.f);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
-                gGL.end();
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
+                LLRender::instance().end();
             }
 
-            gGL.flush();
+            LLRender::instance().flush();
         }
 
         saveChart(label, "time", scratch);
@@ -663,38 +663,38 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
 
         last_p.clear();
 
-        gGL.color3fv(base_col.mV);
+        LLRender::instance().color3fv(base_col.mV);
         for (U32 i = 0; i < base_calls.size(); ++i)
         {
-            gGL.begin(LLRender::TRIANGLE_STRIP);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
             last_p.set((F32) i / (F32) base_calls.size(), (F32)base_calls[i]/max_calls, 0.f);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-            gGL.end();
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().end();
         }
 
-        gGL.flush();
+        LLRender::instance().flush();
 
         {
             LLGLEnable blend(GL_BLEND);
-            gGL.color3fv(cur_col.mV);
+            LLRender::instance().color3fv(cur_col.mV);
             last_p.clear();
 
             for (U32 i = 0; i < cur_calls.size(); ++i)
             {
-                gGL.begin(LLRender::TRIANGLE_STRIP);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
+                LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
                 last_p.set((F32) i / (F32) cur_calls.size(), (F32) cur_calls[i]/max_calls, 0.f);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
-                gGL.end();
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
+                LLRender::instance().end();
 
             }
 
-            gGL.flush();
+            LLRender::instance().flush();
         }
 
         saveChart(label, "calls", scratch);
@@ -704,7 +704,7 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
         //======================================
         buffer.clear();
 
-        gGL.color3fv(base_col.mV);
+        LLRender::instance().color3fv(base_col.mV);
         U32 count = 0;
         U32 total_count = static_cast<U32>(base_execution.size());
 
@@ -712,13 +712,13 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
 
         for (std::vector<LLSD::Real>::iterator iter = base_execution.begin(); iter != base_execution.end(); ++iter)
         {
-            gGL.begin(LLRender::TRIANGLE_STRIP);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
             last_p.set((F32)count/(F32)total_count, (F32)(*iter/max_execution), 0.f);
-            gGL.vertex3fv(last_p.mV);
-            gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-            gGL.end();
+            LLRender::instance().vertex3fv(last_p.mV);
+            LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+            LLRender::instance().end();
             count++;
         }
 
@@ -726,23 +726,23 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
 
         {
             LLGLEnable blend(GL_BLEND);
-            gGL.color3fv(cur_col.mV);
+            LLRender::instance().color3fv(cur_col.mV);
             count = 0;
             total_count = static_cast<U32>(cur_execution.size());
 
             for (std::vector<LLSD::Real>::iterator iter = cur_execution.begin(); iter != cur_execution.end(); ++iter)
             {
-                gGL.begin(LLRender::TRIANGLE_STRIP);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
+                LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
                 last_p.set((F32)count/(F32)total_count, (F32)(*iter/max_execution), 0.f);
-                gGL.vertex3f(last_p.mV[0], 0.f, 0.f);
-                gGL.vertex3fv(last_p.mV);
-                gGL.end();
+                LLRender::instance().vertex3f(last_p.mV[0], 0.f, 0.f);
+                LLRender::instance().vertex3fv(last_p.mV);
+                LLRender::instance().end();
                 count++;
             }
 
-            gGL.flush();
+            LLRender::instance().flush();
         }
 
         saveChart(label, "execution", scratch);
@@ -750,9 +750,9 @@ void LLFastTimerView::exportCharts(const std::string& base, const std::string& t
 
     buffer.flush();
 
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().popMatrix();
 }
 
 //static
@@ -1010,7 +1010,7 @@ void LLFastTimerView::drawLineGraph()
 {
     LL_PROFILE_ZONE_SCOPED;
     //draw line graph history
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     LLLocalClipRect clip(mGraphRect);
 
     //normalize based on last frame's maximum
@@ -1028,7 +1028,7 @@ void LLFastTimerView::drawLineGraph()
         F32 right = (F32) mGraphRect.mLeft + frame_delta*first_frame;
         F32 left = (F32) mGraphRect.mLeft + frame_delta*last_frame;
 
-        gGL.color4f(0.5f,0.5f,0.5f,0.3f);
+        LLRender::instance().color4f(0.5f,0.5f,0.5f,0.3f);
         gl_rect_2d((S32) left, mGraphRect.mTop, (S32) right, mGraphRect.mBottom);
 
         if (mHoverBarIndex > 0)
@@ -1036,12 +1036,12 @@ void LLFastTimerView::drawLineGraph()
             S32 bar_frame = first_frame - (mScrollIndex + mHoverBarIndex) - 1;
             F32 bar = (F32) mGraphRect.mLeft + frame_delta*bar_frame;
 
-            gGL.color4f(0.5f,0.5f,0.5f,1);
+            LLRender::instance().color4f(0.5f,0.5f,0.5f,1);
 
-            gGL.begin(LLRender::LINES);
-            gGL.vertex2i((S32)bar, mGraphRect.mBottom);
-            gGL.vertex2i((S32)bar, mGraphRect.mTop);
-            gGL.end();
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().vertex2i((S32)bar, mGraphRect.mBottom);
+            LLRender::instance().vertex2i((S32)bar, mGraphRect.mTop);
+            LLRender::instance().end();
         }
     }
 
@@ -1057,7 +1057,7 @@ void LLFastTimerView::drawLineGraph()
         //fatten highlighted timer
         if (mHoverID == idp)
         {
-            gGL.setLineWidth(3);
+            LLRender::instance().setLineWidth(3);
         }
 
         llassert(idp->getIndex() < sTimerColors.size());
@@ -1076,8 +1076,8 @@ void LLFastTimerView::drawLineGraph()
             }
         }
 
-        gGL.color4f(col[0], col[1], col[2], alpha);
-        gGL.begin(LLRender::TRIANGLE_STRIP);
+        LLRender::instance().color4f(col[0], col[1], col[2], alpha);
+        LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
         F32 call_scale_factor = (F32)mGraphRect.getHeight() / (F32)max_calls;
         F32 time_scale_factor = (F32)mGraphRect.getHeight() / max_time.value();
         F32 hz_scale_factor = (F32) mGraphRect.getHeight() / (1.f / max_time.value());
@@ -1110,14 +1110,14 @@ void LLFastTimerView::drawLineGraph()
                 y = mGraphRect.mBottom + (1.f / time.value()) * hz_scale_factor;
                 break;
             }
-            gGL.vertex2f(x,y);
-            gGL.vertex2f(x,(GLfloat)mGraphRect.mBottom);
+            LLRender::instance().vertex2f(x,y);
+            LLRender::instance().vertex2f(x,(GLfloat)mGraphRect.mBottom);
         }
-        gGL.end();
+        LLRender::instance().end();
 
         if (mHoverID == idp)
         {
-            gGL.setLineWidth(1.f);
+            LLRender::instance().setLineWidth(1.f);
         }
 
         if (idp->getTreeNode().mCollapsed)
@@ -1456,7 +1456,7 @@ void LLFastTimerView::drawBars()
     const S32 image_width = bar_image->getTextureWidth();
     const S32 image_height = bar_image->getTextureHeight();
 
-    gGL.getTexUnit(0)->bind(bar_image->getImage());
+    LLRender::instance().getTexUnit(0)->bind(bar_image->getImage());
     {
         const S32 histmax = (S32)mRecording.getNumRecordedPeriods();
 
@@ -1510,7 +1510,7 @@ void LLFastTimerView::drawBars()
         }
 
     }
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 }
 
 F32Seconds LLFastTimerView::updateTimerBarWidths(LLTrace::BlockTimerStatHandle* time_block, TimerBarRow& row, S32 history_index, U32& bar_index)
@@ -1623,7 +1623,7 @@ S32 LLFastTimerView::drawBar(LLRect bar_rect, TimerBarRow& row, S32 image_width,
         llassert(time_block->getIndex() < sTimerColors.size());
         LLColor4 color = sTimerColors[time_block->getIndex()];
         if (!hovered) color = lerp(color, LLColor4::grey, 0.2f);
-        gGL.color4fv(color.mV);
+        LLRender::instance().color4fv(color.mV);
         gl_segmented_rect_2d_fragment_tex(render_rect,
             image_width, image_height,
             16,

@@ -48,14 +48,14 @@ void LLDrawPoolGlow::renderPostDeferred(S32 pass)
     LLGLSLShader* shader = &gDeferredEmissiveProgram;
 
     LLGLEnable blend(GL_BLEND);
-    gGL.flush();
+    LLRender::instance().flush();
     /// Get rid of z-fighting with non-glow pass.
     LLGLEnable polyOffset(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(-1.0f, -1.0f);
-    gGL.setSceneBlendType(LLRender::BT_ADD);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ADD);
 
     LLGLDepthTest depth(GL_TRUE, GL_FALSE);
-    gGL.setColorMask(false, true);
+    LLRender::instance().setColorMask(false, true);
 
     //first pass -- static objects
     shader->bind();
@@ -66,8 +66,8 @@ void LLDrawPoolGlow::renderPostDeferred(S32 pass)
     shader->bind();
     pushRiggedBatches(LLRenderPass::PASS_GLOW_RIGGED, true, true);
 
-    gGL.setColorMask(true, false);
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().setColorMask(true, false);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 }
 
 LLDrawPoolSimple::LLDrawPoolSimple() :
@@ -167,7 +167,7 @@ void LLDrawPoolFullbright::renderPostDeferred(S32 pass)
         shader = &gDeferredFullbrightProgram;
     }
 
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 
     // render static
     shader->bind();

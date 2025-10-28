@@ -123,7 +123,7 @@ void LLViewerDynamicTexture::preRender(bool clear_depth)
      //use the bottom left corner
     mOrigin.set(0, 0);
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     // Set up camera
     LLViewerCamera* camera = LLViewerCamera::getInstance();
     mCamera.setOrigin(*camera);
@@ -220,7 +220,7 @@ bool LLViewerDynamicTexture::updateAllInstances()
 
                 glClear(GL_DEPTH_BUFFER_BIT);
 
-                gGL.color4f(1.f, 1.f, 1.f, 1.f);
+                LLRender::instance().color4f(1.f, 1.f, 1.f, 1.f);
                 dynamicTexture->setBoundTarget(&renderTarget);
                 dynamicTexture->preRender();    // Must be called outside of startRender()
                 result = false;
@@ -230,7 +230,7 @@ bool LLViewerDynamicTexture::updateAllInstances()
                     result = true;
                     sNumRenders++;
                 }
-                gGL.flush();
+                LLRender::instance().flush();
                 LLVertexBuffer::unbind();
                 dynamicTexture->setBoundTarget(nullptr);
                 dynamicTexture->postRender(result);
@@ -262,7 +262,7 @@ bool LLViewerDynamicTexture::updateAllInstances()
     }
     bake_target.flush();
 
-    gGL.flush();
+    LLRender::instance().flush();
 
     return ret;
 }

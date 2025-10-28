@@ -119,8 +119,8 @@ void LLToolSelectRect::handleRectangleSelection(S32 x, S32 y, MASK mask)
     S32 center_y = (top + bottom) / 2;
 
     // save drawing mode
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
 
     bool limit_select_distance = gSavedSettings.getBOOL("LimitSelectDistance");
     if (limit_select_distance)
@@ -234,9 +234,9 @@ void LLToolSelectRect::handleRectangleSelection(S32 x, S32 y, MASK mask)
     }
 
     // restore drawing mode
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
     // restore camera
     LLViewerCamera::getInstance()->setFar(old_far_plane);
@@ -254,32 +254,32 @@ void LLWind::renderVectors()
 
     F32 region_width_meters = LLWorld::getInstance()->getRegionWidthInMeters();
 
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-    gGL.pushMatrix();
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().pushMatrix();
     LLVector3 origin_agent;
     origin_agent = gAgent.getPosAgentFromGlobal(mOriginGlobal);
-    gGL.translatef(origin_agent.mV[VX], origin_agent.mV[VY], gAgent.getPositionAgent().mV[VZ] + WIND_RELATIVE_ALTITUDE);
+    LLRender::instance().translatef(origin_agent.mV[VX], origin_agent.mV[VY], gAgent.getPositionAgent().mV[VZ] + WIND_RELATIVE_ALTITUDE);
     for (j = 0; j < mSize; j++)
     {
         for (i = 0; i < mSize; i++)
         {
             x = mVelX[i + j*mSize] * WIND_SCALE_HACK;
             y = mVelY[i + j*mSize] * WIND_SCALE_HACK;
-            gGL.pushMatrix();
-            gGL.translatef((F32)i * region_width_meters/mSize, (F32)j * region_width_meters/mSize, 0.f);
-            gGL.color3f(0.f, 1.f, 0.f);
-            gGL.begin(LLRender::POINTS);
-                gGL.vertex3f(0.f, 0.f, 0.f);
-            gGL.end();
-            gGL.color3f(1.f, 0.f, 0.f);
-            gGL.begin(LLRender::LINES);
-                gGL.vertex3f(x * 0.1f, y * 0.1f, 0.f);
-                gGL.vertex3f(x, y, 0.f);
-            gGL.end();
-            gGL.popMatrix();
+            LLRender::instance().pushMatrix();
+            LLRender::instance().translatef((F32)i * region_width_meters/mSize, (F32)j * region_width_meters/mSize, 0.f);
+            LLRender::instance().color3f(0.f, 1.f, 0.f);
+            LLRender::instance().begin(LLRender::POINTS);
+                LLRender::instance().vertex3f(0.f, 0.f, 0.f);
+            LLRender::instance().end();
+            LLRender::instance().color3f(1.f, 0.f, 0.f);
+            LLRender::instance().begin(LLRender::LINES);
+                LLRender::instance().vertex3f(x * 0.1f, y * 0.1f, 0.f);
+                LLRender::instance().vertex3f(x, y, 0.f);
+            LLRender::instance().end();
+            LLRender::instance().popMatrix();
         }
     }
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 
@@ -290,7 +290,7 @@ void LLViewerParcelMgr::renderRect(const LLVector3d &west_south_bottom_global,
                                    const LLVector3d &east_north_top_global)
 {
     LLGLSUIDefault gls_ui;
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     LLGLDepthTest gls_depth(GL_TRUE);
 
     LLVector3 west_south_bottom_agent = gAgent.getPosAgentFromGlobal(west_south_bottom_global);
@@ -318,40 +318,40 @@ void LLViewerParcelMgr::renderRect(const LLVector3d &west_south_bottom_global,
     F32 nw_top = nw_bottom + PARCEL_POST_HEIGHT;
 
     LLUI::setLineWidth(2.f);
-    gGL.color4f(1.f, 1.f, 0.f, 1.f);
+    LLRender::instance().color4f(1.f, 1.f, 0.f, 1.f);
 
     // Cheat and give this the same pick-name as land
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().begin(LLRender::LINES);
 
-    gGL.vertex3f(west, north, nw_bottom);
-    gGL.vertex3f(west, north, nw_top);
+    LLRender::instance().vertex3f(west, north, nw_bottom);
+    LLRender::instance().vertex3f(west, north, nw_top);
 
-    gGL.vertex3f(east, north, ne_bottom);
-    gGL.vertex3f(east, north, ne_top);
+    LLRender::instance().vertex3f(east, north, ne_bottom);
+    LLRender::instance().vertex3f(east, north, ne_top);
 
-    gGL.vertex3f(east, south, se_bottom);
-    gGL.vertex3f(east, south, se_top);
+    LLRender::instance().vertex3f(east, south, se_bottom);
+    LLRender::instance().vertex3f(east, south, se_top);
 
-    gGL.vertex3f(west, south, sw_bottom);
-    gGL.vertex3f(west, south, sw_top);
+    LLRender::instance().vertex3f(west, south, sw_bottom);
+    LLRender::instance().vertex3f(west, south, sw_top);
 
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.color4f(1.f, 1.f, 0.f, 0.2f);
-    gGL.begin(LLRender::TRIANGLE_STRIP);
+    LLRender::instance().color4f(1.f, 1.f, 0.f, 0.2f);
+    LLRender::instance().begin(LLRender::TRIANGLE_STRIP);
     {
-        gGL.vertex3f(west, north, nw_bottom);
-        gGL.vertex3f(west, north, nw_top);
-        gGL.vertex3f(east, north, ne_bottom);
-        gGL.vertex3f(east, north, ne_top);
-        gGL.vertex3f(east, south, se_bottom);
-        gGL.vertex3f(east, south, se_top);
-        gGL.vertex3f(west, south, sw_top);
-        gGL.vertex3f(west, south, sw_bottom);
-        gGL.vertex3f(west, north, nw_top);
-        gGL.vertex3f(west, north, nw_bottom);
+        LLRender::instance().vertex3f(west, north, nw_bottom);
+        LLRender::instance().vertex3f(west, north, nw_top);
+        LLRender::instance().vertex3f(east, north, ne_bottom);
+        LLRender::instance().vertex3f(east, north, ne_top);
+        LLRender::instance().vertex3f(east, south, se_bottom);
+        LLRender::instance().vertex3f(east, south, se_top);
+        LLRender::instance().vertex3f(west, south, sw_top);
+        LLRender::instance().vertex3f(west, south, sw_bottom);
+        LLRender::instance().vertex3f(west, north, nw_top);
+        LLRender::instance().vertex3f(west, north, nw_bottom);
     }
-    gGL.end();
+    LLRender::instance().end();
 
     LLUI::setLineWidth(1.f);
 }
@@ -392,18 +392,18 @@ void LLViewerParcelMgr::renderOneSegment(F32 x1, F32 y1, F32 x2, F32 y2, F32 hei
     if (height < 1.f)
     {
         z = z1+height;
-        gGL.vertex3f(x1, y1, z);
+        LLRender::instance().vertex3f(x1, y1, z);
 
-        gGL.vertex3f(x1, y1, z1);
+        LLRender::instance().vertex3f(x1, y1, z1);
 
-        gGL.vertex3f(x2, y2, z2);
+        LLRender::instance().vertex3f(x2, y2, z2);
 
-        gGL.vertex3f(x1, y1, z);
+        LLRender::instance().vertex3f(x1, y1, z);
 
-        gGL.vertex3f(x2, y2, z2);
+        LLRender::instance().vertex3f(x2, y2, z2);
 
         z = z2+height;
-        gGL.vertex3f(x2, y2, z);
+        LLRender::instance().vertex3f(x2, y2, z);
     }
     else
     {
@@ -432,25 +432,25 @@ void LLViewerParcelMgr::renderOneSegment(F32 x1, F32 y1, F32 x2, F32 y2, F32 hei
         }
 
 
-        gGL.texCoord2f(tex_coord1 * 0.5f + 0.5f, z1 * 0.5f);
-        gGL.vertex3f(x1, y1, z1);
+        LLRender::instance().texCoord2f(tex_coord1 * 0.5f + 0.5f, z1 * 0.5f);
+        LLRender::instance().vertex3f(x1, y1, z1);
 
-        gGL.texCoord2f(tex_coord2 * 0.5f + 0.5f, z2 * 0.5f);
-        gGL.vertex3f(x2, y2, z2);
+        LLRender::instance().texCoord2f(tex_coord2 * 0.5f + 0.5f, z2 * 0.5f);
+        LLRender::instance().vertex3f(x2, y2, z2);
 
         // top edge stairsteps
         z = llmax(z2 + height, z1 + height);
-        gGL.texCoord2f(tex_coord2 * 0.5f + 0.5f, z * 0.5f);
-        gGL.vertex3f(x2, y2, z);
+        LLRender::instance().texCoord2f(tex_coord2 * 0.5f + 0.5f, z * 0.5f);
+        LLRender::instance().vertex3f(x2, y2, z);
 
-        gGL.texCoord2f(tex_coord1 * 0.5f + 0.5f, z1 * 0.5f);
-        gGL.vertex3f(x1, y1, z1);
+        LLRender::instance().texCoord2f(tex_coord1 * 0.5f + 0.5f, z1 * 0.5f);
+        LLRender::instance().vertex3f(x1, y1, z1);
 
-        gGL.texCoord2f(tex_coord2 * 0.5f + 0.5f, z * 0.5f);
-        gGL.vertex3f(x2, y2, z);
+        LLRender::instance().texCoord2f(tex_coord2 * 0.5f + 0.5f, z * 0.5f);
+        LLRender::instance().vertex3f(x2, y2, z);
 
-        gGL.texCoord2f(tex_coord1 * 0.5f + 0.5f, z * 0.5f);
-        gGL.vertex3f(x1, y1, z);
+        LLRender::instance().texCoord2f(tex_coord1 * 0.5f + 0.5f, z * 0.5f);
+        LLRender::instance().vertex3f(x1, y1, z);
     }
 }
 
@@ -463,10 +463,10 @@ void LLViewerParcelMgr::renderHighlightSegments(const U8* segments, LLViewerRegi
     bool has_segments = false;
 
     LLGLSUIDefault gls_ui;
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     LLGLDepthTest gls_depth(GL_TRUE);
 
-    gGL.color4f(1.f, 1.f, 0.f, 0.2f);
+    LLRender::instance().color4f(1.f, 1.f, 0.f, 0.2f);
 
     const S32 STRIDE = (mParcelsPerEdge+1);
 
@@ -490,7 +490,7 @@ void LLViewerParcelMgr::renderHighlightSegments(const U8* segments, LLViewerRegi
                 if (!has_segments)
                 {
                     has_segments = true;
-                    gGL.begin(LLRender::TRIANGLES);
+                    LLRender::instance().begin(LLRender::TRIANGLES);
                 }
                 renderOneSegment(x1, y1, x2, y2, PARCEL_POST_HEIGHT, SOUTH_MASK, regionp);
             }
@@ -506,7 +506,7 @@ void LLViewerParcelMgr::renderHighlightSegments(const U8* segments, LLViewerRegi
                 if (!has_segments)
                 {
                     has_segments = true;
-                    gGL.begin(LLRender::TRIANGLES);
+                    LLRender::instance().begin(LLRender::TRIANGLES);
                 }
                 renderOneSegment(x1, y1, x2, y2, PARCEL_POST_HEIGHT, WEST_MASK, regionp);
             }
@@ -515,7 +515,7 @@ void LLViewerParcelMgr::renderHighlightSegments(const U8* segments, LLViewerRegi
 
     if (has_segments)
     {
-        gGL.end();
+        LLRender::instance().end();
     }
 }
 
@@ -555,14 +555,14 @@ void LLViewerParcelMgr::renderCollisionSegments(U8* segments, bool use_pass, LLV
 
     if (use_pass && (mCollisionBanned == BA_NOT_ON_LIST))
     {
-        gGL.getTexUnit(0)->bind(mPassImage);
+        LLRender::instance().getTexUnit(0)->bind(mPassImage);
     }
     else
     {
-        gGL.getTexUnit(0)->bind(mBlockedImage);
+        LLRender::instance().getTexUnit(0)->bind(mBlockedImage);
     }
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
 
     for (y = 0; y < STRIDE; y++)
     {
@@ -603,7 +603,7 @@ void LLViewerParcelMgr::renderCollisionSegments(U8* segments, bool use_pass, LLV
 
                 alpha = llclamp(alpha, 0.0f, MAX_ALPHA);
 
-                gGL.color4f(1.f, 1.f, 1.f, alpha);
+                LLRender::instance().color4f(1.f, 1.f, 1.f, alpha);
 
                 if ((pos_y - y1) < 0) direction = SOUTH_MASK;
                 else        direction = NORTH_MASK;
@@ -641,7 +641,7 @@ void LLViewerParcelMgr::renderCollisionSegments(U8* segments, bool use_pass, LLV
 
                 alpha = llclamp(alpha, 0.0f, MAX_ALPHA);
 
-                gGL.color4f(1.f, 1.f, 1.f, alpha);
+                LLRender::instance().color4f(1.f, 1.f, 1.f, alpha);
 
                 if ((pos_x - x1) > 0) direction = WEST_MASK;
                 else        direction = EAST_MASK;
@@ -653,7 +653,7 @@ void LLViewerParcelMgr::renderCollisionSegments(U8* segments, bool use_pass, LLV
         }
     }
 
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void LLViewerParcelMgr::resetCollisionTimer()
@@ -665,42 +665,42 @@ void LLViewerParcelMgr::resetCollisionTimer()
 void draw_line_cube(F32 width, const LLVector3& center)
 {
     width = 0.5f * width;
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
 
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
 
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
-    gGL.vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] + width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] - width ,center.mV[VY] - width,center.mV[VZ] - width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] + width);
+    LLRender::instance().vertex3f(center.mV[VX] + width ,center.mV[VY] - width,center.mV[VZ] - width);
 }
 
 void draw_cross_lines(const LLVector3& center, F32 dx, F32 dy, F32 dz)
 {
-    gGL.vertex3f(center.mV[VX] - dx, center.mV[VY], center.mV[VZ]);
-    gGL.vertex3f(center.mV[VX] + dx, center.mV[VY], center.mV[VZ]);
-    gGL.vertex3f(center.mV[VX], center.mV[VY] - dy, center.mV[VZ]);
-    gGL.vertex3f(center.mV[VX], center.mV[VY] + dy, center.mV[VZ]);
-    gGL.vertex3f(center.mV[VX], center.mV[VY], center.mV[VZ] - dz);
-    gGL.vertex3f(center.mV[VX], center.mV[VY], center.mV[VZ] + dz);
+    LLRender::instance().vertex3f(center.mV[VX] - dx, center.mV[VY], center.mV[VZ]);
+    LLRender::instance().vertex3f(center.mV[VX] + dx, center.mV[VY], center.mV[VZ]);
+    LLRender::instance().vertex3f(center.mV[VX], center.mV[VY] - dy, center.mV[VZ]);
+    LLRender::instance().vertex3f(center.mV[VX], center.mV[VY] + dy, center.mV[VZ]);
+    LLRender::instance().vertex3f(center.mV[VX], center.mV[VY], center.mV[VZ] - dz);
+    LLRender::instance().vertex3f(center.mV[VX], center.mV[VY], center.mV[VZ] + dz);
 }
 
 void LLViewerObjectList::renderObjectBeacons()
@@ -715,10 +715,10 @@ void LLViewerObjectList::renderObjectBeacons()
     gUIProgram.bind();
 
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         S32 last_line_width = -1;
-        // gGL.begin(LLRender::LINES); // Always happens in (line_width != last_line_width)
+        // LLRender::instance().begin(LLRender::LINES); // Always happens in (line_width != last_line_width)
 
         for (std::vector<LLDebugBeacon>::iterator iter = mDebugBeacons.begin(); iter != mDebugBeacons.end(); ++iter)
         {
@@ -728,27 +728,27 @@ void LLViewerObjectList::renderObjectBeacons()
             S32 line_width = debug_beacon.mLineWidth;
             if (line_width != last_line_width)
             {
-                gGL.setLineWidth( (F32)line_width );
+                LLRender::instance().setLineWidth( (F32)line_width );
                 last_line_width = line_width;
             }
 
             const LLVector3 &thisline = debug_beacon.mPositionAgent;
 
-            gGL.begin(LLRender::LINES);
-            gGL.color4fv(linearColor4(color).mV);
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().color4fv(linearColor4(color).mV);
             draw_cross_lines(thisline, 2.0f, 2.0f, 50.f);
             draw_line_cube(0.10f, thisline);
 
-            gGL.end();
+            LLRender::instance().end();
         }
     }
 
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
         LLGLDepthTest gls_depth(GL_TRUE);
 
         S32 last_line_width = -1;
-        // gGL.begin(LLRender::LINES); // Always happens in (line_width != last_line_width)
+        // LLRender::instance().begin(LLRender::LINES); // Always happens in (line_width != last_line_width)
 
         for (std::vector<LLDebugBeacon>::iterator iter = mDebugBeacons.begin(); iter != mDebugBeacons.end(); ++iter)
         {
@@ -757,21 +757,21 @@ void LLViewerObjectList::renderObjectBeacons()
             S32 line_width = debug_beacon.mLineWidth;
             if (line_width != last_line_width)
             {
-                gGL.setLineWidth( (F32)line_width );
+                LLRender::instance().setLineWidth( (F32)line_width );
                 last_line_width = line_width;
             }
 
             const LLVector3 &thisline = debug_beacon.mPositionAgent;
-            gGL.begin(LLRender::LINES);
-            gGL.color4fv(linearColor4(debug_beacon.mColor).mV);
+            LLRender::instance().begin(LLRender::LINES);
+            LLRender::instance().color4fv(linearColor4(debug_beacon.mColor).mV);
             draw_cross_lines(thisline, 0.5f, 0.5f, 0.5f);
             draw_line_cube(0.10f, thisline);
 
-            gGL.end();
+            LLRender::instance().end();
         }
 
-        gGL.flush();
-        gGL.setLineWidth(1.f);
+        LLRender::instance().flush();
+        LLRender::instance().setLineWidth(1.f);
 
         for (std::vector<LLDebugBeacon>::iterator iter = mDebugBeacons.begin(); iter != mDebugBeacons.end(); ++iter)
         {
@@ -799,25 +799,25 @@ void LLSky::renderSunMoonBeacons(const LLVector3& pos_agent, const LLVector3& di
 {
     LLGLSUIDefault gls_ui;
     gUIProgram.bind();
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
     LLVector3 pos_end;
     for (S32 i = 0; i < 3; ++i)
     {
         pos_end.mV[i] = pos_agent.mV[i] + (50 * direction.mV[i]);
     }
-    gGL.setLineWidth((GLfloat)LLPipeline::DebugBeaconLineWidth);
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().setLineWidth((GLfloat)LLPipeline::DebugBeaconLineWidth);
+    LLRender::instance().begin(LLRender::LINES);
     color.mV[3] *= 0.5f;
-    gGL.color4fv(color.mV);
+    LLRender::instance().color4fv(color.mV);
     draw_cross_lines(pos_agent, 0.5f, 0.5f, 0.5f);
     draw_cross_lines(pos_end, 2.f, 2.f, 2.f);
-    gGL.vertex3fv(pos_agent.mV);
-    gGL.vertex3fv(pos_end.mV);
-    gGL.end();
+    LLRender::instance().vertex3fv(pos_agent.mV);
+    LLRender::instance().vertex3fv(pos_end.mV);
+    LLRender::instance().end();
 
-    gGL.flush();
-    gGL.setLineWidth(1.f);
+    LLRender::instance().flush();
+    LLRender::instance().setLineWidth(1.f);
 
 }
 
@@ -847,7 +847,7 @@ class TextureHolder
 {
 public:
     TextureHolder(U32 unit, U32 size) :
-        texUnit(gGL.getTexUnit(unit)),
+        texUnit(LLRender::instance().getTexUnit(unit)),
         source(size)            // preallocate vector
     {
         // takes (count, pointer)
@@ -960,7 +960,7 @@ F32 gpu_benchmark()
         pixels[i] = (U8) ll_rand(255);
     }
 
-    gGL.setColorMask(true, true);
+    LLRender::instance().setColorMask(true, true);
     LLGLDepthTest depth(GL_FALSE);
 
     LLTimer alloc_timer;
@@ -989,8 +989,8 @@ F32 gpu_benchmark()
         }
         LLImageGL::setManualImage(GL_TEXTURE_2D, 0, GL_RGBA, res,res,GL_RGBA, GL_UNSIGNED_BYTE, pixels);
         // disable mipmaps and use point filtering to cause cache misses
-        gGL.getTexUnit(0)->setHasMipMaps(false);
-        gGL.getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
+        LLRender::instance().getTexUnit(0)->setHasMipMaps(false);
+        LLRender::instance().getTexUnit(0)->setTextureFilteringOption(LLTexUnit::TFO_POINT);
 
         if (alloc_timer.getElapsedTimeF32() > time_limit)
         {

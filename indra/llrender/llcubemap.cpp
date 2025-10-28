@@ -88,11 +88,11 @@ void LLCubeMap::initGL()
                 mRawImages[i] = new LLImageRaw(RESOLUTION, RESOLUTION, 4);
                 mImages[i]->createGLTexture(0, mRawImages[i], texname);
 
-                gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
+                LLRender::instance().getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
                 mImages[i]->setAddressMode(LLTexUnit::TAM_CLAMP);
                 stop_glerror();
             }
-            gGL.getTexUnit(0)->disable();
+            LLRender::instance().getTexUnit(0)->disable();
         }
         disable();
     }
@@ -179,7 +179,7 @@ void LLCubeMap::initReflectionMap(U32 resolution, U32 components)
     mImages[0] = new LLImageGL(resolution, resolution, components, true);
     mImages[0]->setTexName(texname);
     mImages[0]->setTarget(mTargets[0], LLTexUnit::TT_CUBE_MAP);
-    gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
+    LLRender::instance().getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
     mImages[0]->setAddressMode(LLTexUnit::TAM_CLAMP);
 }
 
@@ -205,7 +205,7 @@ void LLCubeMap::initEnvironmentMap(const std::vector<LLPointer<LLImageRaw> >& ra
         mRawImages[i] = rawimages[i];
         mImages[i]->createGLTexture(0, mRawImages[i], texname);
 
-        gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
+        LLRender::instance().getTexUnit(0)->bindManual(LLTexUnit::TT_CUBE_MAP, texname);
         mImages[i]->setAddressMode(LLTexUnit::TAM_CLAMP);
         stop_glerror();
 
@@ -216,7 +216,7 @@ void LLCubeMap::initEnvironmentMap(const std::vector<LLPointer<LLImageRaw> >& ra
     mImages[0]->setFilteringOption(LLTexUnit::TFO_ANISOTROPIC);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-    gGL.getTexUnit(0)->disable();
+    LLRender::instance().getTexUnit(0)->disable();
     disable();
 }
 
@@ -233,7 +233,7 @@ void LLCubeMap::generateMipMaps()
         LL_PROFILE_ZONE_NAMED_CATEGORY_TEXTURE("cmgmm - glGenerateMipmap");
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     }
-    gGL.getTexUnit(0)->disable();
+    LLRender::instance().getTexUnit(0)->disable();
     disable();
 }
 
@@ -244,7 +244,7 @@ GLuint LLCubeMap::getGLName()
 
 void LLCubeMap::bind()
 {
-    gGL.getTexUnit(mTextureStage)->bind(this);
+    LLRender::instance().getTexUnit(mTextureStage)->bind(this);
 }
 
 void LLCubeMap::enable(S32 stage)
@@ -257,7 +257,7 @@ void LLCubeMap::enableTexture(S32 stage)
     mTextureStage = stage;
     if (stage >= 0 && LLCubeMap::sUseCubeMaps)
     {
-        gGL.getTexUnit(stage)->enable(LLTexUnit::TT_CUBE_MAP);
+        LLRender::instance().getTexUnit(stage)->enable(LLTexUnit::TT_CUBE_MAP);
     }
 }
 
@@ -270,10 +270,10 @@ void LLCubeMap::disableTexture(void)
 {
     if (mTextureStage >= 0 && LLCubeMap::sUseCubeMaps)
     {
-        gGL.getTexUnit(mTextureStage)->disable();
+        LLRender::instance().getTexUnit(mTextureStage)->disable();
         if (mTextureStage == 0)
         {
-            gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
         }
     }
 }
@@ -286,7 +286,7 @@ void LLCubeMap::setMatrix(S32 stage)
 
     //if (stage > 0)
     {
-        gGL.getTexUnit(stage)->activate();
+        LLRender::instance().getTexUnit(stage)->activate();
     }
 
     LLVector3 x(gGLModelView+0);
@@ -298,14 +298,14 @@ void LLCubeMap::setMatrix(S32 stage)
     LLMatrix4 trans(mat3);
     trans.transpose();
 
-    gGL.matrixMode(LLRender::MM_TEXTURE);
-    gGL.pushMatrix();
-    gGL.loadMatrix((F32 *)trans.mMatrix);
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_TEXTURE);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix((F32 *)trans.mMatrix);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
     /*if (stage > 0)
     {
-        gGL.getTexUnit(0)->activate();
+        LLRender::instance().getTexUnit(0)->activate();
     }*/
 }
 
@@ -315,15 +315,15 @@ void LLCubeMap::restoreMatrix()
 
     //if (mMatrixStage > 0)
     {
-        gGL.getTexUnit(mMatrixStage)->activate();
+        LLRender::instance().getTexUnit(mMatrixStage)->activate();
     }
-    gGL.matrixMode(LLRender::MM_TEXTURE);
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_TEXTURE);
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
     /*if (mMatrixStage > 0)
     {
-        gGL.getTexUnit(0)->activate();
+        LLRender::instance().getTexUnit(0)->activate();
     }*/
 }
 

@@ -237,9 +237,9 @@ public:
     void run() override
     {
         mWindow->makeContextCurrent(mContext);
-        gGL.init(false);
+        LLRender::instance().init(false);
         mQueue->runUntilClose();
-        gGL.shutdown();
+        LLRender::instance().shutdown();
         mWindow->destroySharedContext(mContext);
     }
 
@@ -617,31 +617,31 @@ void LLVertexBufferData::drawWithMatrix()
 
     if (mTexName)
     {
-        gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mTexName);
+        LLRender::instance().getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mTexName);
     }
     else
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     }
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.pushMatrix();
-    gGL.loadMatrix(glm::value_ptr(mModelView));
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.pushMatrix();
-    gGL.loadMatrix(glm::value_ptr(mProjection));
-    gGL.matrixMode(LLRender::MM_TEXTURE0);
-    gGL.pushMatrix();
-    gGL.loadMatrix(glm::value_ptr(mTexture0));
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(glm::value_ptr(mModelView));
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(glm::value_ptr(mProjection));
+    LLRender::instance().matrixMode(LLRender::MM_TEXTURE0);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().loadMatrix(glm::value_ptr(mTexture0));
 
     mVB->setBuffer();
     mVB->drawArrays(mMode, 0, mCount);
 
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.popMatrix();
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().popMatrix();
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().popMatrix();
 }
 
 void LLVertexBufferData::draw()
@@ -655,11 +655,11 @@ void LLVertexBufferData::draw()
 
     if (mTexName)
     {
-        gGL.getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mTexName);
+        LLRender::instance().getTexUnit(0)->bindManual(LLTexUnit::TT_TEXTURE, mTexName);
     }
     else
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     }
 
     mVB->setBuffer();
@@ -768,13 +768,13 @@ void LLVertexBuffer::setupClientArrays(U32 data_mask)
 void LLVertexBuffer::drawArrays(U32 mode, const std::vector<LLVector3>& pos)
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_VERTEX;
-    gGL.begin(mode);
+    LLRender::instance().begin(mode);
     for (auto& v : pos)
     {
-        gGL.vertex3fv(v.mV);
+        LLRender::instance().vertex3fv(v.mV);
     }
-    gGL.end();
-    gGL.flush();
+    LLRender::instance().end();
+    LLRender::instance().flush();
 }
 
 //static
@@ -785,19 +785,19 @@ void LLVertexBuffer::drawElements(U32 mode, const LLVector4a* pos, const LLVecto
 
     STOP_GLERROR;
 
-    gGL.syncMatrices();
+    LLRender::instance().syncMatrices();
 
     unbind();
 
-    gGL.begin(mode);
+    LLRender::instance().begin(mode);
 
     if (tc != nullptr)
     {
         for (U32 i = 0; i < num_indices; ++i)
         {
             U16 idx = indicesp[i];
-            gGL.texCoord2fv(tc[idx].mV);
-            gGL.vertex3fv(pos[idx].getF32ptr());
+            LLRender::instance().texCoord2fv(tc[idx].mV);
+            LLRender::instance().vertex3fv(pos[idx].getF32ptr());
         }
     }
     else
@@ -805,11 +805,11 @@ void LLVertexBuffer::drawElements(U32 mode, const LLVector4a* pos, const LLVecto
         for (U32 i = 0; i < num_indices; ++i)
         {
             U16 idx = indicesp[i];
-            gGL.vertex3fv(pos[idx].getF32ptr());
+            LLRender::instance().vertex3fv(pos[idx].getF32ptr());
         }
     }
-    gGL.end();
-    gGL.flush();
+    LLRender::instance().end();
+    LLRender::instance().flush();
 }
 
 bool LLVertexBuffer::validateRange(U32 start, U32 end, U32 count, U32 indices_offset) const
@@ -902,7 +902,7 @@ void LLVertexBuffer::drawRange(U32 mode, U32 start, U32 end, U32 count, U32 indi
     llassert(validateRange(start, end, count, indices_offset));
     llassert(mGLBuffer == sGLRenderBuffer);
     llassert(mGLIndices == sGLRenderIndices);
-    gGL.syncMatrices();
+    LLRender::instance().syncMatrices();
     STOP_GLERROR;
     glDrawRangeElements(sGLMode[mode], start, end, count, mIndicesType,
         (GLvoid*) (indices_offset * (size_t) mIndicesStride));
@@ -928,7 +928,7 @@ void LLVertexBuffer::drawArrays(U32 mode, U32 first, U32 count) const
     llassert(mGLBuffer == sGLRenderBuffer);
     llassert(mGLIndices == sGLRenderIndices);
 
-    gGL.syncMatrices();
+    LLRender::instance().syncMatrices();
     STOP_GLERROR;
     glDrawArrays(sGLMode[mode], first, count);
     STOP_GLERROR;

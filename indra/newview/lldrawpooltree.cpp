@@ -72,7 +72,7 @@ void LLDrawPoolTree::renderDeferred(S32 pass)
     }
 
 
-    gGL.getTexUnit(sDiffTex)->bindFast(mTexturep);
+    LLRender::instance().getTexUnit(sDiffTex)->bindFast(mTexturep);
     mTexturep->addTextureStats(1024.f * 1024.f); // <=== keep Linden tree textures at full res
 
     for (std::vector<LLFace*>::iterator iter = mDrawFace.begin();
@@ -85,7 +85,7 @@ void LLDrawPoolTree::renderDeferred(S32 pass)
         {
             LLMatrix4* model_matrix = &(face->getDrawable()->getRegion()->mRenderMatrix);
 
-            llassert(gGL.getMatrixMode() == LLRender::MM_MODELVIEW);
+            llassert(LLRender::instance().getMatrixMode() == LLRender::MM_MODELVIEW);
             LLRenderPass::applyModelMatrix(model_matrix);
 
             buff->setBuffer();

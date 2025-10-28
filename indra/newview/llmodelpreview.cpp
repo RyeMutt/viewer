@@ -102,7 +102,7 @@ LLViewerFetchedTexture* bindMaterialDiffuseTexture(const LLImportMaterial& mater
     {
         if (texture->getDiscardLevel() > -1)
         {
-            gGL.getTexUnit(0)->bind(texture, true);
+            LLRender::instance().getTexUnit(0)->bind(texture, true);
             return texture;
         }
     }
@@ -3308,23 +3308,23 @@ bool LLModelPreview::render()
         gUIProgram.bind();
 
         //clear background to grey
-        gGL.matrixMode(LLRender::MM_PROJECTION);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
-        gGL.ortho(0.0f, (F32)width, 0.0f, (F32)height, -1.0f, 1.0f);
+        LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
+        LLRender::instance().ortho(0.0f, (F32)width, 0.0f, (F32)height, -1.0f, 1.0f);
 
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.pushMatrix();
-        gGL.loadIdentity();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().loadIdentity();
 
-        gGL.color4fv(PREVIEW_CANVAS_COL.mV);
+        LLRender::instance().color4fv(PREVIEW_CANVAS_COL.mV);
         gl_rect_2d_simple(width, height);
 
-        gGL.matrixMode(LLRender::MM_PROJECTION);
-        gGL.popMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+        LLRender::instance().popMatrix();
 
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.popMatrix();
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().popMatrix();
         gUIProgram.unbind();
     }
 
@@ -3481,7 +3481,7 @@ bool LLModelPreview::render()
 
     gObjectPreviewProgram.bind(show_skin_weight);
 
-    gGL.loadIdentity();
+    LLRender::instance().loadIdentity();
     gPipeline.enableLightsPreview();
 
     LLQuaternion camera_rot = LLQuaternion(mCameraPitch, LLVector3::y_axis) *
@@ -3501,8 +3501,8 @@ bool LLModelPreview::render()
 
     stop_glerror();
 
-    gGL.pushMatrix();
-    gGL.color4fv(PREVIEW_EDGE_COL.mV);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().color4fv(PREVIEW_EDGE_COL.mV);
 
     if (!mBaseModel.empty() && mVertexBuffer[LLModel::NUM_LODS].empty())
     {
@@ -3553,11 +3553,11 @@ bool LLModelPreview::render()
                     continue;
                 }
 
-                gGL.pushMatrix();
+                LLRender::instance().pushMatrix();
 
                 LLMatrix4 mat = instance.mTransform;
 
-                gGL.multMatrix((GLfloat*)mat.mMatrix);
+                LLRender::instance().multMatrix((GLfloat*)mat.mMatrix);
 
                 auto num_models = mVertexBuffer[mPreviewLOD][model].size();
                 for (size_t i = 0; i < num_models; ++i)
@@ -3570,7 +3570,7 @@ bool LLModelPreview::render()
                             const std::string& binding = instance.mModel->mMaterialList[i];
                             const LLImportMaterial& material = instance.mMaterial[binding];
 
-                            gGL.diffuseColor4fv(material.mDiffuseColor.mV);
+                            LLRender::instance().diffuseColor4fv(material.mDiffuseColor.mV);
 
                             // Find the tex for this material, bind it, and add it to our set
                             //
@@ -3583,7 +3583,7 @@ bool LLModelPreview::render()
                     }
                     else
                     {
-                        gGL.diffuseColor4fv(PREVIEW_BASE_COL.mV);
+                        LLRender::instance().diffuseColor4fv(PREVIEW_BASE_COL.mV);
                     }
 
                     // Zero this variable for an obligatory buffer initialization
@@ -3593,19 +3593,19 @@ bool LLModelPreview::render()
                     buffer->setBuffer();
                     buffer->drawRange(LLRender::TRIANGLES, 0, buffer->getNumVerts() - 1, buffer->getNumIndices(), 0);
 
-                    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-                    gGL.diffuseColor4fv(PREVIEW_EDGE_COL.mV);
+                    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                    LLRender::instance().diffuseColor4fv(PREVIEW_EDGE_COL.mV);
                     if (show_edges)
                     {
-                        gGL.setLineWidth(PREVIEW_EDGE_WIDTH);
+                        LLRender::instance().setLineWidth(PREVIEW_EDGE_WIDTH);
                         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                         buffer->drawRange(LLRender::TRIANGLES, 0, buffer->getNumVerts() - 1, buffer->getNumIndices(), 0);
                         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                        gGL.setLineWidth(1.f);
+                        LLRender::instance().setLineWidth(1.f);
                     }
                     buffer->unmapBuffer();
                 }
-                gGL.popMatrix();
+                LLRender::instance().popMatrix();
             }
 
             if (show_physics)
@@ -3616,17 +3616,17 @@ bool LLModelPreview::render()
                 {
                     if (pass == 0)
                     { //depth only pass
-                        gGL.setColorMask(false, false);
+                        LLRender::instance().setColorMask(false, false);
                     }
                     else
                     {
-                        gGL.setColorMask(true, true);
+                        LLRender::instance().setColorMask(true, true);
                     }
 
                     //enable alpha blending on second pass but not first pass
                     LLGLState blend(GL_BLEND, pass);
 
-                    gGL.blendFunc(LLRender::BF_SOURCE_ALPHA, LLRender::BF_ONE_MINUS_SOURCE_ALPHA);
+                    LLRender::instance().blendFunc(LLRender::BF_SOURCE_ALPHA, LLRender::BF_ONE_MINUS_SOURCE_ALPHA);
 
                     for (LLMeshUploadThread::instance_list_t::iterator iter = mUploadData.begin(); iter != mUploadData.end(); ++iter)
                     {
@@ -3639,10 +3639,10 @@ bool LLModelPreview::render()
                             continue;
                         }
 
-                        gGL.pushMatrix();
+                        LLRender::instance().pushMatrix();
                         LLMatrix4 mat = instance.mTransform;
 
-                        gGL.multMatrix((GLfloat*)mat.mMatrix);
+                        LLRender::instance().multMatrix((GLfloat*)mat.mMatrix);
 
 
                         bool render_mesh = true;
@@ -3676,12 +3676,12 @@ bool LLModelPreview::render()
                                     {
                                         if (physics_explode > 0.f)
                                         {
-                                            gGL.pushMatrix();
+                                            LLRender::instance().pushMatrix();
 
                                             LLVector3 offset = model->mHullCenter[i] - model->mCenterOfHullCenters;
                                             offset *= physics_explode;
 
-                                            gGL.translatef(offset.mV[0], offset.mV[1], offset.mV[2]);
+                                            LLRender::instance().translatef(offset.mV[0], offset.mV[1], offset.mV[2]);
                                         }
 
                                         static std::vector<LLColor4U> hull_colors;
@@ -3691,12 +3691,12 @@ bool LLModelPreview::render()
                                             hull_colors.push_back(LLColor4U(rand() % 128 + 127, rand() % 128 + 127, rand() % 128 + 127, 128));
                                         }
 
-                                        gGL.diffuseColor4ubv(hull_colors[i].mV);
+                                        LLRender::instance().diffuseColor4ubv(hull_colors[i].mV);
                                         LLVertexBuffer::drawArrays(LLRender::TRIANGLES, physics.mMesh[i].mPositions);
 
                                         if (physics_explode > 0.f)
                                         {
-                                            gGL.popMatrix();
+                                            LLRender::instance().popMatrix();
                                         }
                                     }
 
@@ -3713,8 +3713,8 @@ bool LLModelPreview::render()
                             {
                                 for (size_t i = 0; i < num_models; ++i)
                                 {
-                                    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-                                    gGL.diffuseColor4fv(PREVIEW_PSYH_FILL_COL.mV);
+                                    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                                    LLRender::instance().diffuseColor4fv(PREVIEW_PSYH_FILL_COL.mV);
 
                                     // Zero this variable for an obligatory buffer initialization
                                     // See https://github.com/secondlife/viewer/issues/912
@@ -3723,31 +3723,31 @@ bool LLModelPreview::render()
                                     buffer->setBuffer();
                                     buffer->drawRange(LLRender::TRIANGLES, 0, buffer->getNumVerts() - 1, buffer->getNumIndices(), 0);
 
-                                    gGL.diffuseColor4fv(PREVIEW_PSYH_EDGE_COL.mV);
-                                    gGL.setLineWidth(PREVIEW_PSYH_EDGE_WIDTH);
+                                    LLRender::instance().diffuseColor4fv(PREVIEW_PSYH_EDGE_COL.mV);
+                                    LLRender::instance().setLineWidth(PREVIEW_PSYH_EDGE_WIDTH);
                                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                                     buffer->drawRange(LLRender::TRIANGLES, 0, buffer->getNumVerts() - 1, buffer->getNumIndices(), 0);
 
                                     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                                    gGL.setLineWidth(1.f);
+                                    LLRender::instance().setLineWidth(1.f);
 
                                     buffer->unmapBuffer();
                                 }
                             }
                         }
-                        gGL.popMatrix();
+                        LLRender::instance().popMatrix();
                     }
 
                     // only do this if mDegenerate was set in the preceding mesh checks [Check this if the ordering ever breaks]
                     if (mHasDegenerate)
                     {
-                        gGL.setLineWidth(PREVIEW_DEG_EDGE_WIDTH);
+                        LLRender::instance().setLineWidth(PREVIEW_DEG_EDGE_WIDTH);
                         glPointSize(PREVIEW_DEG_POINT_SIZE);
                         gPipeline.enableLightsFullbright();
                         //show degenerate triangles
                         LLGLDepthTest depth(GL_TRUE, GL_TRUE, GL_ALWAYS);
                         LLGLDisable cull(GL_CULL_FACE);
-                        gGL.diffuseColor4f(1.f, 0.f, 0.f, 1.f);
+                        LLRender::instance().diffuseColor4f(1.f, 0.f, 0.f, 1.f);
                         const LLVector4a scale(0.5f);
 
                         for (LLMeshUploadThread::instance_list_t::iterator iter = mUploadData.begin(); iter != mUploadData.end(); ++iter)
@@ -3761,10 +3761,10 @@ bool LLModelPreview::render()
                                 continue;
                             }
 
-                            gGL.pushMatrix();
+                            LLRender::instance().pushMatrix();
                             LLMatrix4 mat = instance.mTransform;
 
-                            gGL.multMatrix((GLfloat*)mat.mMatrix);
+                            LLRender::instance().multMatrix((GLfloat*)mat.mMatrix);
 
 
                             LLPhysicsDecomp* decomp = gMeshRepo.mDecompThread;
@@ -3809,12 +3809,12 @@ bool LLModelPreview::render()
                                 }
                             }
 
-                            gGL.popMatrix();
+                            LLRender::instance().popMatrix();
                         }
-                        gGL.setLineWidth(1.f);
+                        LLRender::instance().setLineWidth(1.f);
                         glPointSize(1.f);
                         gPipeline.enableLightsPreview();
-                        gGL.setSceneBlendType(LLRender::BT_ALPHA);
+                        LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
                     }
                 }
             }
@@ -3896,7 +3896,7 @@ bool LLModelPreview::render()
                             model->mSkinInfo.updateHash();
                             LLRenderPass::uploadMatrixPalette(mPreviewAvatar, &model->mSkinInfo);
 
-                            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
                             if (show_textures)
                             {
@@ -3906,7 +3906,7 @@ bool LLModelPreview::render()
                                     const std::string& binding = instance.mModel->mMaterialList[i];
                                     const LLImportMaterial& material = instance.mMaterial[binding];
 
-                                    gGL.diffuseColor4fv(material.mDiffuseColor.mV);
+                                    LLRender::instance().diffuseColor4fv(material.mDiffuseColor.mV);
 
                                     // Find the tex for this material, bind it, and add it to our set
                                     //
@@ -3919,7 +3919,7 @@ bool LLModelPreview::render()
                             }
                             else
                             {
-                                gGL.diffuseColor4fv(PREVIEW_BASE_COL.mV);
+                                LLRender::instance().diffuseColor4fv(PREVIEW_BASE_COL.mV);
                             }
 
                             // Zero this variable for an obligatory buffer initialization
@@ -3931,13 +3931,13 @@ bool LLModelPreview::render()
 
                             if (show_edges)
                             {
-                                gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-                                gGL.diffuseColor4fv(PREVIEW_EDGE_COL.mV);
-                                gGL.setLineWidth(PREVIEW_EDGE_WIDTH);
+                                LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+                                LLRender::instance().diffuseColor4fv(PREVIEW_EDGE_COL.mV);
+                                LLRender::instance().setLineWidth(PREVIEW_EDGE_WIDTH);
                                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                                 buffer->draw(LLRender::TRIANGLES, buffer->getNumIndices(), 0);
                                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                                gGL.setLineWidth(1.f);
+                                LLRender::instance().setLineWidth(1.f);
                             }
                         }
                     }
@@ -3977,7 +3977,7 @@ bool LLModelPreview::render()
 
     gObjectPreviewProgram.unbind();
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 
     return true;
 }
@@ -3985,22 +3985,22 @@ bool LLModelPreview::render()
 void LLModelPreview::renderGroundPlane(float z_offset)
 {   // Not necesarilly general - beware - but it seems to meet the needs of LLModelPreview::render
 
-    gGL.diffuseColor3f( 1.0f, 0.0f, 1.0f );
+    LLRender::instance().diffuseColor3f( 1.0f, 0.0f, 1.0f );
 
-    gGL.begin(LLRender::LINES);
-    gGL.vertex3fv(mGroundPlane[0].mV);
-    gGL.vertex3fv(mGroundPlane[1].mV);
+    LLRender::instance().begin(LLRender::LINES);
+    LLRender::instance().vertex3fv(mGroundPlane[0].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[1].mV);
 
-    gGL.vertex3fv(mGroundPlane[1].mV);
-    gGL.vertex3fv(mGroundPlane[2].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[1].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[2].mV);
 
-    gGL.vertex3fv(mGroundPlane[2].mV);
-    gGL.vertex3fv(mGroundPlane[3].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[2].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[3].mV);
 
-    gGL.vertex3fv(mGroundPlane[3].mV);
-    gGL.vertex3fv(mGroundPlane[0].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[3].mV);
+    LLRender::instance().vertex3fv(mGroundPlane[0].mV);
 
-    gGL.end();
+    LLRender::instance().end();
 }
 
 

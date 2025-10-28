@@ -219,7 +219,7 @@ void LLXYVector::draw()
     else
     {
         // skip the arrow, set color for center circle
-        gGL.color4fv(mArrowColor.get().mV);
+        LLRender::instance().color4fv(mArrowColor.get().mV);
     }
 
     // draw center circle

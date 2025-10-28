@@ -2008,7 +2008,7 @@ LLViewerWindow::LLViewerWindow(const Params& p)
     // Initialize OpenGL Renderer
     LLVertexBuffer::initClass(mWindow);
     LL_INFOS("RenderInit") << "LLVertexBuffer initialization done." << LL_ENDL ;
-    if (!gGL.init(true))
+    if (!LLRender::instance().init(true))
     {
         LLError::LLUserWarningMsg::show(LLTrans::getString("MBVideoDrvErr"));
         LL_ERRS() << "gGL not initialized" << LL_ENDL;
@@ -2466,7 +2466,7 @@ void LLViewerWindow::shutdownGL()
     stopGL();
     stop_glerror();
 
-    gGL.shutdown();
+    LLRender::instance().shutdown();
 
     SUBSYSTEM_CLEANUP(LLVertexBuffer);
 
@@ -2705,18 +2705,18 @@ void LLViewerWindow::setMenuBackgroundColor(bool god_mode, bool dev_grid)
 void LLViewerWindow::drawDebugText()
 {
     gUIProgram.bind();
-    gGL.color4f(1,1,1,1);
-    gGL.pushMatrix();
-    gGL.pushUIMatrix();
+    LLRender::instance().color4f(1,1,1,1);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().pushUIMatrix();
     {
         // scale view by UI global scale factor and aspect ratio correction factor
-        gGL.scaleUI(mDisplayScale.mV[VX], mDisplayScale.mV[VY], 1.f);
+        LLRender::instance().scaleUI(mDisplayScale.mV[VX], mDisplayScale.mV[VY], 1.f);
         mDebugText->draw();
     }
-    gGL.popUIMatrix();
-    gGL.popMatrix();
+    LLRender::instance().popUIMatrix();
+    LLRender::instance().popMatrix();
 
-    gGL.flush();
+    LLRender::instance().flush();
     gUIProgram.unbind();
 }
 
@@ -2732,9 +2732,9 @@ void LLViewerWindow::draw()
 
     LLUI::setLineWidth(1.f);
     // Reset any left-over transforms
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
-    gGL.loadIdentity();
+    LLRender::instance().loadIdentity();
 
     //S32 screen_x, screen_y;
 
@@ -2749,7 +2749,7 @@ void LLViewerWindow::draw()
         // draw timecode block
         std::string text;
 
-        gGL.loadIdentity();
+        LLRender::instance().loadIdentity();
 
         microsecondsToTimecodeString(gFrameTime,text);
         const LLFontGL* font = LLFontGL::getFontSansSerif();
@@ -2764,14 +2764,14 @@ void LLViewerWindow::draw()
     // No translation needed, this view is glued to 0,0
 
     gUIProgram.bind();
-    gGL.color4f(1, 1, 1, 1);
+    LLRender::instance().color4f(1, 1, 1, 1);
 
-    gGL.pushMatrix();
+    LLRender::instance().pushMatrix();
     LLUI::pushMatrix();
     {
 
         // scale view by UI global scale factor and aspect ratio correction factor
-        gGL.scaleUI(mDisplayScale.mV[VX], mDisplayScale.mV[VY], 1.f);
+        LLRender::instance().scaleUI(mDisplayScale.mV[VX], mDisplayScale.mV[VY], 1.f);
 
         LLVector2 old_scale_factor = LLUI::getScaleFactor();
         // apply camera zoom transform (for high res screenshots)
@@ -2783,10 +2783,10 @@ void LLViewerWindow::draw()
             int pos_y = sub_region / llceil(zoom_factor);
             int pos_x = sub_region - (pos_y*llceil(zoom_factor));
             // offset for this tile
-            gGL.translatef((F32)getWindowWidthScaled() * -(F32)pos_x,
+            LLRender::instance().translatef((F32)getWindowWidthScaled() * -(F32)pos_x,
                         (F32)getWindowHeightScaled() * -(F32)pos_y,
                         0.f);
-            gGL.scalef(zoom_factor, zoom_factor, 1.f);
+            LLRender::instance().scalef(zoom_factor, zoom_factor, 1.f);
             LLUI::getScaleFactor() *= zoom_factor;
         }
 
@@ -2815,7 +2815,7 @@ void LLViewerWindow::draw()
             S32 screen_x, screen_y;
             top_ctrl->localPointToScreen(0, 0, &screen_x, &screen_y);
 
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
             LLUI::pushMatrix();
             LLUI::translate( (F32) screen_x, (F32) screen_y);
             top_ctrl->draw();
@@ -2838,7 +2838,7 @@ void LLViewerWindow::draw()
         LLUI::setScaleFactor(old_scale_factor);
     }
     LLUI::popMatrix();
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 
     gUIProgram.unbind();
 
@@ -4173,32 +4173,32 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
             LLBBox hud_bbox = gAgentAvatarp->getHUDBBox();
 
             // set up transform to encompass bounding box of HUD
-            gGL.matrixMode(LLRender::MM_PROJECTION);
-            gGL.pushMatrix();
-            gGL.loadIdentity();
+            LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+            LLRender::instance().pushMatrix();
+            LLRender::instance().loadIdentity();
             F32 depth = llmax(1.f, hud_bbox.getExtentLocal().mV[VX] * 1.1f);
-            gGL.ortho(-0.5f * LLViewerCamera::getInstance()->getAspect(), 0.5f * LLViewerCamera::getInstance()->getAspect(), -0.5f, 0.5f, 0.f, depth);
+            LLRender::instance().ortho(-0.5f * LLViewerCamera::getInstance()->getAspect(), 0.5f * LLViewerCamera::getInstance()->getAspect(), -0.5f, 0.5f, 0.f, depth);
 
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
-            gGL.pushMatrix();
-            gGL.loadIdentity();
-            gGL.loadMatrix(OGL_TO_CFR_ROTATION);        // Load Cory's favorite reference frame
-            gGL.translatef(-hud_bbox.getCenterLocal().mV[VX] + (depth *0.5f), 0.f, 0.f);
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().pushMatrix();
+            LLRender::instance().loadIdentity();
+            LLRender::instance().loadMatrix(OGL_TO_CFR_ROTATION);        // Load Cory's favorite reference frame
+            LLRender::instance().translatef(-hud_bbox.getCenterLocal().mV[VX] + (depth *0.5f), 0.f, 0.f);
         }
 
         // Render light for editing
         if (LLSelectMgr::sRenderLightRadius && LLToolMgr::getInstance()->inEdit())
         {
-            gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+            LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
             LLGLEnable gls_blend(GL_BLEND);
             LLGLEnable gls_cull(GL_CULL_FACE);
             LLGLDepthTest gls_depth(GL_TRUE, GL_FALSE);
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
-            gGL.pushMatrix();
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().pushMatrix();
             if (selection->getSelectType() == SELECT_TYPE_HUD)
             {
                 F32 zoom = gAgentCamera.mHUDCurZoom;
-                gGL.scalef(zoom, zoom, zoom);
+                LLRender::instance().scalef(zoom, zoom, zoom);
             }
 
             struct f : public LLSelectedObjectFunctor
@@ -4209,15 +4209,15 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
                     if (drawable && drawable->isLight())
                     {
                         LLVOVolume* vovolume = drawable->getVOVolume();
-                        gGL.pushMatrix();
+                        LLRender::instance().pushMatrix();
 
                         LLVector3 center = drawable->getPositionAgent();
-                        gGL.translatef(center[0], center[1], center[2]);
+                        LLRender::instance().translatef(center[0], center[1], center[2]);
                         F32 scale = vovolume->getLightRadius();
-                        gGL.scalef(scale, scale, scale);
+                        LLRender::instance().scalef(scale, scale, scale);
 
                         LLColor4 color(vovolume->getLightSRGBColor(), .5f);
-                        gGL.color4fv(color.mV);
+                        LLRender::instance().color4fv(color.mV);
 
                         //F32 pixel_area = 100000.f;
                         // Render Outside
@@ -4228,14 +4228,14 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
                         gSphere.render();
                         glCullFace(GL_BACK);
 
-                        gGL.popMatrix();
+                        LLRender::instance().popMatrix();
                     }
                     return true;
                 }
             } func;
             LLSelectMgr::getInstance()->getSelection()->applyToObjects(&func);
 
-            gGL.popMatrix();
+            LLRender::instance().popMatrix();
         }
 
         // NOTE: The average position for the axis arrows of the selected objects should
@@ -4289,11 +4289,11 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
         // un-setup HUD render
         if (selection->getSelectType() == SELECT_TYPE_HUD && selection->getObjectCount())
         {
-            gGL.matrixMode(LLRender::MM_PROJECTION);
-            gGL.popMatrix();
+            LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+            LLRender::instance().popMatrix();
 
-            gGL.matrixMode(LLRender::MM_MODELVIEW);
-            gGL.popMatrix();
+            LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+            LLRender::instance().popMatrix();
             stop_glerror();
         }
     }
@@ -5966,7 +5966,7 @@ void LLViewerWindow::checkSettings()
     LL_RECORD_BLOCK_TIME(FTM_WINDOW_CHECK_SETTINGS);
     if (mStatesDirty)
     {
-        gGL.refreshState();
+        LLRender::instance().refreshState();
         LLViewerShaderMgr::instance()->setShaders();
         mStatesDirty = false;
     }

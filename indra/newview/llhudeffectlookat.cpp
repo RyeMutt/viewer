@@ -533,29 +533,29 @@ void LLHUDEffectLookAt::render()
 {
     if (sDebugLookAt && mSourceObject.notNull())
     {
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
 
         //LLGLDisable gls_stencil(GL_STENCIL_TEST);
 
         LLVector3 target = mTargetPos + ((LLVOAvatar*)(LLViewerObject*)mSourceObject)->mHeadp->getWorldPosition();
-        gGL.matrixMode(LLRender::MM_MODELVIEW);
-        gGL.pushMatrix();
-        gGL.translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
-        gGL.scalef(0.3f, 0.3f, 0.3f);
-        gGL.begin(LLRender::LINES);
+        LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+        LLRender::instance().pushMatrix();
+        LLRender::instance().translatef(target.mV[VX], target.mV[VY], target.mV[VZ]);
+        LLRender::instance().scalef(0.3f, 0.3f, 0.3f);
+        LLRender::instance().begin(LLRender::LINES);
         {
             LLColor3 color = (*mAttentions)[mTargetType].mColor;
-            gGL.color3f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE]);
-            gGL.vertex3f(-1.f, 0.f, 0.f);
-            gGL.vertex3f(1.f, 0.f, 0.f);
+            LLRender::instance().color3f(color.mV[VRED], color.mV[VGREEN], color.mV[VBLUE]);
+            LLRender::instance().vertex3f(-1.f, 0.f, 0.f);
+            LLRender::instance().vertex3f(1.f, 0.f, 0.f);
 
-            gGL.vertex3f(0.f, -1.f, 0.f);
-            gGL.vertex3f(0.f, 1.f, 0.f);
+            LLRender::instance().vertex3f(0.f, -1.f, 0.f);
+            LLRender::instance().vertex3f(0.f, 1.f, 0.f);
 
-            gGL.vertex3f(0.f, 0.f, -1.f);
-            gGL.vertex3f(0.f, 0.f, 1.f);
-        } gGL.end();
-        gGL.popMatrix();
+            LLRender::instance().vertex3f(0.f, 0.f, -1.f);
+            LLRender::instance().vertex3f(0.f, 0.f, 1.f);
+        } LLRender::instance().end();
+        LLRender::instance().popMatrix();
     }
 }
 

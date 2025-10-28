@@ -1596,7 +1596,7 @@ void LLOverlapPanel::draw()
     static const std::string current_selection_text("Current selection: ");
     static const std::string overlapper_text("Overlapper: ");
     LLColor4 text_color = LLColor4::grey;
-    gGL.color4fv(text_color.mV);
+    LLRender::instance().color4fv(text_color.mV);
 
     if(!LLView::sPreviewClickedElement)
     {

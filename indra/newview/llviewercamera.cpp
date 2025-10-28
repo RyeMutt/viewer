@@ -308,8 +308,8 @@ void LLViewerCamera::setPerspective(bool for_selection,
     aspect = getAspect();
 
     // Load camera view matrix
-    gGL.matrixMode(LLRender::MM_PROJECTION);
-    gGL.loadIdentity();
+    LLRender::instance().matrixMode(LLRender::MM_PROJECTION);
+    LLRender::instance().loadIdentity();
 
     glm::mat4 proj_mat = glm::identity<glm::mat4>();
 
@@ -368,11 +368,11 @@ void LLViewerCamera::setPerspective(bool for_selection,
 
     proj_mat *= glm::perspective(fov_y, aspect, z_near, z_far);
 
-    gGL.loadMatrix(glm::value_ptr(proj_mat));
+    LLRender::instance().loadMatrix(glm::value_ptr(proj_mat));
 
     set_current_projection(proj_mat);
 
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
 
     glm::mat4 modelview(glm::make_mat4((GLfloat*)OGL_TO_CFR_ROTATION));
 
@@ -382,7 +382,7 @@ void LLViewerCamera::setPerspective(bool for_selection,
 
     modelview *= glm::make_mat4(ogl_matrix);
 
-    gGL.loadMatrix(glm::value_ptr(modelview));
+    LLRender::instance().loadMatrix(glm::value_ptr(modelview));
 
     if (for_selection && (width > 1 || height > 1))
     {

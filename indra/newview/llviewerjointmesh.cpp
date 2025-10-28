@@ -230,9 +230,9 @@ U32 LLViewerJointMesh::drawShape( F32 pixelArea, bool first_pass, bool is_dummy)
     // setup current color
     //----------------------------------------------------------------
     if (is_dummy)
-        gGL.diffuseColor4fv(LLVOAvatar::getDummyColor().mV);
+        LLRender::instance().diffuseColor4fv(LLVOAvatar::getDummyColor().mV);
     else
-        gGL.diffuseColor4fv(mColor.mV);
+        LLRender::instance().diffuseColor4fv(mColor.mV);
 
     stop_glerror();
 
@@ -244,35 +244,35 @@ U32 LLViewerJointMesh::drawShape( F32 pixelArea, bool first_pass, bool is_dummy)
     LLViewerTexLayerSet *layerset = dynamic_cast<LLViewerTexLayerSet*>(mLayerSet);
     if (mTestImageName)
     {
-        gGL.getTexUnit(diffuse_channel)->bindManual(LLTexUnit::TT_TEXTURE, mTestImageName);
+        LLRender::instance().getTexUnit(diffuse_channel)->bindManual(LLTexUnit::TT_TEXTURE, mTestImageName);
 
         if (mIsTransparent)
         {
-            gGL.diffuseColor4f(1.f, 1.f, 1.f, 1.f);
+            LLRender::instance().diffuseColor4f(1.f, 1.f, 1.f, 1.f);
         }
         else
         {
-            gGL.diffuseColor4f(0.7f, 0.6f, 0.3f, 1.f);
+            LLRender::instance().diffuseColor4f(0.7f, 0.6f, 0.3f, 1.f);
         }
     }
     else if( !is_dummy && layerset )
     {
         if( layerset->hasComposite() )
         {
-            gGL.getTexUnit(diffuse_channel)->bind(layerset->getViewerComposite());
+            LLRender::instance().getTexUnit(diffuse_channel)->bind(layerset->getViewerComposite());
         }
         else
         {
-            gGL.getTexUnit(diffuse_channel)->bind(LLViewerTextureManager::getFetchedTexture(IMG_DEFAULT));
+            LLRender::instance().getTexUnit(diffuse_channel)->bind(LLViewerTextureManager::getFetchedTexture(IMG_DEFAULT));
         }
     }
     else if ( !is_dummy && mTexture.notNull() )
     {
-        gGL.getTexUnit(diffuse_channel)->bind(mTexture);
+        LLRender::instance().getTexUnit(diffuse_channel)->bind(mTexture);
     }
     else
     {
-        gGL.getTexUnit(diffuse_channel)->bind(LLViewerTextureManager::getFetchedTexture(IMG_DEFAULT));
+        LLRender::instance().getTexUnit(diffuse_channel)->bind(LLViewerTextureManager::getFetchedTexture(IMG_DEFAULT));
     }
 
     U32 start = mMesh->mFaceVertexOffset;
@@ -297,12 +297,12 @@ U32 LLViewerJointMesh::drawShape( F32 pixelArea, bool first_pass, bool is_dummy)
     }
     else
     {
-        gGL.pushMatrix();
+        LLRender::instance().pushMatrix();
         LLMatrix4 jointToWorld = getWorldMatrix();
-        gGL.multMatrix((GLfloat*)jointToWorld.mMatrix);
+        LLRender::instance().multMatrix((GLfloat*)jointToWorld.mMatrix);
         buff->setBuffer();
         buff->drawRange(LLRender::TRIANGLES, start, end, count, offset);
-        gGL.popMatrix();
+        LLRender::instance().popMatrix();
     }
     gPipeline.addTrianglesDrawn(count);
 

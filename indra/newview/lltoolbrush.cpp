@@ -524,12 +524,12 @@ void LLToolBrushLand::render()
 void LLToolBrushLand::renderOverlay(LLSurface& land, const LLVector3& pos_region,
                                     const LLVector3& pos_world)
 {
-    gGL.matrixMode(LLRender::MM_MODELVIEW);
-    gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().matrixMode(LLRender::MM_MODELVIEW);
+    LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
     LLGLDepthTest mDepthTest(GL_TRUE);
-    gGL.pushMatrix();
-    gGL.color4fv(OVERLAY_COLOR.mV);
-    gGL.translatef(0.0f, 0.0f, 1.0f);
+    LLRender::instance().pushMatrix();
+    LLRender::instance().color4fv(OVERLAY_COLOR.mV);
+    LLRender::instance().translatef(0.0f, 0.0f, 1.0f);
 
     S32 i = (S32) pos_region.mV[VX];
     S32 j = (S32) pos_region.mV[VY];
@@ -537,7 +537,7 @@ void LLToolBrushLand::renderOverlay(LLSurface& land, const LLVector3& pos_region
     S32 radioAction = gSavedSettings.getS32("RadioLandBrushAction");
     F32 force = gSavedSettings.getF32("LandBrushForce"); // .1 to 100?
 
-    gGL.begin(LLRender::LINES);
+    LLRender::instance().begin(LLRender::LINES);
     for(S32 di = -half_edge; di <= half_edge; di++)
     {
         if((i+di) < 0 || (i+di) >= (S32)land.mGridsPerEdge) continue;
@@ -553,37 +553,37 @@ void LLToolBrushLand::renderOverlay(LLSurface& land, const LLVector3& pos_region
                 wz2 = wz + .2f + (.2f + force/100.f) * force_scale, // top vertex
                 tic = .075f; // arrowhead size
             // vertical line
-            gGL.vertex3f(wx, wy, wz);
-            gGL.vertex3f(wx, wy, wz2);
+            LLRender::instance().vertex3f(wx, wy, wz);
+            LLRender::instance().vertex3f(wx, wy, wz2);
             if(radioAction == E_LAND_RAISE || radioAction == E_LAND_NOISE) // up arrow
             {
-                gGL.vertex3f(wx, wy, wz2);
-                gGL.vertex3f(wx+tic, wy, wz2-tic);
-                gGL.vertex3f(wx, wy, wz2);
-                gGL.vertex3f(wx-tic, wy, wz2-tic);
+                LLRender::instance().vertex3f(wx, wy, wz2);
+                LLRender::instance().vertex3f(wx+tic, wy, wz2-tic);
+                LLRender::instance().vertex3f(wx, wy, wz2);
+                LLRender::instance().vertex3f(wx-tic, wy, wz2-tic);
             }
             if(radioAction == E_LAND_LOWER || radioAction == E_LAND_NOISE) // down arrow
             {
-                gGL.vertex3f(wx, wy, wz);
-                gGL.vertex3f(wx+tic, wy, wz+tic);
-                gGL.vertex3f(wx, wy, wz);
-                gGL.vertex3f(wx-tic, wy, wz+tic);
+                LLRender::instance().vertex3f(wx, wy, wz);
+                LLRender::instance().vertex3f(wx+tic, wy, wz+tic);
+                LLRender::instance().vertex3f(wx, wy, wz);
+                LLRender::instance().vertex3f(wx-tic, wy, wz+tic);
             }
             if(radioAction == E_LAND_REVERT || radioAction == E_LAND_SMOOTH) // flat top
             {
-                gGL.vertex3f(wx-tic, wy, wz2);
-                gGL.vertex3f(wx+tic, wy, wz2);
+                LLRender::instance().vertex3f(wx-tic, wy, wz2);
+                LLRender::instance().vertex3f(wx+tic, wy, wz2);
             }
             if(radioAction == E_LAND_LEVEL || radioAction == E_LAND_SMOOTH) // flat bottom
             {
-                gGL.vertex3f(wx-tic, wy, wz);
-                gGL.vertex3f(wx+tic, wy, wz);
+                LLRender::instance().vertex3f(wx-tic, wy, wz);
+                LLRender::instance().vertex3f(wx+tic, wy, wz);
             }
         }
     }
-    gGL.end();
+    LLRender::instance().end();
 
-    gGL.popMatrix();
+    LLRender::instance().popMatrix();
 }
 
 void LLToolBrushLand::determineAffectedRegions(region_list_t& regions,

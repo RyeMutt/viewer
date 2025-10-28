@@ -164,7 +164,7 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
         return 0;
     }
 
-    gGL.getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
+    LLRender::instance().getTexUnit(0)->enable(LLTexUnit::TT_TEXTURE);
 
     S32 scaled_max_pixels = max_pixels == S32_MAX ? S32_MAX : llceil((F32)max_pixels * sScaleX);
 
@@ -184,15 +184,15 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
         }
     }
 
-    gGL.pushUIMatrix();
+    LLRender::instance().pushUIMatrix();
 
-    gGL.loadUIIdentity();
+    LLRender::instance().loadUIIdentity();
 
     LLVector2 origin(floorf(sCurOrigin.mX*sScaleX), floorf(sCurOrigin.mY*sScaleY));
 
     // Depth translation, so that floating text appears 'in-world'
     // and is correctly occluded.
-    gGL.translatef(0.f,0.f,sCurDepth);
+    LLRender::instance().translatef(0.f,0.f,sCurDepth);
 
     S32 chars_drawn = 0;
     S32 i;
@@ -210,7 +210,7 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
     F32 cur_x, cur_y, cur_render_x, cur_render_y;
 
     // Not guaranteed to be set correctly
-    gGL.setSceneBlendType(LLRender::BT_ALPHA);
+    LLRender::instance().setSceneBlendType(LLRender::BT_ALPHA);
 
     cur_x = ((F32)x * sScaleX) + origin.mV[VX];
     cur_y = ((F32)y * sScaleY) + origin.mV[VY];
@@ -321,17 +321,17 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
             // otherwise the queued glyphs will be taken from wrong textures.
             if (glyph_count > 0)
             {
-                gGL.begin(LLRender::TRIANGLES);
+                LLRender::instance().begin(LLRender::TRIANGLES);
                 {
-                    gGL.vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
+                    LLRender::instance().vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
                 }
-                gGL.end();
+                LLRender::instance().end();
                 glyph_count = 0;
             }
 
             bitmap_entry = next_bitmap_entry;
             LLImageGL* font_image = font_bitmap_cache->getImageGL(bitmap_entry.first, bitmap_entry.second);
-            gGL.getTexUnit(0)->bind(font_image);
+            LLRender::instance().getTexUnit(0)->bind(font_image);
 
             // For some reason it's not enough to compare by bitmap_entry.
             // Issue hits emojis, japenese and chinese glyphs, only on first run.
@@ -359,11 +359,11 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
 
         if (glyph_count >= GLYPH_BATCH_SIZE)
         {
-            gGL.begin(LLRender::TRIANGLES);
+            LLRender::instance().begin(LLRender::TRIANGLES);
             {
-                gGL.vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
+                LLRender::instance().vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
             }
-            gGL.end();
+            LLRender::instance().end();
 
             glyph_count = 0;
         }
@@ -397,11 +397,11 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
         cur_render_y = cur_y;
     }
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
+        LLRender::instance().vertexBatchPreTransformed(vertices, uvs, colors, glyph_count * 6);
     }
-    gGL.end();
+    LLRender::instance().end();
 
 
     if (right_x)
@@ -414,11 +414,11 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
     {
         F32 descender = (F32)llfloor(mFontFreetype->getDescenderHeight());
 
-        gGL.getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
-        gGL.begin(LLRender::LINES);
-        gGL.vertex2f(start_x, cur_y - descender);
-        gGL.vertex2f(cur_x, cur_y - descender);
-        gGL.end();
+        LLRender::instance().getTexUnit(0)->unbind(LLTexUnit::TT_TEXTURE);
+        LLRender::instance().begin(LLRender::LINES);
+        LLRender::instance().vertex2f(start_x, cur_y - descender);
+        LLRender::instance().vertex2f(cur_x, cur_y - descender);
+        LLRender::instance().end();
     }
 
     if (draw_ellipses)
@@ -439,7 +439,7 @@ S32 LLFontGL::render(const LLWString &wstr, S32 begin_offset, F32 x, F32 y, cons
                 use_color);
     }
 
-    gGL.popUIMatrix();
+    LLRender::instance().popUIMatrix();
 
     return chars_drawn;
 }

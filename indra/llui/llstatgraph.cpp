@@ -100,13 +100,13 @@ void LLStatGraph::draw()
     }
 
     static LLUIColor default_color = LLUIColorTable::instance().getColor( "MenuDefaultBgColor" );
-    gGL.color4fv(default_color.get().mV);
+    LLRender::instance().color4fv(default_color.get().mV);
     gl_rect_2d(0, getRect().getHeight(), getRect().getWidth(), 0, true);
 
-    gGL.color4fv(LLColor4::black.mV);
+    LLRender::instance().color4fv(LLColor4::black.mV);
     gl_rect_2d(0, getRect().getHeight(), getRect().getWidth(), 0, false);
 
-    gGL.color4fv(it->mColor().mV);
+    LLRender::instance().color4fv(it->mColor().mV);
     gl_rect_2d(1, ll_round(frac*getRect().getHeight()), getRect().getWidth() - 1, 0, true);
 }
 

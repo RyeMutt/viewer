@@ -633,31 +633,31 @@ void LLJoystickCameraRotate::drawRotatedImage( LLPointer<LLUIImage> image, S32 r
         { (F32)width/texture->getWidth(), 0.f }
     };
 
-    gGL.getTexUnit(0)->bind(texture);
+    LLRender::instance().getTexUnit(0)->bind(texture);
 
-    gGL.color4fv(UI_VERTEX_COLOR.mV);
+    LLRender::instance().color4fv(UI_VERTEX_COLOR.mV);
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.texCoord2fv(uv[(rotations + 0) % 4]);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 0) % 4]);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2fv(uv[(rotations + 1) % 4]);
-        gGL.vertex2i(0, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 1) % 4]);
+        LLRender::instance().vertex2i(0, height);
 
-        gGL.texCoord2fv(uv[(rotations + 2) % 4]);
-        gGL.vertex2i(0, 0);
+        LLRender::instance().texCoord2fv(uv[(rotations + 2) % 4]);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.texCoord2fv(uv[(rotations + 0) % 4]);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 0) % 4]);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2fv(uv[(rotations + 2) % 4]);
-        gGL.vertex2i(0, 0);
+        LLRender::instance().texCoord2fv(uv[(rotations + 2) % 4]);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.texCoord2fv(uv[(rotations + 3) % 4]);
-        gGL.vertex2i(width, 0);
+        LLRender::instance().texCoord2fv(uv[(rotations + 3) % 4]);
+        LLRender::instance().vertex2i(width, 0);
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 
@@ -911,31 +911,31 @@ void LLJoystickQuaternion::drawRotatedImage(LLPointer<LLUIImage> image, S32 rota
         { (F32)width / texture->getWidth(), 0.f }
     };
 
-    gGL.getTexUnit(0)->bind(texture);
+    LLRender::instance().getTexUnit(0)->bind(texture);
 
-    gGL.color4fv(UI_VERTEX_COLOR.mV);
+    LLRender::instance().color4fv(UI_VERTEX_COLOR.mV);
 
-    gGL.begin(LLRender::TRIANGLES);
+    LLRender::instance().begin(LLRender::TRIANGLES);
     {
-        gGL.texCoord2fv(uv[(rotations + 0) % 4]);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 0) % 4]);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2fv(uv[(rotations + 1) % 4]);
-        gGL.vertex2i(0, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 1) % 4]);
+        LLRender::instance().vertex2i(0, height);
 
-        gGL.texCoord2fv(uv[(rotations + 2) % 4]);
-        gGL.vertex2i(0, 0);
+        LLRender::instance().texCoord2fv(uv[(rotations + 2) % 4]);
+        LLRender::instance().vertex2i(0, 0);
 
-        gGL.texCoord2fv(uv[(rotations + 0) % 4]);
-        gGL.vertex2i(width, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 0) % 4]);
+        LLRender::instance().vertex2i(width, height);
 
-        gGL.texCoord2fv(uv[(rotations + 1) % 4]);
-        gGL.vertex2i(0, height);
+        LLRender::instance().texCoord2fv(uv[(rotations + 1) % 4]);
+        LLRender::instance().vertex2i(0, height);
 
-        gGL.texCoord2fv(uv[(rotations + 3) % 4]);
-        gGL.vertex2i(width, 0);
+        LLRender::instance().texCoord2fv(uv[(rotations + 3) % 4]);
+        LLRender::instance().vertex2i(width, 0);
     }
-    gGL.end();
+    LLRender::instance().end();
 }
 
 void LLJoystickQuaternion::setRotation(const LLQuaternion &value)
