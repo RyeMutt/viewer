@@ -33,6 +33,8 @@
 #include <boost/unordered_map.hpp>
 #include <list>
 
+#include "llglheaders.h"
+
 #include "llerror.h"
 #include "v4color.h"
 #include "llstring.h"
@@ -42,7 +44,6 @@
 #include "llgltypes.h"
 #include "llinstancetracker.h"
 
-#include "llglheaders.h"
 #include "glm/mat4x4.hpp"
 
 extern bool gDebugGL;
@@ -141,7 +142,11 @@ public:
     // In ALL CAPS
     std::string mGLRenderer;
 
+    // GL Extension String
+    std::set<std::string> mGLExtensions;
+
 private:
+    void reloadExtensionsString();
     void initExtensions();
     void initGLStates();
 };
