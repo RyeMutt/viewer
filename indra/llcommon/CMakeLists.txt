@@ -115,7 +115,6 @@ set(llcommon_HEADER_FILES
     chrono.h
     classic_callback.h
     commoncontrol.h
-    ctype_workaround.h
     fix_macros.h
     fsyspath.h
     function_types.h
@@ -145,7 +144,6 @@ set(llcommon_HEADER_FILES
     lldependencies.h
     lldepthstack.h
     lldictionary.h
-    lldoubledispatch.h
     llendianswizzle.h
     llerror.h
     llerrorcontrol.h
