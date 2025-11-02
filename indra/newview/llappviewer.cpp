@@ -90,7 +90,6 @@
 #include "lltoast.h"
 #include "llsdutil_math.h"
 #include "lllocationhistory.h"
-#include "llfasttimerview.h"
 #include "llvector4a.h"
 #include "llviewermenufile.h"
 #include "llvoicechannel.h"
@@ -591,32 +590,6 @@ static void settings_modify()
     gDebugPipeline = gSavedSettings.getBOOL("RenderDebugPipeline");
 }
 
-class LLFastTimerLogThread : public LLThread
-{
-public:
-    std::string mFile;
-
-    LLFastTimerLogThread(std::string& test_name) : LLThread("fast timer log")
-    {
-        std::string file_name = test_name + std::string(".slp");
-        mFile = gDirUtilp->getExpandedFilename(LL_PATH_LOGS, file_name);
-    }
-
-    void run()
-    {
-        llofstream os(mFile.c_str());
-
-        while (!LLAppViewer::instance()->isQuitting())
-        {
-            LLTrace::BlockTimer::writeLog(os);
-            os.flush();
-            ms_sleep(32);
-        }
-
-        os.close();
-    }
-};
-
 //virtual
 bool LLAppViewer::initSLURLHandler()
 {
@@ -667,7 +640,6 @@ LLAppViewer::LLAppViewer()
     mAgentRegionLastAlive(false),
     mRandomizeFramerate(LLCachedControl<bool>(gSavedSettings,"Randomize Framerate", false)),
     mPeriodicSlowFrame(LLCachedControl<bool>(gSavedSettings,"Periodic Slow Frame", false)),
-    mFastTimerLogThread(NULL),
     mSettingsLocationList(NULL),
     mIsFirstRun(false)
 {
@@ -1301,10 +1273,6 @@ void LLAppViewer::initMaxHeapSize()
     LLMemory::initMaxHeapSizeGB(max_heap_size_gb);
 }
 
-
-// externally visible timers
-LLTrace::BlockTimerStatHandle FTM_FRAME("Frame");
-
 bool LLAppViewer::frame()
 {
     bool ret = false;
@@ -1347,6 +1315,8 @@ bool LLAppViewer::frame()
 
 bool LLAppViewer::doFrame()
 {
+    LL_PROFILE_ZONE_NAMED("Frame");
+    LL_PROFILE_GPU_ZONE("Frame");
 #ifdef LL_DISCORD
     {
         LL_PROFILE_ZONE_NAMED("discord_callbacks");
@@ -1354,8 +1324,6 @@ bool LLAppViewer::doFrame()
     }
 #endif
 
-    LL_RECORD_BLOCK_TIME(FTM_FRAME);
-    LL_PROFILE_GPU_ZONE("Frame");
     {
     // and now adjust the visuals from previous frame.
     if(LLPerfStats::tunables.userAutoTuneEnabled && LLPerfStats::tunables.tuningFlag != LLPerfStats::Tunables::Nothing)
@@ -1375,13 +1343,7 @@ bool LLAppViewer::doFrame()
         LLPerfStats::RecordSceneTime T (LLPerfStats::StatType_t::RENDER_IDLE); // perf stats
         {
             LL_PROFILE_ZONE_NAMED_CATEGORY_APP("df LLTrace");
-            if (LLFloaterReg::instanceVisible("block_timers"))
-            {
-                LLTrace::BlockTimer::processTimes();
-            }
-
             LLTrace::get_frame_recording().nextPeriod();
-            LLTrace::BlockTimer::logStats();
         }
 
         LLTrace::get_thread_recorder()->pullFromChildren();
@@ -1392,7 +1354,7 @@ bool LLAppViewer::doFrame()
     {
         {
             LLPerfStats::RecordSceneTime T(LLPerfStats::StatType_t::RENDER_IDLE); // ensure we have the entire top scope of frame covered (input event and coro)
-            LL_PROFILE_ZONE_NAMED_CATEGORY_APP("df processMiscNativeEvents")
+            LL_PROFILE_ZONE_NAMED_CATEGORY_APP("df processMiscNativeEvents");
             pingMainloopTimeout("Main:MiscNativeWindowEvents");
 
             if (gViewerWindow)
@@ -1402,7 +1364,7 @@ bool LLAppViewer::doFrame()
             }
 
             {
-                LL_PROFILE_ZONE_NAMED_CATEGORY_APP("df gatherInput")
+                LL_PROFILE_ZONE_NAMED_CATEGORY_APP("df gatherInput");
                 pingMainloopTimeout("Main:GatherInput");
             }
 
@@ -1536,7 +1498,6 @@ bool LLAppViewer::doFrame()
 
         // Sleep and run background threads
         {
-            //LL_RECORD_BLOCK_TIME(SLEEP2);
             LL_PROFILE_ZONE_WARN("Sleep2");
 
             // yield some time to the os based on command line option
@@ -1720,13 +1681,6 @@ bool LLAppViewer::cleanup()
         }
         LLSceneMonitor::deleteSingleton();
     }
-
-    // There used to be an 'if (LLFastTimerView::sAnalyzePerformance)' block
-    // here, completely redundant with the one that occurs later in this same
-    // function. Presumably the duplication was due to an automated merge gone
-    // bad. Not knowing which instance to prefer, we chose to retain the later
-    // one because it happens just after mFastTimerLogThread is deleted. This
-    // comment is in case we guessed wrong, so we can move it here instead.
 
 #if LL_LINUX
     // remove any old breakpad minidump files from the log directory
@@ -2084,28 +2038,10 @@ bool LLAppViewer::cleanup()
     }
     delete sImageDecodeThread;
     sImageDecodeThread = NULL;
-    delete mFastTimerLogThread;
-    mFastTimerLogThread = NULL;
     delete sPurgeDiskCacheThread;
     sPurgeDiskCacheThread = NULL;
     delete mGeneralThreadPool;
     mGeneralThreadPool = NULL;
-
-    if (LLFastTimerView::sAnalyzePerformance)
-    {
-        LL_INFOS() << "Analyzing performance" << LL_ENDL;
-
-        std::string baseline_name = LLTrace::BlockTimer::sLogName + "_baseline.slp";
-        std::string current_name  = LLTrace::BlockTimer::sLogName + ".slp";
-        std::string report_name   = LLTrace::BlockTimer::sLogName + "_report.csv";
-
-        LLFastTimerView::doAnalysis(
-            gDirUtilp->getExpandedFilename(LL_PATH_LOGS, baseline_name),
-            gDirUtilp->getExpandedFilename(LL_PATH_LOGS, current_name),
-            gDirUtilp->getExpandedFilename(LL_PATH_LOGS, report_name));
-    }
-
-    SUBSYSTEM_CLEANUP(LLMetricPerformanceTesterBasic) ;
 
     LL_INFOS() << "Cleaning up Media and Textures" << LL_ENDL;
 
@@ -2235,13 +2171,6 @@ bool LLAppViewer::initThreads()
     LLAppViewer::instance()->initGeneralThread();
 
     LLAppViewer::sPurgeDiskCacheThread = new LLPurgeDiskCacheThread();
-
-    if (LLTrace::BlockTimer::sLog || LLTrace::BlockTimer::sMetricLog)
-    {
-        LLTrace::BlockTimer::setLogLock(new LLMutex());
-        mFastTimerLogThread = new LLFastTimerLogThread(LLTrace::BlockTimer::sLogName);
-        mFastTimerLogThread->start();
-    }
 
     // Mesh streaming and caching
     gMeshRepo.init();
@@ -2786,22 +2715,6 @@ bool LLAppViewer::initConfiguration()
     // If we have specified crash on startup, set the global so we'll trigger the crash at the right time
     gCrashOnStartup = gSavedSettings.getBOOL("CrashOnStartup");
 
-    if (gSavedSettings.getBOOL("LogPerformance"))
-    {
-        LLTrace::BlockTimer::sLog = true;
-        LLTrace::BlockTimer::sLogName = std::string("performance");
-    }
-
-    std::string test_name(gSavedSettings.getString("LogMetrics"));
-    if (!test_name.empty())
-    {
-        LLTrace::BlockTimer::sMetricLog = true;
-        // '--logmetrics' is specified with a named test metric argument so the data gathering is done only on that test
-        // In the absence of argument, every metric would be gathered (makes for a rather slow run and hard to decipher report...)
-        LL_INFOS() << "'--logmetrics' argument : " << test_name << LL_ENDL;
-        LLTrace::BlockTimer::sLogName = test_name;
-    }
-
     if (clp.hasOption("graphicslevel"))
     {
         // User explicitly requested --graphicslevel on the command line. We
@@ -2814,7 +2727,6 @@ bool LLAppViewer::initConfiguration()
         mForceGraphicsLevel = gSavedSettings.getU32("RenderQualityPerformance");
     }
 
-    LLFastTimerView::sAnalyzePerformance = gSavedSettings.getBOOL("AnalyzePerformance");
     gAgentPilot.setReplaySession(gSavedSettings.getBOOL("ReplaySession"));
 
     if (gSavedSettings.getBOOL("DebugSession"))
@@ -4721,20 +4633,6 @@ public:
         }
 };
 
-static LLTrace::BlockTimerStatHandle FTM_AUDIO_UPDATE("Update Audio");
-static LLTrace::BlockTimerStatHandle FTM_CLEANUP("Cleanup");
-static LLTrace::BlockTimerStatHandle FTM_CLEANUP_DRAWABLES("Drawables");
-static LLTrace::BlockTimerStatHandle FTM_IDLE_CB("Idle Callbacks");
-static LLTrace::BlockTimerStatHandle FTM_LOD_UPDATE("Update LOD");
-static LLTrace::BlockTimerStatHandle FTM_OBJECTLIST_UPDATE("Update Objectlist");
-static LLTrace::BlockTimerStatHandle FTM_REGION_UPDATE("Update Region");
-static LLTrace::BlockTimerStatHandle FTM_WORLD_UPDATE("Update World");
-static LLTrace::BlockTimerStatHandle FTM_NETWORK("Network");
-static LLTrace::BlockTimerStatHandle FTM_AGENT_NETWORK("Agent Network");
-static LLTrace::BlockTimerStatHandle FTM_VLMANAGER("VL Manager");
-static LLTrace::BlockTimerStatHandle FTM_AGENT_POSITION("Agent Position");
-static LLTrace::BlockTimerStatHandle FTM_HUD_EFFECTS("HUD Effects");
-
 ///////////////////////////////////////////////////////
 // idle()
 //
@@ -4833,7 +4731,7 @@ void LLAppViewer::idle()
 
     if (!gDisconnected)
     {
-        LL_PROFILE_ZONE_NAMED_CATEGORY_NETWORK("network"); //LL_RECORD_BLOCK_TIME(FTM_NETWORK);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_NETWORK("network");
         // Update spaceserver timeinfo
         LLWorld::getInstance()->setSpaceTimeUSec(LLWorld::getInstance()->getSpaceTimeUSec() + LLUnits::Seconds::fromValue(dt_raw));
 
@@ -4936,7 +4834,7 @@ void LLAppViewer::idle()
     if (!mQuitRequested)  //MAINT-4243
 #endif
     {
-//      LL_RECORD_BLOCK_TIME(FTM_IDLE_CB);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("Idle Callbacks");
 
         // Do event notifications if necessary.  Yes, we may want to move this elsewhere.
         gEventNotifier.update();
@@ -4977,11 +4875,11 @@ void LLAppViewer::idle()
         {
             // Teleported, but waiting for things to load, start processing surface data
             {
-                LL_RECORD_BLOCK_TIME(FTM_NETWORK);
+                LL_PROFILE_ZONE_NAMED_CATEGORY_APP("teleport - unpack VL data");
                 gVLManager.unpackData();
             }
             {
-                LL_RECORD_BLOCK_TIME(FTM_REGION_UPDATE);
+                LL_PROFILE_ZONE_NAMED_CATEGORY_APP("teleport - region update");
                 const F32 max_region_update_time = .001f; // 1ms
                 LLWorld::getInstance()->updateRegions(max_region_update_time);
             }
@@ -5004,15 +4902,17 @@ void LLAppViewer::idle()
 
     {
         // Handle pending gesture processing
-        LL_RECORD_BLOCK_TIME(FTM_AGENT_POSITION);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - gesture update");
         LLGestureMgr::instance().update();
+    }
 
+    {
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - agentposition");
         gAgent.updateAgentPosition(gFrameDTClamped, yaw, current_mouse.mX, current_mouse.mY);
     }
 
     {
-        LL_RECORD_BLOCK_TIME(FTM_OBJECTLIST_UPDATE);
-
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - objectlist update");
         if (!(logoutRequestSent() && hasSavedFinalSnapshot()))
         {
             gObjectList.update(gAgent);
@@ -5027,12 +4927,12 @@ void LLAppViewer::idle()
     //
 
     {
-        LL_RECORD_BLOCK_TIME(FTM_CLEANUP);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - cleanup");
         {
             gObjectList.cleanDeadObjects();
         }
         {
-            LL_RECORD_BLOCK_TIME(FTM_CLEANUP_DRAWABLES);
+            LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - cleanup drawables");
             LLDrawable::cleanupDeadDrawables();
         }
     }
@@ -5051,7 +4951,7 @@ void LLAppViewer::idle()
     //
 
     {
-        LL_RECORD_BLOCK_TIME(FTM_HUD_EFFECTS);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - hudeffects");
         LLSelectMgr::getInstance()->updateEffects();
         LLHUDManager::getInstance()->cleanupEffects();
         LLHUDManager::getInstance()->sendEffects();
@@ -5063,7 +4963,7 @@ void LLAppViewer::idle()
     //
 
     {
-        LL_RECORD_BLOCK_TIME(FTM_NETWORK);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("network - unpack VL data");
         gVLManager.unpackData();
     }
 
@@ -5075,7 +4975,7 @@ void LLAppViewer::idle()
     LLWorld::getInstance()->updateVisibilities();
     {
         const F32 max_region_update_time = .001f; // 1ms
-        LL_RECORD_BLOCK_TIME(FTM_REGION_UPDATE);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("app - region update");
         LLWorld::getInstance()->updateRegions(max_region_update_time);
     }
 
@@ -5112,7 +5012,7 @@ void LLAppViewer::idle()
     //
 
     {
-        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("world update"); //LL_RECORD_BLOCK_TIME(FTM_WORLD_UPDATE);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("world update");
         gPipeline.updateMove();
     }
 
@@ -5145,7 +5045,7 @@ void LLAppViewer::idle()
 
     // objects and camera should be in sync, do LOD calculations now
     {
-        LL_RECORD_BLOCK_TIME(FTM_LOD_UPDATE);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("LOD Updates");
         gObjectList.updateApparentAngles(gAgent);
     }
 
@@ -5153,7 +5053,7 @@ void LLAppViewer::idle()
     LLAvatarRenderInfoAccountant::getInstance()->idle();
 
     {
-        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("audio update"); //LL_RECORD_BLOCK_TIME(FTM_AUDIO_UPDATE);
+        LL_PROFILE_ZONE_NAMED_CATEGORY_APP("audio update");
 
         if (gAudiop)
         {
@@ -5469,13 +5369,6 @@ void LLAppViewer::idleNameCache()
 constexpr F32 CHECK_MESSAGES_DEFAULT_MAX_TIME = 0.020f; // 50 ms = 50 fps (just for messages!)
 static F32 CheckMessagesMaxTime = CHECK_MESSAGES_DEFAULT_MAX_TIME;
 
-static LLTrace::BlockTimerStatHandle FTM_IDLE_NETWORK("Idle Network");
-static LLTrace::BlockTimerStatHandle FTM_MESSAGE_ACKS("Message Acks");
-static LLTrace::BlockTimerStatHandle FTM_RETRANSMIT("Retransmit");
-static LLTrace::BlockTimerStatHandle FTM_TIMEOUT_CHECK("Timeout Check");
-static LLTrace::BlockTimerStatHandle FTM_DYNAMIC_THROTTLE("Dynamic Throttle");
-static LLTrace::BlockTimerStatHandle FTM_CHECK_REGION_CIRCUIT("Check Region Circuit");
-
 void LLAppViewer::idleNetwork()
 {
     LL_PROFILE_ZONE_SCOPED_CATEGORY_NETWORK;
@@ -5487,7 +5380,7 @@ void LLAppViewer::idleNetwork()
     static LLCachedControl<bool> speed_test(gSavedSettings, "SpeedTest", false);
     if (!speed_test())
     {
-        LL_PROFILE_ZONE_NAMED_CATEGORY_NETWORK("idle network"); //LL_RECORD_BLOCK_TIME(FTM_IDLE_NETWORK); // decode
+        LL_PROFILE_ZONE_NAMED_CATEGORY_NETWORK("idle network"); // decode
 
         LLTimer check_message_timer;
         //  Read all available packets from network

@@ -37,6 +37,6 @@ if (USE_TRACY)
   endif ()
 
   # See: indra/llcommon/llprofiler.h
-  add_compile_definitions(LL_PROFILER_CONFIGURATION=3)
+  add_compile_definitions(LL_PROFILER_CONFIGURATION=1)
 endif (USE_TRACY)
 

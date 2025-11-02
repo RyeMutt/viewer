@@ -404,9 +404,6 @@ void normalized_float_to_string(const float x, char *out_str)
 //
 // LLDebugText
 //
-
-static LLTrace::BlockTimerStatHandle FTM_DISPLAY_DEBUG_TEXT("Display Debug Text");
-
 class LLDebugText
 {
 private:
@@ -941,7 +938,7 @@ public:
 
     void draw()
     {
-        LL_RECORD_BLOCK_TIME(FTM_DISPLAY_DEBUG_TEXT);
+        LL_PROFILE_ZONE_SCOPED;
 
         // Camera matrix text is hard to see again a white background
         // Add a dark background underneath the matrices for readability (contrast)
@@ -3414,13 +3411,11 @@ void append_xui_tooltip(LLView* viewp, LLToolTip::Params& params)
     }
 }
 
-static LLTrace::BlockTimerStatHandle ftm("Update UI");
-
 // Update UI based on stored mouse position from mouse-move
 // event processing.
 void LLViewerWindow::updateUI()
 {
-    LL_PROFILE_ZONE_SCOPED_CATEGORY_UI; //LL_RECORD_BLOCK_TIME(ftm);
+    LL_PROFILE_ZONE_SCOPED_CATEGORY_UI;
 
     static std::string last_handle_msg;
 
@@ -4069,10 +4064,9 @@ void LLViewerWindow::updateKeyboardFocus()
     }
 }
 
-static LLTrace::BlockTimerStatHandle FTM_UPDATE_WORLD_VIEW("Update World View");
 void LLViewerWindow::updateWorldViewRect(bool use_full_window)
 {
-    LL_RECORD_BLOCK_TIME(FTM_UPDATE_WORLD_VIEW);
+    LL_PROFILE_ZONE_SCOPED_CATEGORY_UI;
 
     // start off using whole window to render world
     LLRect new_world_rect = mWindowRectRaw;
@@ -5970,11 +5964,9 @@ void LLViewerWindow::requestResolutionUpdate()
     mResDirty = true;
 }
 
-static LLTrace::BlockTimerStatHandle FTM_WINDOW_CHECK_SETTINGS("Window Settings");
-
 void LLViewerWindow::checkSettings()
 {
-    LL_RECORD_BLOCK_TIME(FTM_WINDOW_CHECK_SETTINGS);
+    LL_PROFILE_ZONE_SCOPED;
     if (mStatesDirty)
     {
         gGL.refreshState();
