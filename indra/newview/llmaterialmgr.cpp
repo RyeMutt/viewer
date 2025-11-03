@@ -137,9 +137,9 @@ LLMaterialMgr::LLMaterialMgr():
 {
     LLAppCoreHttp & app_core_http(LLAppViewer::instance()->getAppCoreHttp());
 
-    mHttpRequest = LLCore::HttpRequest::ptr_t(new LLCore::HttpRequest());
-    mHttpHeaders = LLCore::HttpHeaders::ptr_t(new LLCore::HttpHeaders());
-    mHttpOptions = LLCore::HttpOptions::ptr_t(new LLCore::HttpOptions());
+    mHttpRequest = std::make_shared<LLCore::HttpRequest>();
+    mHttpHeaders = std::make_shared<LLCore::HttpHeaders>();
+    mHttpOptions = std::make_shared<LLCore::HttpOptions>();
     mHttpPolicy = app_core_http.getPolicy(LLAppCoreHttp::AP_MATERIALS);
 
     mMaterials.insert(std::pair<LLMaterialID, LLMaterialPtr>(LLMaterialID::null, LLMaterialPtr(NULL)));
@@ -862,9 +862,9 @@ void LLMaterialMgr::processGetAllQueueCoro(LLUUID regionId)
 
     LL_DEBUGS("Materials") << "GET all for region " << regionId << "url " << capURL << LL_ENDL;
 
-    LLCoreHttpUtil::HttpCoroutineAdapter::ptr_t httpAdapter(
-            new LLCoreHttpUtil::HttpCoroutineAdapter("processGetAllQueue", LLCore::HttpRequest::DEFAULT_POLICY_ID));
-    LLCore::HttpRequest::ptr_t httpRequest(new LLCore::HttpRequest());
+    LLCoreHttpUtil::HttpCoroutineAdapter::ptr_t
+        httpAdapter = std::make_shared<LLCoreHttpUtil::HttpCoroutineAdapter>("processGetAllQueue", LLCore::HttpRequest::DEFAULT_POLICY_ID);
+    LLCore::HttpRequest::ptr_t httpRequest = std::make_shared<LLCore::HttpRequest>();
 
     LLSD result = httpAdapter->getAndSuspend(httpRequest, capURL);
 

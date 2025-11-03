@@ -194,11 +194,11 @@ LLXMLRPCTransaction::Impl::Impl
 
     if (!mHttpRequest)
     {
-        mHttpRequest = LLCore::HttpRequest::ptr_t(new LLCore::HttpRequest);
+        mHttpRequest = std::make_shared<LLCore::HttpRequest>();
     }
 
     // LLRefCounted starts with a 1 ref, so don't add a ref in the smart pointer
-    httpOpts = LLCore::HttpOptions::ptr_t(new LLCore::HttpOptions());
+    httpOpts = std::make_shared<LLCore::HttpOptions>();
 
     // Delay between repeats will start from 5 sec and grow to 20 sec with each repeat
     httpOpts->setMinBackoff((LLCore::HttpTime)5E6L);
@@ -221,7 +221,7 @@ LLXMLRPCTransaction::Impl::Impl
     httpOpts->setSSLVerifyHost(vefifySSLCert);
 
     // LLRefCounted starts with a 1 ref, so don't add a ref in the smart pointer
-    httpHeaders = LLCore::HttpHeaders::ptr_t(new LLCore::HttpHeaders());
+    httpHeaders = std::make_shared<LLCore::HttpHeaders>();
 
     httpHeaders->append(HTTP_OUT_HEADER_CONTENT_TYPE, HTTP_CONTENT_TEXT_XML);
 

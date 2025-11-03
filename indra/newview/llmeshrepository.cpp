@@ -940,13 +940,13 @@ LLMeshRepoThread::LLMeshRepoThread()
     mSkinMapMutex = new LLMutex();
     mSignal = new LLCondition();
     mHttpRequest = new LLCore::HttpRequest;
-    mHttpOptions = LLCore::HttpOptions::ptr_t(new LLCore::HttpOptions);
+    mHttpOptions = std::make_shared<LLCore::HttpOptions>();
     mHttpOptions->setTransferTimeout(SMALL_MESH_XFER_TIMEOUT);
     mHttpOptions->setUseRetryAfter(gSavedSettings.getBOOL("MeshUseHttpRetryAfter"));
-    mHttpLargeOptions = LLCore::HttpOptions::ptr_t(new LLCore::HttpOptions);
+    mHttpLargeOptions = std::make_shared<LLCore::HttpOptions>();
     mHttpLargeOptions->setTransferTimeout(LARGE_MESH_XFER_TIMEOUT);
     mHttpLargeOptions->setUseRetryAfter(gSavedSettings.getBOOL("MeshUseHttpRetryAfter"));
-    mHttpHeaders = LLCore::HttpHeaders::ptr_t(new LLCore::HttpHeaders);
+    mHttpHeaders = std::make_shared<LLCore::HttpHeaders>();
     mHttpHeaders->append(HTTP_OUT_HEADER_ACCEPT, HTTP_CONTENT_VND_LL_MESH);
     mHttpPolicyClass = app_core_http.getPolicy(LLAppCoreHttp::AP_MESH2);
     mHttpLargePolicyClass = app_core_http.getPolicy(LLAppCoreHttp::AP_LARGE_MESH);
@@ -2608,11 +2608,11 @@ LLMeshUploadThread::LLMeshUploadThread(LLMeshUploadThread::instance_list_t& data
     mMeshUploadTimeOut = gSavedSettings.getS32("MeshUploadTimeOut");
 
     mHttpRequest = new LLCore::HttpRequest;
-    mHttpOptions = LLCore::HttpOptions::ptr_t(new LLCore::HttpOptions);
+    mHttpOptions = std::make_shared<LLCore::HttpOptions>();
     mHttpOptions->setTransferTimeout(mMeshUploadTimeOut);
     mHttpOptions->setUseRetryAfter(gSavedSettings.getBOOL("MeshUseHttpRetryAfter"));
     mHttpOptions->setRetries(UPLOAD_RETRY_LIMIT);
-    mHttpHeaders = LLCore::HttpHeaders::ptr_t(new LLCore::HttpHeaders);
+    mHttpHeaders = std::make_shared<LLCore::HttpHeaders>();
     mHttpHeaders->append(HTTP_OUT_HEADER_CONTENT_TYPE, HTTP_CONTENT_LLSD_XML);
     mHttpPolicyClass = LLAppViewer::instance()->getAppCoreHttp().getPolicy(LLAppCoreHttp::AP_UPLOADS);
 }

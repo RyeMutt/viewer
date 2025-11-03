@@ -3908,7 +3908,7 @@ void LLAppearanceMgr::serverAppearanceUpdateCoro(LLCoreHttpUtil::HttpCoroutineAd
         LL_DEBUGS("Avatar") << "Will send request for cof_version " << cofVersion << LL_ENDL;
 
         bRetry = false;
-        LLCore::HttpRequest::ptr_t httpRequest(new LLCore::HttpRequest());
+        LLCore::HttpRequest::ptr_t httpRequest = std::make_shared<LLCore::HttpRequest>();
 
         if (gSavedSettings.getBOOL("DebugForceAppearanceRequestFailure"))
         {

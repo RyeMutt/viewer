@@ -140,7 +140,7 @@ namespace {
     {
         if( !pRandomGenerator )
         {
-            pRandomGenerator.reset(new LLRandLagFib2281(LLUUID::getRandomSeed( ) ));
+            pRandomGenerator = std::make_unique<LLRandLagFib2281>(LLUUID::getRandomSeed());
         }
 
         return(*pRandomGenerator)();
