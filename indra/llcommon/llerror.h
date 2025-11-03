@@ -28,18 +28,16 @@
 #ifndef LL_LLERROR_H
 #define LL_LLERROR_H
 
+#include "llpreprocessor.h"
+#include "stdtypes.h"
+
+#include "llprofiler.h"
+
+#include <functional> // std::function
 #include <sstream>
 #include <string>
 #include <typeinfo>
 #include <vector>
-
-#include "stdtypes.h"
-
-#include "llprofiler.h"
-#include "llpreprocessor.h"
-
-#include <boost/static_assert.hpp>
-#include <functional> // std::function
 
 const int LL_ERR_NOERR = 0;
 

@@ -27,8 +27,6 @@
 #ifndef LL_LINDEN_COMMON_H
 #define LL_LINDEN_COMMON_H
 
-#include "llprofiler.h"
-
 // *NOTE:  Please keep includes here to a minimum!
 //
 // Files included here are included in every library .cpp file and
@@ -43,6 +41,8 @@
 #endif
 
 #include "llpreprocessor.h"
+
+#include "llprofiler.h"
 
 #include <cstring>
 #include <cfloat>

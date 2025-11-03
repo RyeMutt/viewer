@@ -550,7 +550,7 @@ GLuint LLShaderMgr::loadShaderFile(const std::string& filename, S32 & shader_lev
     GLchar *extra_code_text[1024];
     GLchar *shader_code_text[4096 + LL_ARRAY_SIZE(extra_code_text)] = { NULL };
     GLuint extra_code_count = 0, shader_code_count = 0;
-    BOOST_STATIC_ASSERT(LL_ARRAY_SIZE(extra_code_text) < LL_ARRAY_SIZE(shader_code_text));
+    static_assert(LL_ARRAY_SIZE(extra_code_text) < LL_ARRAY_SIZE(shader_code_text));
 
 
     S32 major_version = gGLManager.mGLSLVersionMajor;

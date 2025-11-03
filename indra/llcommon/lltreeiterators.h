@@ -64,7 +64,6 @@
 #include <deque>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
-#include <boost/static_assert.hpp>
 
 namespace LLTreeIter
 {
@@ -259,11 +258,11 @@ public:
     template <typename TYPE1, typename TYPE2>
     LLTreeRootIter(TYPE1, TYPE2)
     {
-        BOOST_STATIC_ASSERT(use_a_valid_LLTreeIter_RootIter_value);
+        static_assert(use_a_valid_LLTreeIter_RootIter_value);
     }
     LLTreeRootIter()
     {
-        BOOST_STATIC_ASSERT(use_a_valid_LLTreeIter_RootIter_value);
+        static_assert(use_a_valid_LLTreeIter_RootIter_value);
     }
 };
 
@@ -637,11 +636,11 @@ public:
     template <typename TYPE1, typename TYPE2>
     LLTreeWalkIter(TYPE1, TYPE2)
     {
-        BOOST_STATIC_ASSERT(use_a_valid_LLTreeIter_WalkIter_value);
+        static_assert(use_a_valid_LLTreeIter_WalkIter_value);
     }
     LLTreeWalkIter()
     {
-        BOOST_STATIC_ASSERT(use_a_valid_LLTreeIter_WalkIter_value);
+        static_assert(use_a_valid_LLTreeIter_WalkIter_value);
     }
 };
 
