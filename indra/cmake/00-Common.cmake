@@ -63,6 +63,18 @@ if(USE_LTO)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
+# Only enable debug logging in Release builds under the Test channel by default
+string(TOLOWER ${VIEWER_CHANNEL} channel_lower)
+if(channel_lower MATCHES "^second life test")
+  option(DISABLE_RELEASE_DEBUG_LOGGING "Disable building with debug logging in Release" OFF)
+else()
+  option(DISABLE_RELEASE_DEBUG_LOGGING "Disable building with debug logging in Release" ON)
+endif()
+
+if (DISABLE_RELEASE_DEBUG_LOGGING)
+  add_compile_definitions($<$<CONFIG:Release>:LL_DISABLE_DEBUG_LOGGING=1>)
+endif()
+
 # Don't bother with a MinSizeRel or Debug builds.
 set(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo;Release" CACHE STRING "Supported build types." FORCE)
 
