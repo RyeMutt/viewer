@@ -110,6 +110,11 @@ constexpr U32 REGION_COMBAT_FLAG_DAMAGE_ADJUST  = 0x0001;  // Region allows dama
 constexpr U32 REGION_COMBAT_FLAG_RESTRICT_LOG   = 0x0002;  // Region disallows non-system combat logging
 constexpr U32 REGION_COMBAT_FLAG_RESTORE_HEALTH = 0x0004;  // Region restores health on death
 
+inline bool is_flag_set(U32 flags, U32 flag)
+{
+    return (flags & flag) != 0;
+}
+
 inline bool is_flag_set(U64 flags, U64 flag)
 {
     return (flags & flag) != 0;
