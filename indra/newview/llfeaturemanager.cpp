@@ -377,6 +377,25 @@ F32 gpu_benchmark();
 
 #if LL_WINDOWS
 
+namespace
+{
+
+static constexpr U32 STATUS_MSC_EXCEPTION = 0xE06D7363; // compiler specific
+
+U32 msc_exception_filter(U32 code, struct _EXCEPTION_POINTERS* exception_infop)
+{
+    if (code == STATUS_MSC_EXCEPTION)
+    {
+        // C++ exception, go on
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
+    else
+    {
+        // handle it
+        return EXCEPTION_EXECUTE_HANDLER;
+    }
+}
+
 F32 logExceptionBenchmark()
 {
     // FIXME: gpu_benchmark uses many C++ classes on the stack to control state.
@@ -400,6 +419,8 @@ F32 logExceptionBenchmark()
     }
     return gbps;
 }
+
+} // namespace
 #endif
 
 bool checkRDNA35()
