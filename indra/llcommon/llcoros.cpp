@@ -303,75 +303,6 @@ std::string LLCoros::launch(const std::string& prefix, const callable_t& callabl
     return name;
 }
 
-namespace
-{
-
-#if LL_WINDOWS
-
-static const U32 STATUS_MSC_EXCEPTION = 0xE06D7363; // compiler specific
-
-U32 exception_filter(U32 code, struct _EXCEPTION_POINTERS* exception_infop)
-{
-    if (LLApp::instance()->reportCrashToBugsplat((void*)exception_infop))
-    {
-        // Handled
-        return EXCEPTION_CONTINUE_SEARCH;
-    }
-    else if (code == STATUS_MSC_EXCEPTION)
-    {
-        // C++ exception, go on
-        return EXCEPTION_CONTINUE_SEARCH;
-    }
-    else
-    {
-        // handle it, convert to std::exception
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
-
-    return EXCEPTION_CONTINUE_SEARCH;
-}
-
-void cpphandle(const LLCoros::callable_t& callable, const std::string& name)
-{
-    // SE and C++ can not coexists, thus two handlers
-    try
-    {
-        callable();
-    }
-    catch (const LLCoros::Stop& exc)
-    {
-        LL_INFOS("LLCoros") << "coroutine " << name << " terminating because "
-            << exc.what() << LL_ENDL;
-    }
-    catch (const LLContinueError&)
-    {
-        // Any uncaught exception derived from LLContinueError will be caught
-        // here and logged. This coroutine will terminate but the rest of the
-        // viewer will carry on.
-        LOG_UNHANDLED_EXCEPTION(STRINGIZE("coroutine " << name));
-    }
-}
-
-void sehandle(const LLCoros::callable_t& callable, const std::string& name)
-{
-    __try
-    {
-        // handle stop and continue exceptions first
-        cpphandle(callable, name);
-    }
-    __except (exception_filter(GetExceptionCode(), GetExceptionInformation()))
-    {
-        // convert to C++ styled exception
-        // Note: it might be better to use _se_set_translator
-        // if you want exception to inherit full callstack
-        char integer_string[512];
-        sprintf(integer_string, "SEH, code: %lu\n", GetExceptionCode());
-        throw std::exception(integer_string);
-    }
-}
-#endif // LL_WINDOWS
-} // anonymous namespace
-
 // Top-level wrapper around caller's coroutine callable.
 // Normally we like to pass strings and such by const reference -- but in this
 // case, we WANT to copy both the name and the callable to our local stack!
@@ -382,36 +313,33 @@ void LLCoros::toplevel(std::string name, callable_t callable)
     // set it as current
     mCurrent.reset(&corodata);
 
-#ifdef LL_WINDOWS
-    // can not use __try directly, toplevel requires unwinding, thus use of a wrapper
-    sehandle(callable, name);
-#else // LL_WINDOWS
-    // run the code the caller actually wants in the coroutine
-    try
-    {
-        callable();
-    }
-    catch (const Stop& exc)
-    {
-        LL_INFOS("LLCoros") << "coroutine " << name << " terminating because "
-                            << exc.what() << LL_ENDL;
-    }
-    catch (const LLContinueError&)
-    {
-        // Any uncaught exception derived from LLContinueError will be caught
-        // here and logged. This coroutine will terminate but the rest of the
-        // viewer will carry on.
-        LOG_UNHANDLED_EXCEPTION(STRINGIZE("coroutine " << name));
-    }
-    catch (...)
-    {
-        // Stash any OTHER kind of uncaught exception in the rethrow() queue
-        // to be rethrown by the main fiber.
-        LL_WARNS("LLCoros") << "Capturing uncaught exception in coroutine "
-                            << name << LL_ENDL;
-        LLCoros::instance().saveException(name, std::current_exception());
-    }
-#endif // else LL_WINDOWS
+    LL::seh::catcher([&]() {
+            // run the code the caller actually wants in the coroutine
+            try
+            {
+                callable();
+            }
+            catch (const Stop& exc)
+            {
+                LL_INFOS("LLCoros") << "coroutine " << name << " terminating because " << exc.what() << LL_ENDL;
+            }
+            catch (const LLContinueError&)
+            {
+                // Any uncaught exception derived from LLContinueError will be caught
+                // here and logged. This coroutine will terminate but the rest of the
+                // viewer will carry on.
+                LOG_UNHANDLED_EXCEPTION(STRINGIZE("coroutine " << name));
+            }
+#ifndef LL_WINDOWS
+            catch (...)
+            {
+                // Stash any OTHER kind of uncaught exception in the rethrow() queue
+                // to be rethrown by the main fiber.
+                LL_WARNS("LLCoros") << "Capturing uncaught exception in coroutine " << name << LL_ENDL;
+                LLCoros::instance().saveException(name, std::current_exception());
+            }
+#endif // LL_WINDOWS
+        });
 }
 
 //static

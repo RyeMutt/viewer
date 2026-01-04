@@ -38,6 +38,7 @@
 
 #include <boost/stacktrace.hpp>
 // other Linden headers
+#include "llapp.h"
 #include "llerror.h"
 #include "llerrorcontrol.h"
 
@@ -115,19 +116,22 @@ void LL::seh::fill_stacktrace(std::string& stacktrace, U32 code)
     }
 }
 
-U32 LL::seh::common_filter(U32 code, struct _EXCEPTION_POINTERS*)
+U32 LL::seh::common_filter(U32 code, struct _EXCEPTION_POINTERS* exception_infop)
 {
-    if (code == STATUS_MSC_EXCEPTION)
+    if (LLApp::instance()->reportCrashToBugsplat((void*)exception_infop))
+    {
+        // Handled
+        return EXCEPTION_CONTINUE_SEARCH;
+    }
+    else if (code == STATUS_MSC_EXCEPTION)
     {
         // C++ exception, don't stop at this handler
         return EXCEPTION_CONTINUE_SEARCH;
     }
-    else
-    {
-        // This is a non-C++ exception, e.g. hardware check.
-        // Pass control into the handler block.
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
+
+    // This is a non-C++ exception, e.g. hardware check.
+    // Pass control into the handler block.
+    return EXCEPTION_EXECUTE_HANDLER;
 }
 
 void LL::seh::rethrow(U32 code, const std::string& stacktrace)
