@@ -93,6 +93,8 @@ extern LLTrace::BlockTimerStatHandle FTM_RENDER_UI_2D;
 class LLPipeline
 {
 public:
+    static constexpr F32 DEFERRED_LIGHT_RADIUS = 1.5f;
+
     LLPipeline();
     ~LLPipeline();
 

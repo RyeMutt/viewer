@@ -1104,7 +1104,7 @@ F32 LLDrawable::getVisibilityRadius() const
     {
         if (const LLVOVolume* vov = getVOVolume())
         {
-            return llmax(getRadius(), vov->getLightRadius());
+            return llmax(getRadius(), vov->getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS));
         }
         // LL_WARNS() ?
     }

@@ -4207,7 +4207,7 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
 
                         LLVector3 center = drawable->getPositionAgent();
                         gGL.translatef(center[0], center[1], center[2]);
-                        F32 scale = vovolume->getLightRadius();
+                        F32 scale = vovolume->getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
                         gGL.scalef(scale, scale, scale);
 
                         LLColor4 color(vovolume->getLightSRGBColor(), .5f);

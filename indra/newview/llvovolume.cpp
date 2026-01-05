@@ -931,7 +931,7 @@ void LLVOVolume::updateTextureVirtualSize(bool forced)
         mLightTexture = LLViewerTextureManager::getFetchedTexture(id, FTT_DEFAULT, true, LLGLTexture::BOOST_NONE);
         if (mLightTexture.notNull())
         {
-            F32 rad = getLightRadius();
+            F32 rad = getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
             mLightTexture->addTextureStats(gPipeline.calcPixelArea(getPositionAgent(),
                                                                     LLVector3(rad,rad,rad),
                                                                     *camera));
@@ -3301,7 +3301,7 @@ void LLVOVolume::updateSpotLightPriority()
     }
     LL_PROFILE_ZONE_SCOPED_CATEGORY_VOLUME;
 
-    F32 r = getLightRadius();
+    F32 r = getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
     LLVector3 pos = mDrawable->getPositionAgent();
 
     LLVector3 at(0,0,-1);
@@ -3363,12 +3363,12 @@ F32 LLVOVolume::getLightIntensity() const
     }
 }
 
-F32 LLVOVolume::getLightRadius() const
+F32 LLVOVolume::getLightRadius(const F32 fudge_factor) const
 {
     const LLLightParams *param_block = getLightParams();
     if (param_block)
     {
-        return param_block->getRadius();
+        return param_block->getRadius() * fudge_factor;
     }
     else
     {

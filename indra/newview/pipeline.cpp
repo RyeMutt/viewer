@@ -5519,7 +5519,7 @@ static F32 calc_light_dist(LLVOVolume* light, const LLVector3& cam_pos, F32 max_
     {
         return 0.f; // selected lights get highest priority
     }
-    F32 radius = light->getLightRadius();
+    const F32 radius = light->getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
     F32 dist = dist_vec(light->getRenderPosition(), cam_pos);
     dist = llmax(dist - radius, 0.f);
     if (light->mDrawable.notNull() && light->mDrawable->isState(LLDrawable::ACTIVE))
@@ -5866,7 +5866,7 @@ void LLPipeline::setupHWLights()
             LLVector3 light_pos(light->getRenderPosition());
             LLVector4 light_pos_gl(light_pos, 1.0f);
 
-            F32 adjusted_radius = light->getLightRadius() * (sRenderDeferred ? 1.5f : 1.0f);
+            const F32 adjusted_radius = light->getLightRadius(DEFERRED_LIGHT_RADIUS);
             if (adjusted_radius <= 0.001f)
             {
                 continue;
@@ -5882,23 +5882,12 @@ void LLPipeline::setupHWLights()
             light_state->setDiffuse(light_color);
             light_state->setAmbient(LLColor4::black);
             light_state->setConstantAttenuation(0.f);
-            light_state->setSize(light->getLightRadius() * 1.5f);
+            light_state->setSize(light->getLightRadius(DEFERRED_LIGHT_RADIUS));
             light_state->setFalloff(light->getLightFalloff(DEFERRED_LIGHT_FALLOFF));
+            light_state->setLinearAttenuation(linatten);
+            light_state->setQuadraticAttenuation(light->getLightFalloff(DEFERRED_LIGHT_FALLOFF) + 1.f); // get falloff to match for forward deferred rendering lights
 
-            if (sRenderDeferred)
-            {
-                light_state->setLinearAttenuation(linatten);
-                light_state->setQuadraticAttenuation(light->getLightFalloff(DEFERRED_LIGHT_FALLOFF) + 1.f); // get falloff to match for forward deferred rendering lights
-            }
-            else
-            {
-                light_state->setLinearAttenuation(linatten);
-                light_state->setQuadraticAttenuation(0.f);
-            }
-
-
-            if (light->isLightSpotlight() // directional (spot-)light
-                && (LLPipeline::sRenderDeferred || RenderSpotLightsInNondeferred)) // these are only rendered as GL spotlights if we're in deferred rendering mode *or* the setting forces them on
+            if (light->isLightSpotlight()) // directional (spot-)light
             {
                 LLQuaternion quat = light->getRenderRotation();
                 LLVector3 at_axis(0,0,-1); // this matches deferred rendering's object light direction
@@ -8688,7 +8677,7 @@ void LLPipeline::renderDeferredLighting()
                     LLVector4a center;
                     center.load3(drawablep->getPositionAgent().mV);
                     const F32 *c = center.getF32ptr();
-                    F32        s = volume->getLightRadius() * 1.5f;
+                    F32        s = volume->getLightRadius(DEFERRED_LIGHT_RADIUS);
 
                     // send light color to shader in linear space
                     LLColor3 col = volume->getLightLinearColor() * light_scale;
@@ -8776,7 +8765,7 @@ void LLPipeline::renderDeferredLighting()
                     LLVector4a center;
                     center.load3(drawablep->getPositionAgent().mV);
                     const F32* c = center.getF32ptr();
-                    F32        s = volume->getLightRadius() * 1.5f;
+                    F32        s = volume->getLightRadius(DEFERRED_LIGHT_RADIUS);
 
                     sVisibleLightCount++;
 
@@ -8849,7 +8838,7 @@ void LLPipeline::renderDeferredLighting()
                     LLDrawable* drawablep = *iter;
                     LLVOVolume* volume = drawablep->getVOVolume();
                     LLVector3   center = drawablep->getPositionAgent();
-                    F32         light_size_final = volume->getLightRadius() * 1.5f;
+                    F32         light_size_final = volume->getLightRadius(DEFERRED_LIGHT_RADIUS);
                     F32         light_falloff_final = volume->getLightFalloff(DEFERRED_LIGHT_FALLOFF);
 
                     sVisibleLightCount++;
@@ -9126,7 +9115,7 @@ void LLPipeline::setupSpotLight(LLGLSLShader& shader, LLDrawable* drawablep)
 
     glm::mat4 screen_to_light = glm::inverse(light_to_screen);
 
-    F32 s = volume->getLightRadius()*1.5f;
+    F32 s = volume->getLightRadius(DEFERRED_LIGHT_RADIUS);
     F32 near_clip = dist;
     F32 width = scale.mV[VX];
     F32 height = scale.mV[VY];
@@ -10580,7 +10569,7 @@ void LLPipeline::generateSunShadow(LLCamera& camera)
             F32 near_clip = dist + 0.01f;
             F32 width = scale.mV[VX];
             F32 height = scale.mV[VY];
-            F32 far_clip = dist + volume->getLightRadius() * 1.5f;
+            F32 far_clip = dist + volume->getLightRadius(DEFERRED_LIGHT_RADIUS);
 
             F32 fovy = fov; // radians
             F32 aspect = width / height;
