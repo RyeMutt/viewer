@@ -4196,23 +4196,48 @@ void LLViewerWindow::renderSelections( bool for_gl_pick, bool pick_parcel_walls,
                         LLVOVolume* vovolume = drawable->getVOVolume();
                         gGL.pushMatrix();
 
-                        LLVector3 center = drawable->getPositionAgent();
-                        gGL.translatef(center[0], center[1], center[2]);
-                        F32 scale = vovolume->getLightRadius();
-                        gGL.scalef(scale, scale, scale);
-
                         LLColor4 color(vovolume->getLightSRGBColor(), .5f);
                         gGL.color4fv(color.mV);
 
-                        //F32 pixel_area = 100000.f;
-                        // Render Outside
-                        gSphere.render();
+                        LLVector3 center = drawable->getPositionAgent();
+                        F32 light_scale = vovolume->getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
 
-                        // Render Inside
-                        glCullFace(GL_FRONT);
-                        gSphere.render();
-                        glCullFace(GL_BACK);
+                        if (vovolume->isLightSpotlight())
+                        {
+                            // Transform center to the base of the spotlights projection cone
+                            const LLQuaternion render_rot = vovolume->getRenderRotation();
+                            LLVector3 at(0, 0, -1);
+                            at *= render_rot;
+                            center += at / light_scale;
 
+                            F32 x, y, z, angle_radians;
+                            render_rot.getAngleAxis(&angle_radians, &x, &y, &z);
+
+                            gGL.translatef(center[0], center[1], center[2]);
+                            gGL.rotatef(angle_radians * RAD_TO_DEG, x, y, z);
+                            gGL.scalef(light_scale, light_scale, light_scale * 2.f);
+
+                            //  Render Outside
+                            gCone.renderSingle();
+
+                            // Render Inside
+                            glCullFace(GL_FRONT);
+                            gCone.renderSingle();
+                            glCullFace(GL_BACK);
+                        }
+                        else
+                        {
+                            gGL.translatef(center[0], center[1], center[2]);
+                            gGL.scalef(light_scale, light_scale, light_scale);
+
+                            //  Render Outside
+                            gSphere.render();
+
+                            // Render Inside
+                            glCullFace(GL_FRONT);
+                            gSphere.render();
+                            glCullFace(GL_BACK);
+                        }
                         gGL.popMatrix();
                     }
                     return true;

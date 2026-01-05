@@ -40,6 +40,7 @@ class LLCone
 {
 public:
     void render(S32 sides = 12);
+    void renderSingle(F32 offset = 0.f, S32 sides = 12);
 };
 
 

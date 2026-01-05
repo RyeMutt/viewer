@@ -2833,7 +2833,7 @@ void renderLights(LLDrawable* drawablep)
         }
 
         gGL.diffuseColor4f(1,1,0,1);
-        F32 rad = drawablep->getVOVolume()->getLightRadius();
+        F32 rad = drawablep->getVOVolume()->getLightRadius(LLPipeline::DEFERRED_LIGHT_RADIUS);
         drawBoxOutline(pos, LLVector4a(rad));
     }
 }

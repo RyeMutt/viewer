@@ -931,10 +931,7 @@ void LLVOVolume::updateTextureVirtualSize(bool forced)
         mLightTexture = LLViewerTextureManager::getFetchedTexture(id, FTT_DEFAULT, true, LLGLTexture::BOOST_NONE);
         if (mLightTexture.notNull())
         {
-            F32 rad = getLightRadius();
-            mLightTexture->addTextureStats(gPipeline.calcPixelArea(getPositionAgent(),
-                                                                    LLVector3(rad,rad,rad),
-                                                                    *camera));
+            updateSpotLightPriority();
         }
     }
 
@@ -3301,13 +3298,17 @@ void LLVOVolume::updateSpotLightPriority()
     }
     LL_PROFILE_ZONE_SCOPED_CATEGORY_VOLUME;
 
-    F32 r = getLightRadius();
+    // This value was historically 0.5 and not 1.5 for the deferred renderer. It was changed at some point and broke shadow behavior.
+    static constexpr F32 PROJECTOR_RADIUS_SKEW = 0.5f;
+    F32 r = getLightRadius(PROJECTOR_RADIUS_SKEW);
     LLVector3 pos = mDrawable->getPositionAgent();
 
-    LLVector3 at(0,0,-1);
+    // Transform center to the base of the spotlights projection cone
+    LLVector3 at(0, 0, -1);
     at *= getRenderRotation();
     pos += at * r;
 
+    // Skew towards camera
     at = LLViewerCamera::getInstance()->getAtAxis();
     pos -= at * r;
 
@@ -3363,12 +3364,12 @@ F32 LLVOVolume::getLightIntensity() const
     }
 }
 
-F32 LLVOVolume::getLightRadius() const
+F32 LLVOVolume::getLightRadius(const F32 fudge_factor) const
 {
     const LLLightParams *param_block = getLightParams();
     if (param_block)
     {
-        return param_block->getRadius();
+        return param_block->getRadius() * fudge_factor;
     }
     else
     {
