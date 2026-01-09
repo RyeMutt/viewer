@@ -695,5 +695,15 @@ struct ll_template_cast_impl<DEST, SOURCE>      \
     }                                           \
 }
 
+namespace ll
+{
+    struct string_hash
+    {
+        using is_transparent = void;
+        [[nodiscard]] size_t operator()(char const* rhs) const { return std::hash<std::string_view>{}(rhs); }
+        [[nodiscard]] size_t operator()(std::string_view rhs) const { return std::hash<std::string_view>{}(rhs); }
+        [[nodiscard]] size_t operator()(const std::string& rhs) const { return std::hash<std::string>{}(rhs); }
+    };
+} // namespace ll
 
 #endif // LL_LLSTL_H
