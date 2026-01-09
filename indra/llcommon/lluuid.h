@@ -178,15 +178,22 @@ namespace std
     {
         inline size_t operator()(const LLUUID& id) const noexcept
         {
-            return (size_t)id.getDigest64();
+            size_t seed = 0;
+            for (size_t i = 0; i < UUID_BYTES; ++i)
+            {
+                seed ^= static_cast<size_t>(id.mData[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            }
+            return seed;
         }
     };
 }
 
-// For use with boost containers.
+
+// For use with boost::container_hash
 inline size_t hash_value(const LLUUID& id) noexcept
 {
-    return (size_t)id.getDigest64();
+    return std::hash<LLUUID>{}(id);
 }
+
 
 #endif // LL_LLUUID_H

@@ -63,15 +63,11 @@ public:
 
     static const LLMaterialID null;
 
-    // Returns a 64 bits digest of the material Id, by XORing its two 64 bits
-    // long words. HB
-    inline U64 getDigest64() const
-    {
-        U64* tmp = (U64*)mID;
-        return tmp[0] ^ tmp[1];
-    }
-
 private:
+    // definitions follow class
+    friend std::hash<LLMaterialID>;
+    friend size_t hash_value(const LLMaterialID&) noexcept;
+
     void parseFromBinary(const LLSD::Binary& pMaterialID);
     int  compareToOtherMaterialID(const LLMaterialID& pOtherMaterialID) const;
 
@@ -79,21 +75,24 @@ private:
 } ;
 
 // std::hash implementation for LLMaterialID
-namespace std
+template<>
+struct std::hash<LLMaterialID>
 {
-    template<> struct hash<LLMaterialID>
+    inline size_t operator()(const LLMaterialID& id) const noexcept
     {
-        inline size_t operator()(const LLMaterialID& id) const noexcept
+        size_t seed = 0;
+        for (size_t i = 0; i < MATERIAL_ID_SIZE; ++i)
         {
-            return (size_t)id.getDigest64();
+            seed ^= static_cast<size_t>(id.mID[i]) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
-    };
-}
+        return seed;
+    }
+};
 
-// For use with boost containers.
+// For use with boost::container_hash
 inline size_t hash_value(const LLMaterialID& id) noexcept
 {
-    return (size_t)id.getDigest64();
+    return std::hash<LLMaterialID>{}(id);
 }
 
 #endif // LL_LLMATERIALID_H
